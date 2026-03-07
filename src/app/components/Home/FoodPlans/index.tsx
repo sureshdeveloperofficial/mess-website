@@ -129,7 +129,7 @@ const AutoSlidingStack = ({ items }: { items: FoodItem[] }) => {
                                 damping: 25,
                                 opacity: { duration: 0.5 }
                             }}
-                            className='absolute w-56 h-56 md:w-72 md:h-72 rounded-[3.5rem] overflow-hidden border-12 border-white shadow-[0_30px_60px_-15px_rgba(45,42,38,0.2)] cursor-pointer'
+                            className='absolute w-56 h-56 md:w-72 md:h-72 rounded-[3.5rem] overflow-hidden border-12 border-white shadow-[0_30px_60px_-15px_rgba(45,42,38,0.2)] cursor-pointer will-change-transform'
                         >
                             <Image
                                 src={getFullImageUrl(item.image) || PREMIUM_IMAGES[index % PREMIUM_IMAGES.length]}
@@ -185,10 +185,10 @@ const PremiumCard = ({ plan, onSelect, index }: { plan: FoodPlan, onSelect: (p: 
             onMouseLeave={handleMouseLeave}
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: index * 0.1, duration: 1, ease: [0.16, 1, 0.3, 1] }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ delay: index * 0.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
-            className='group bg-white/40 backdrop-blur-2xl rounded-[5rem] p-10 md:p-20 shadow-[0_50px_100px_-20px_rgba(45,42,38,0.05)] border border-white/40 flex flex-col lg:flex-row items-center gap-16 relative overflow-hidden'
+            className='group bg-white/40 backdrop-blur-2xl rounded-[5rem] p-10 md:p-20 shadow-[0_50px_100px_-20px_rgba(45,42,38,0.05)] border border-white/40 flex flex-col lg:flex-row items-center gap-16 relative overflow-hidden will-change-transform'
         >
             {/* Ambient Background Glow */}
             <div className='absolute -top-24 -right-24 w-96 h-96 bg-[#FF7A3D]/5 rounded-full blur-[100px] group-hover:bg-[#FF7A3D]/10 transition-colors duration-700'></div>
@@ -208,9 +208,9 @@ const PremiumCard = ({ plan, onSelect, index }: { plan: FoodPlan, onSelect: (p: 
                     </motion.div>
                 </div>
 
-                <h3 className='text-5xl md:text-7xl font-black text-[#2D2A26] capitalize mb-6 tracking-tighter leading-none'>
+                <h3 className='text-4xl md:text-6xl font-black text-[#2D2A26] capitalize mb-6 tracking-tighter leading-none whitespace-nowrap'>
                     {plan.name.split(' ').map((word, i) => (
-                        <span key={i} className={i === 0 ? 'text-[#FF7A3D] block lg:inline' : 'block lg:inline ml-0 lg:ml-2'}>
+                        <span key={i} className={i === 0 ? 'text-[#FF7A3D]' : 'ml-3'}>
                             {word}
                         </span>
                     ))}
@@ -289,15 +289,20 @@ const FoodPlans = () => {
 
     useEffect(() => {
         if (!isLoading && plans.length > 0) {
-            gsap.to(".floating-bg-icon", {
-                y: "random(-100, 100)",
-                x: "random(-50, 50)",
-                rotation: "random(-45, 45)",
-                duration: "random(10, 20)",
-                repeat: -1,
-                yoyo: true,
-                ease: "sine.inOut",
-            })
+            // Use requestAnimationFrame for smoother initial setup
+            const t = setTimeout(() => {
+                gsap.to(".floating-bg-icon", {
+                    y: "random(-50, 50)",
+                    x: "random(-30, 30)",
+                    rotation: "random(-20, 20)",
+                    duration: "random(15, 25)",
+                    repeat: -1,
+                    yoyo: true,
+                    ease: "sine.inOut",
+                    stagger: 0.2
+                })
+            }, 100)
+            return () => clearTimeout(t)
         }
     }, [isLoading, plans])
 
@@ -337,46 +342,8 @@ const FoodPlans = () => {
                 <div className='absolute bottom-1/4 right-1/3 w-[600px] h-[600px] bg-[#2D2A26]/2 rounded-full blur-[180px]'></div>
             </div>
 
-            <div className='container relative z-10 mx-auto px-4'>
-                <div className='max-w-4xl mx-auto text-center mb-16'>
-                    <motion.div
-                        initial={{ width: 0 }}
-                        whileInView={{ width: "100px" }}
-                        viewport={{ once: true }}
-                        className='h-[2px] bg-[#FF7A3D]/20 mx-auto mb-10'
-                    />
-
-                    <motion.span
-                        initial={{ opacity: 0, y: 10 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        className='text-[#FF7A3D] font-black uppercase tracking-[0.6em] text-[10px] mb-4 flex items-center justify-center gap-4'
-                    >
-                        <span className='w-8 h-px bg-[#FF7A3D]/20'></span>
-                        Authentic Selection
-                        <span className='w-8 h-px bg-[#FF7A3D]/20'></span>
-                    </motion.span>
-
-                    <motion.h2
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: 0.1 }}
-                        className='text-6xl md:text-8xl font-black text-[#2D2A26] tracking-tighter mb-4 leading-none'
-                    >
-                        Daily <span className='text-[#FF7A3D] italic underline decoration-[#2D2A26]/5 underline-offset-8 transition-all hover:decoration-[#FF7A3D]/20 duration-500'>Mess Plans</span>
-                    </motion.h2>
-
-                    <motion.p
-                        initial={{ opacity: 0, y: 15 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: 0.2 }}
-                        className='text-xl text-[#2D2A26]/40 font-medium max-w-2xl mx-auto leading-relaxed italic'
-                    >
-                        "A hearty selection of home-cooked flavors meticulously prepared for your daily cravings."
-                    </motion.p>
-                </div>
+            <div className='max-w-[1400px] relative z-10 mx-auto px-4'>
+                {/* Header section removed as it's redundant on the plans page */}
 
                 {isLoading ? (
                     <div className='flex flex-col gap-24'>

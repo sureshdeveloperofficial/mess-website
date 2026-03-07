@@ -7,7 +7,7 @@ import Gallery from '@/app/components/Home/Gallery'
 import Newsletter from '@/app/components/Home/Newsletter'
 import MenuPreview from '@/app/components/Home/MenuPreview'
 import HowItWorks from '@/app/components/Home/HowItWorks'
-import AppDownload from '@/app/components/Home/AppDownload'
+// import AppDownload from '@/app/components/Home/AppDownload'
 import { Metadata } from 'next'
 import ContactForm from '@/app/components/Contact/Form'
 
@@ -25,7 +25,7 @@ export default function Home() {
       <Expert />
       <Cook />
       <Gallery />
-      <AppDownload />
+      {/* <AppDownload /> */}
       <ContactForm />
       <Newsletter />
     </main>

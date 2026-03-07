@@ -1,4 +1,5 @@
 'use client'
+import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { Icon } from '@iconify/react'
@@ -76,13 +77,15 @@ const MenuPreview = () => {
                         </motion.h2>
                     </div>
 
-                    <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className='flex items-center gap-2 text-[#FF7A3D] font-black uppercase tracking-widest text-sm bg-white px-8 py-4 rounded-full border border-[#FF7A3D]/10 hover:bg-[#FF7A3D] hover:text-white transition-all duration-300'
-                    >
-                        Full Menu <Icon icon='ion:arrow-forward' />
-                    </motion.button>
+                    <Link href='/plans'>
+                        <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className='flex items-center gap-2 text-[#FF7A3D] font-black uppercase tracking-widest text-sm bg-white px-8 py-4 rounded-full border border-[#FF7A3D]/10 hover:bg-[#FF7A3D] hover:text-white transition-all duration-300'
+                        >
+                            Full Menu <Icon icon='ion:arrow-forward' />
+                        </motion.button>
+                    </Link>
                 </div>
 
                 <motion.div
@@ -130,7 +133,7 @@ const MenuPreview = () => {
                                         <div className='text-2xl font-black text-[#FF7A3D]'>{item.price}</div>
                                     </div>
 
-                                    <div className='flex items-center gap-4 pt-6 border-t border-[#2D2A26]/5'>
+                                    {/* <div className='flex items-center gap-4 pt-6 border-t border-[#2D2A26]/5'>
                                         <div className='flex items-center gap-2 text-[#2D2A26]/40'>
                                             <Icon icon='ion:list-outline' />
                                             <span className='text-xs font-bold uppercase tracking-widest'>{item.items}</span>
@@ -139,7 +142,7 @@ const MenuPreview = () => {
                                             <Icon icon='ion:time-outline' />
                                             <span className='text-xs font-bold uppercase tracking-widest'>30 MINS</span>
                                         </div>
-                                    </div>
+                                    </div> */}
                                 </div>
 
                                 {/* Tilt highlight effect */}
