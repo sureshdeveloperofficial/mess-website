@@ -1,0 +1,31 @@
+import React from 'react'
+import FoodPlans from '@/app/components/Home/FoodPlans'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+    title: 'Daily Mess Menu - AL SHAMIL MESS',
+    description: 'Explore our soulful home-cooked meals and daily mess plans.',
+}
+
+export default function PlansPage() {
+    return (
+        <main className='pt-20'>
+            <div className='pt-20 pb-10 bg-linear-to-b from-primary/5 to-white text-center relative overflow-hidden'>
+                {/* Decorative background circle */}
+                <div className='absolute -top-20 -left-20 w-64 h-64 bg-primary/5 rounded-full blur-3xl'></div>
+                <div className='absolute -bottom-10 -right-10 w-96 h-96 bg-primary/5 rounded-full blur-3xl'></div>
+
+                <h1 className='text-5xl md:text-7xl font-black text-grey uppercase tracking-tighter relative z-10'>
+                    DAILY <span className='text-primary'>MESS MENU</span>
+                </h1>
+                <p className='text-grey/50 mt-6 max-w-2xl mx-auto px-6 text-lg font-medium relative z-10'>
+                    Discover our soulful home-cooked meals and daily mess plans designed for your nutrition and taste.
+                    Experience the warmth of home-style dining every day.
+                </p>
+            </div>
+            <div className='-mt-10 relative z-20'>
+                <FoodPlans />
+            </div>
+        </main>
+    )
+}

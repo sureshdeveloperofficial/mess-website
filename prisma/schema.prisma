@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id       String @id @default(cuid())
+  email    String @unique
+  password String
+}
+
+model Category {
+  id        String     @id @default(cuid())
+  name      String     @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  foodItems FoodItem[]
+}
+
+model FoodItem {
+  id          String     @id @default(cuid())
+  name        String
+  description String?
+  price       Float
+  image       String?
+  categoryId  String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  category    Category   @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  options     Option[]
+  foodPlans   FoodPlan[] @relation("FoodItemToFoodPlan")
+}
+
+model Option {
+  id         String   @id @default(cuid())
+  name       String
+  price      Float
+  foodItemId String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  foodItem   FoodItem @relation(fields: [foodItemId], references: [id], onDelete: Cascade)
+}
+
+model FoodPlan {
+  id          String     @id @default(cuid())
+  name        String
+  description String?
+  price       Float
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  foodItems   FoodItem[] @relation("FoodItemToFoodPlan")
+}
