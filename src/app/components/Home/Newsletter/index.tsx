@@ -40,7 +40,7 @@ const Newsletter = () => {
     <section ref={containerRef} className='relative overflow-hidden py-24 sm:py-32'>
       {/* Decorative background gradients */}
       <div className='absolute top-0 left-0 w-full h-full bg-[#FFF9F5] pointer-events-none' />
-      <div className='absolute -top-24 -right-24 w-96 h-96 bg-[#FF7A3D]/5 rounded-full blur-[100px] pointer-events-none' />
+      <div className='absolute -top-24 -right-24 w-96 h-96 bg-[#FACB15]/5 rounded-full blur-[100px] pointer-events-none' />
       <div className='absolute -bottom-24 -left-24 w-96 h-96 bg-[#2D2A26]/5 rounded-full blur-[100px] pointer-events-none' />
 
       <div className='container relative z-10'>
@@ -63,15 +63,15 @@ const Newsletter = () => {
                 transition={{ delay: 0.3 }}
                 className='flex items-center gap-3 mb-6'
               >
-                <div className='w-10 h-[2px] bg-[#FF7A3D]' />
-                <span className='text-[10px] font-black uppercase tracking-[0.4em] text-[#FF7A3D]'>
+                <div className='w-10 h-[2px] bg-[#FACB15]' />
+                <span className='text-[10px] font-black uppercase tracking-[0.4em] text-[#FACB15]'>
                   Daily Broadcast
                 </span>
               </motion.div>
 
               <h2 className='text-5xl md:text-7xl font-black text-white mb-8 tracking-tighter leading-none'>
                 Today's Special <br />
-                <span className='text-[#FF7A3D] italic'>Revealed Daily.</span>
+                <span className='text-[#FACB15] italic'>Revealed Daily.</span>
               </h2>
 
               <p className='text-white/40 text-lg md:text-xl font-medium mb-12 max-w-xl leading-relaxed italic'>
@@ -79,7 +79,7 @@ const Newsletter = () => {
               </p>
 
               <div className='relative max-w-lg group'>
-                <div className='absolute -inset-1 bg-linear-to-r from-[#FF7A3D] to-[#FF9D6E] rounded-full opacity-20 group-focus-within:opacity-40 transition duration-500 blur'></div>
+                <div className='absolute -inset-1 bg-linear-to-r from-[#FACB15] to-[#FF9D6E] rounded-full opacity-20 group-focus-within:opacity-40 transition duration-500 blur'></div>
                 <div className='relative flex items-center bg-white/10 backdrop-blur-xl border border-white/10 rounded-full p-2 pr-4 focus-within:bg-white transition-all duration-500'>
                   <input
                     type='email'
@@ -90,7 +90,7 @@ const Newsletter = () => {
                     whileHover={{ scale: 1.05, x: 5 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    <div className='w-12 h-12 bg-linear-to-br from-[#FF7A3D] to-[#FF9D6E] rounded-2xl flex items-center justify-center shadow-lg shadow-[#FF7A3D]/20 transition-transform duration-500 group-hover:scale-110'>
+                    <div className='w-12 h-12 bg-linear-to-br from-[#FACB15] to-[#FF9D6E] rounded-2xl flex items-center justify-center shadow-lg shadow-[#FACB15]/20 transition-transform duration-500 group-hover:scale-110'>
                       <Icon icon='tabler:arrow-narrow-right' width='24' className='text-white' />
                     </div>
                   </motion.button>
@@ -107,7 +107,7 @@ const Newsletter = () => {
             <div className='lg:col-span-5 relative hidden lg:block'>
               <div className='relative group'>
                 {/* Main dish circle glow */}
-                <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-[#FF7A3D]/20 rounded-full blur-[60px] animate-pulse pointer-events-none' />
+                <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-[#FACB15]/20 rounded-full blur-[60px] animate-pulse pointer-events-none' />
 
                 <div className='main-dish relative z-10'>
                   <Image

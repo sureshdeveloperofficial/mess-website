@@ -3,7 +3,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --color-primary: #df6853;
+  --color-primary: #FACB15;
   --color-grey: #363636;
 
   --spacing-60\%: 60%;
@@ -23,6 +23,7 @@
   color utility to any element that depends on these defaults.
 */
 @layer base {
+
   *,
   ::after,
   ::before,
@@ -42,7 +43,7 @@
   h2 {
     @apply text-black font-semibold sm:text-5xl text-4xl sm:leading-14 leading-11
   }
-  
+
 }
 
 @layer utilities {
@@ -73,9 +74,11 @@
     0% {
       background-position: 0% 50%;
     }
+
     50% {
       background-position: 100% 50%;
     }
+
     100% {
       background-position: 0% 50%;
     }

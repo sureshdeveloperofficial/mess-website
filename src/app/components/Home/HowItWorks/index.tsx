@@ -62,7 +62,7 @@ const HowItWorks = () => {
                     <motion.p
                         initial={{ opacity: 0, y: 10 }}
                         whileInView={{ opacity: 1, y: 0 }}
-                        className='text-[#FF7A3D] text-sm font-black mb-4 tracking-[0.5em] uppercase'
+                        className='text-[#FACB15] text-sm font-black mb-4 tracking-[0.5em] uppercase'
                     >
                         Simple Process
                     </motion.p>
@@ -72,7 +72,7 @@ const HowItWorks = () => {
                         transition={{ delay: 0.1 }}
                         className='text-5xl md:text-7xl font-black text-[#2D2A26] tracking-tighter leading-none'
                     >
-                        How It <span className='text-[#FF7A3D] italic'>Works</span>
+                        How It <span className='text-[#FACB15] italic'>Works</span>
                     </motion.h2>
                 </div>
 
@@ -84,10 +84,10 @@ const HowItWorks = () => {
                     className='relative flex flex-col lg:flex-row justify-between items-start gap-12 lg:gap-8 lg:px-20'
                 >
                     {/* Connector Line (Desktop) */}
-                    <div className='absolute top-24 left-40 right-40 h-1 bg-[#FF7A3D]/5 hidden lg:block'>
+                    <div className='absolute top-24 left-40 right-40 h-1 bg-[#FACB15]/5 hidden lg:block'>
                         <motion.div
                             variants={lineVariants}
-                            className='h-full bg-[#FF7A3D]/20 w-full origin-left'
+                            className='h-full bg-[#FACB15]/20 w-full origin-left'
                         ></motion.div>
                     </div>
 
@@ -99,9 +99,9 @@ const HowItWorks = () => {
                         >
                             <motion.div
                                 whileHover={{ scale: 1.1, rotate: 5 }}
-                                className='w-48 h-48 rounded-[3rem] bg-[#FFF9F5] border-4 border-white shadow-2xl shadow-[#FF7A3D]/10 flex items-center justify-center mb-10 group relative transition-all duration-500 hover:bg-[#FF7A3D]'
+                                className='w-48 h-48 rounded-[3rem] bg-[#FFF9F5] border-4 border-white shadow-2xl shadow-[#FACB15]/10 flex items-center justify-center mb-10 group relative transition-all duration-500 hover:bg-[#FACB15]'
                             >
-                                <Icon icon={step.icon} className='text-6xl text-[#FF7A3D] group-hover:text-white transition-colors duration-500' />
+                                <Icon icon={step.icon} className='text-6xl text-[#FACB15] group-hover:text-white transition-colors duration-500' />
 
                                 {/* Step Number */}
                                 <div className='absolute -top-4 -right-4 w-12 h-12 bg-[#2D2A26] text-white rounded-2xl flex items-center justify-center font-black text-xl shadow-xl'>

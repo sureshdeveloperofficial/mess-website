@@ -88,8 +88,8 @@ const Hero = () => {
   return (
     <section ref={containerRef} id='home-section' className='relative bg-[#FFF9F5] overflow-hidden pt-20 lg:pt-32'>
       {/* Background Decorative Elements */}
-      <div className='absolute top-0 right-0 w-1/2 h-full bg-[#FF7A3D]/5 -skew-x-12 origin-top-right pointer-events-none'></div>
-      <div className='absolute top-20 left-[10%] w-64 h-64 bg-[#FF7A3D]/10 rounded-full blur-[120px] pointer-events-none'></div>
+      <div className='absolute top-0 right-0 w-1/2 h-full bg-[#FACB15]/5 -skew-x-12 origin-top-right pointer-events-none'></div>
+      <div className='absolute top-20 left-[10%] w-64 h-64 bg-[#FACB15]/10 rounded-full blur-[120px] pointer-events-none'></div>
 
       <div className='container relative z-10'>
         <div className='grid grid-cols-1 lg:grid-cols-12 items-center gap-16'>
@@ -102,7 +102,7 @@ const Hero = () => {
                 custom={0}
                 className='flex items-center gap-3 mb-6'
               >
-                <span className='px-4 py-1.5 bg-[#FF7A3D]/10 text-[#FF7A3D] text-[10px] font-black uppercase tracking-[0.2em] rounded-full'>
+                <span className='px-4 py-1.5 bg-[#FACB15]/10 text-[#FACB15] text-[10px] font-black uppercase tracking-[0.2em] rounded-full'>
                   Est. 2024 • Authentic Mess Dining
                 </span>
                 <div className='flex gap-0.5 text-yellow-500 font-bold'>
@@ -117,7 +117,7 @@ const Hero = () => {
                 custom={1}
                 className='text-6xl md:text-8xl font-black text-[#2D2A26] lg:text-start text-center leading-[0.9] tracking-tighter mb-8'
               >
-                Deliciously <span className='text-[#FF7A3D] italic'>Home-Made.</span> Daily Delivered.
+                Deliciously <span className='text-[#FACB15] italic'>Home-Made.</span> Daily Delivered.
               </motion.h1>
 
               <motion.p
@@ -141,7 +141,7 @@ const Hero = () => {
                   <motion.button
                     whileHover={{ scale: 1.05, boxShadow: '0 20px 40px -10px rgba(255,122,61,0.3)' }}
                     whileTap={{ scale: 0.95 }}
-                    className='text-xl font-black rounded-4xl text-white py-6 px-12 bg-[#FF7A3D] shadow-2xl shadow-[#FF7A3D]/20 transition-all duration-300 flex items-center gap-3 group'
+                    className='text-xl font-black rounded-4xl text-white py-6 px-12 bg-[#FACB15] shadow-2xl shadow-[#FACB15]/20 transition-all duration-300 flex items-center gap-3 group'
                   >
                     Explore Food Plans
                     <Icon icon='ion:calendar-outline' className='group-hover:translate-x-2 transition-transform' />
@@ -189,11 +189,11 @@ const Hero = () => {
                 custom={1.5}
                 className='absolute -top-12 -left-8 bg-white/80 backdrop-blur-xl p-5 rounded-[2.5rem] shadow-2xl z-30 flex items-center gap-4 border border-white/20 group'
               >
-                <div className='w-12 h-12 bg-linear-to-br from-[#FF7A3D] to-[#FF9D6E] rounded-2xl flex items-center justify-center shadow-lg shadow-[#FF7A3D]/20 transition-transform duration-500 group-hover:scale-110'>
+                <div className='w-12 h-12 bg-linear-to-br from-[#FACB15] to-[#FF9D6E] rounded-2xl flex items-center justify-center shadow-lg shadow-[#FACB15]/20 transition-transform duration-500 group-hover:scale-110'>
                   <Icon icon='ion:heart' className='text-white text-xl animate-pulse' />
                 </div>
                 <div>
-                  <p className='text-[10px] font-black uppercase tracking-[0.2em] text-[#FF7A3D]'>Our Promise</p>
+                  <p className='text-[10px] font-black uppercase tracking-[0.2em] text-[#FACB15]'>Our Promise</p>
                   <p className='font-black text-[#2D2A26] text-base leading-tight'>Tradition in<br />Every Bite</p>
                 </div>
               </motion.div>

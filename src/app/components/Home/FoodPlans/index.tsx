@@ -191,8 +191,8 @@ const PremiumCard = ({ plan, onSelect, index }: { plan: FoodPlan, onSelect: (p: 
             className='group bg-white/40 backdrop-blur-2xl rounded-[5rem] p-10 md:p-20 shadow-[0_50px_100px_-20px_rgba(45,42,38,0.05)] border border-white/40 flex flex-col lg:flex-row items-center gap-16 relative overflow-hidden will-change-transform'
         >
             {/* Ambient Background Glow */}
-            <div className='absolute -top-24 -right-24 w-96 h-96 bg-[#FF7A3D]/5 rounded-full blur-[100px] group-hover:bg-[#FF7A3D]/10 transition-colors duration-700'></div>
-            <div className='absolute -bottom-24 -left-24 w-96 h-96 bg-[#2D2A26]/5 rounded-full blur-[100px] group-hover:bg-[#FF7A3D]/5 transition-colors duration-700'></div>
+            <div className='absolute -top-24 -right-24 w-96 h-96 bg-[#FACB15]/5 rounded-full blur-[100px] group-hover:bg-[#FACB15]/10 transition-colors duration-700'></div>
+            <div className='absolute -bottom-24 -left-24 w-96 h-96 bg-[#2D2A26]/5 rounded-full blur-[100px] group-hover:bg-[#FACB15]/5 transition-colors duration-700'></div>
 
             {/* Content Side */}
             <div className='flex-1 relative z-10 w-full' style={{ transform: "translateZ(50px)" }}>
@@ -201,7 +201,7 @@ const PremiumCard = ({ plan, onSelect, index }: { plan: FoodPlan, onSelect: (p: 
                         initial={{ scale: 0 }}
                         whileInView={{ scale: 1 }}
                         transition={{ type: "spring", delay: 0.5 }}
-                        className='px-6 py-2 bg-[#FF7A3D]/10 text-[#FF7A3D] rounded-full flex items-center gap-2'
+                        className='px-6 py-2 bg-[#FACB15]/10 text-[#FACB15] rounded-full flex items-center gap-2'
                     >
                         <Icon icon='ion:sparkles' className='text-sm' />
                         <span className='text-[10px] font-black uppercase tracking-[0.2em]'>Signature Choice</span>
@@ -210,13 +210,13 @@ const PremiumCard = ({ plan, onSelect, index }: { plan: FoodPlan, onSelect: (p: 
 
                 <h3 className='text-4xl md:text-6xl font-black text-[#2D2A26] capitalize mb-6 tracking-tighter leading-none whitespace-nowrap'>
                     {plan.name.split(' ').map((word, i) => (
-                        <span key={i} className={i === 0 ? 'text-[#FF7A3D]' : 'ml-3'}>
+                        <span key={i} className={i === 0 ? 'text-[#FACB15]' : 'ml-3'}>
                             {word}
                         </span>
                     ))}
                 </h3>
 
-                <p className='text-[#2D2A26]/60 text-xl mb-12 leading-relaxed font-medium italic max-w-xl border-l-4 border-[#FF7A3D]/20 pl-6'>
+                <p className='text-[#2D2A26]/60 text-xl mb-12 leading-relaxed font-medium italic max-w-xl border-l-4 border-[#FACB15]/20 pl-6'>
                     "{plan.description || "Experience the pinnacle of culinary excellence with our hand-picked selections."}"
                 </p>
 
@@ -226,7 +226,7 @@ const PremiumCard = ({ plan, onSelect, index }: { plan: FoodPlan, onSelect: (p: 
                         <span className='text-[10px] font-black text-[#2D2A26]/40 uppercase tracking-[0.3em] block'>Varieties</span>
                         <div className='flex items-center gap-3'>
                             <div className='w-10 h-10 rounded-2xl bg-[#2D2A26]/5 flex items-center justify-center'>
-                                <Icon icon='ion:restaurant-outline' className='text-[#FF7A3D] text-xl' />
+                                <Icon icon='ion:restaurant-outline' className='text-[#FACB15] text-xl' />
                             </div>
                             <span className='text-2xl font-black text-[#2D2A26]'>{plan.foodItems.length} Dishes</span>
                         </div>
@@ -235,7 +235,7 @@ const PremiumCard = ({ plan, onSelect, index }: { plan: FoodPlan, onSelect: (p: 
                         <span className='text-[10px] font-black text-[#2D2A26]/40 uppercase tracking-[0.3em] block'>Experience</span>
                         <div className='flex items-center gap-3'>
                             <div className='w-10 h-10 rounded-2xl bg-[#2D2A26]/5 flex items-center justify-center'>
-                                <Icon icon='ion:star-outline' className='text-[#FF7A3D] text-xl' />
+                                <Icon icon='ion:star-outline' className='text-[#FACB15] text-xl' />
                             </div>
                             <span className='text-2xl font-black text-[#2D2A26]'>Premium</span>
                         </div>
@@ -243,14 +243,14 @@ const PremiumCard = ({ plan, onSelect, index }: { plan: FoodPlan, onSelect: (p: 
                 </div>
 
                 <div className='flex items-center gap-10'>
-                    <div className='bg-[#FF7A3D] text-white px-10 py-5 rounded-[2.5rem] shadow-[0_20px_40px_-10px_rgba(255,122,61,0.3)]'>
+                    <div className='bg-[#FACB15] text-white px-10 py-5 rounded-[2.5rem] shadow-[0_20px_40px_-10px_rgba(255,122,61,0.3)]'>
                         <span className='text-[10px] font-black uppercase tracking-widest block opacity-70 mb-1'>Starting At</span>
                         <span className='font-black text-4xl'>${plan.price.toFixed(0)}</span>
                     </div>
 
                     <MagneticButton
                         onClick={() => onSelect(plan)}
-                        className='px-12 py-6 bg-[#2D2A26] text-white rounded-[2.5rem] font-black shadow-xl hover:bg-[#FF7A3D] transition-all flex items-center gap-3 text-lg group overflow-hidden relative'
+                        className='px-12 py-6 bg-[#2D2A26] text-white rounded-[2.5rem] font-black shadow-xl hover:bg-[#FACB15] transition-all flex items-center gap-3 text-lg group overflow-hidden relative'
                     >
                         <span className='relative z-10'>Explore Plan</span>
                         <Icon icon='ion:arrow-forward' className='relative z-10 group-hover:translate-x-2 transition-transform' />
@@ -311,10 +311,10 @@ const FoodPlans = () => {
             {/* Background Narrative Elements */}
             <div className='absolute top-0 left-0 w-full h-full pointer-events-none'>
                 <Icon icon='ion:restaurant-outline' className='floating-bg-icon absolute top-10 left-[5%] text-9xl text-[#2D2A26]/2 opacity-[0.03]' />
-                <Icon icon='ion:wine-outline' className='floating-bg-icon absolute top-1/2 right-[5%] text-[15rem] text-[#FF7A3D]/5 opacity-[0.03]' />
+                <Icon icon='ion:wine-outline' className='floating-bg-icon absolute top-1/2 right-[5%] text-[15rem] text-[#FACB15]/5 opacity-[0.03]' />
                 <Icon icon='ion:leaf-outline' className='floating-bg-icon absolute bottom-20 left-[15%] text-8xl text-green-500/5 opacity-[0.03]' />
                 <Icon icon='ion:cafe-outline' className='floating-bg-icon absolute top-1/4 right-[10%] text-9xl text-[#2D2A26]/2 opacity-[0.03]' />
-                <Icon icon='ion:pizza-outline' className='floating-bg-icon absolute top-[60%] left-[8%] text-9xl text-[#FF7A3D]/5 opacity-[0.03]' />
+                <Icon icon='ion:pizza-outline' className='floating-bg-icon absolute top-[60%] left-[8%] text-9xl text-[#FACB15]/5 opacity-[0.03]' />
 
                 {/* Decorative drifting particles/sparkles */}
                 {[...Array(8)].map((_, i) => (
@@ -330,7 +330,7 @@ const FoodPlans = () => {
                             repeat: Infinity,
                             delay: i * 0.5,
                         }}
-                        className='absolute w-2 h-2 bg-[#FF7A3D]/20 rounded-full blur-[2px]'
+                        className='absolute w-2 h-2 bg-[#FACB15]/20 rounded-full blur-[2px]'
                         style={{
                             top: `${Math.random() * 100}%`,
                             left: `${Math.random() * 100}%`,
@@ -338,7 +338,7 @@ const FoodPlans = () => {
                     />
                 ))}
 
-                <div className='absolute top-1/4 left-1/3 w-[500px] h-[500px] bg-[#FF7A3D]/2 rounded-full blur-[150px]'></div>
+                <div className='absolute top-1/4 left-1/3 w-[500px] h-[500px] bg-[#FACB15]/2 rounded-full blur-[150px]'></div>
                 <div className='absolute bottom-1/4 right-1/3 w-[600px] h-[600px] bg-[#2D2A26]/2 rounded-full blur-[180px]'></div>
             </div>
 

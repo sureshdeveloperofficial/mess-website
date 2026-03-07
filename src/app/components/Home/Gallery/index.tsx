@@ -45,7 +45,7 @@ const Gallery = () => {
           <motion.p
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
-            className='text-[#FF7A3D] text-sm font-black mb-4 tracking-[0.5em] uppercase'
+            className='text-[#FACB15] text-sm font-black mb-4 tracking-[0.5em] uppercase'
           >
             Visual Feast
           </motion.p>
@@ -54,7 +54,7 @@ const Gallery = () => {
             whileInView={{ opacity: 1, y: 0 }}
             className='text-5xl md:text-7xl font-black text-[#2D2A26] tracking-tighter leading-none'
           >
-            Explore Our <span className='text-[#FF7A3D] italic'>Signature Dishes</span>
+            Explore Our <span className='text-[#FACB15] italic'>Signature Dishes</span>
           </motion.h2>
         </div>
 
@@ -67,7 +67,7 @@ const Gallery = () => {
             {GALLERY_DATA.map((item, index) => (
               <div
                 key={index}
-                className='gallery-item overflow-hidden rounded-[3rem] mb-10 relative group bg-white shadow-2xl shadow-[#FF7A3D]/5 border border-[#FF7A3D]/5'
+                className='gallery-item overflow-hidden rounded-[3rem] mb-10 relative group bg-white shadow-2xl shadow-[#FACB15]/5 border border-[#FACB15]/5'
               >
                 <div className='relative aspect-square md:aspect-auto overflow-hidden'>
                   <Image
@@ -85,7 +85,7 @@ const Gallery = () => {
                       <p className='text-white text-xl font-bold'>$ {item.price}</p>
                       <Link
                         href='/plans'
-                        className='bg-[#FF7A3D] text-white px-8 py-3 rounded-full text-sm font-black uppercase tracking-widest hover:bg-white hover:text-[#FF7A3D] transition-all duration-300'
+                        className='bg-[#FACB15] text-white px-8 py-3 rounded-full text-sm font-black uppercase tracking-widest hover:bg-white hover:text-[#FACB15] transition-all duration-300'
                       >
                         Order Now
                       </Link>
@@ -97,15 +97,6 @@ const Gallery = () => {
           </Masonry>
         </div>
 
-        <div className='flex justify-center'>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className='px-12 py-6 bg-[#2D2A26] rounded-full text-lg font-black text-white shadow-2xl shadow-[#2D2A26]/20 hover:bg-[#FF7A3D] transition-all duration-300 flex items-center gap-3'
-          >
-            View More Options <Icon icon='ion:grid-outline' />
-          </motion.button>
-        </div>
       </div>
     </section>
   )

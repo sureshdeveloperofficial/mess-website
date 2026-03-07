@@ -63,7 +63,7 @@ const MenuPreview = () => {
                         <motion.p
                             initial={{ opacity: 0, x: -20 }}
                             whileInView={{ opacity: 1, x: 0 }}
-                            className='text-[#FF7A3D] text-sm font-black mb-4 tracking-[0.5em] uppercase'
+                            className='text-[#FACB15] text-sm font-black mb-4 tracking-[0.5em] uppercase'
                         >
                             Wholesome Goodness
                         </motion.p>
@@ -73,7 +73,7 @@ const MenuPreview = () => {
                             transition={{ delay: 0.1 }}
                             className='text-5xl md:text-7xl font-black text-[#2D2A26] tracking-tighter leading-none'
                         >
-                            Today's <span className='text-[#FF7A3D] italic'>Soul-Satiating</span> Specials
+                            Today's <span className='text-[#FACB15] italic'>Soul-Satiating</span> Specials
                         </motion.h2>
                     </div>
 
@@ -81,7 +81,7 @@ const MenuPreview = () => {
                         <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            className='flex items-center gap-2 text-[#FF7A3D] font-black uppercase tracking-widest text-sm bg-white px-8 py-4 rounded-full border border-[#FF7A3D]/10 hover:bg-[#FF7A3D] hover:text-white transition-all duration-300'
+                            className='flex items-center gap-2 text-[#FACB15] font-black uppercase tracking-widest text-sm bg-white px-8 py-4 rounded-full border border-[#FACB15]/10 hover:bg-[#FACB15] hover:text-white transition-all duration-300'
                         >
                             Full Menu <Icon icon='ion:arrow-forward' />
                         </motion.button>
@@ -103,7 +103,7 @@ const MenuPreview = () => {
                         >
                             <motion.div
                                 whileHover={{ y: -15 }}
-                                className='relative bg-white rounded-[4rem] overflow-hidden shadow-2xl shadow-[#FF7A3D]/5 border border-[#FF7A3D]/5'
+                                className='relative bg-white rounded-[4rem] overflow-hidden shadow-2xl shadow-[#FACB15]/5 border border-[#FACB15]/5'
                             >
                                 {/* Image Container */}
                                 <div className='relative h-80 overflow-hidden'>
@@ -114,7 +114,7 @@ const MenuPreview = () => {
                                         className='object-cover transform transition-transform duration-1000 group-hover:scale-110'
                                     />
                                     <div className='absolute top-6 right-6 px-4 py-2 bg-white/90 backdrop-blur-sm rounded-full'>
-                                        <span className='text-[10px] font-black uppercase tracking-widest text-[#FF7A3D]'>
+                                        <span className='text-[10px] font-black uppercase tracking-widest text-[#FACB15]'>
                                             {item.tag}
                                         </span>
                                     </div>
@@ -125,12 +125,12 @@ const MenuPreview = () => {
                                 <div className='p-10'>
                                     <div className='flex justify-between items-start mb-4'>
                                         <div>
-                                            <p className='text-[10px] font-black uppercase tracking-widest text-[#FF7A3D] mb-1'>{item.title}</p>
-                                            <h3 className='text-2xl font-black text-[#2D2A26] tracking-tight group-hover:text-[#FF7A3D] transition-colors'>
+                                            <p className='text-[10px] font-black uppercase tracking-widest text-[#FACB15] mb-1'>{item.title}</p>
+                                            <h3 className='text-2xl font-black text-[#2D2A26] tracking-tight group-hover:text-[#FACB15] transition-colors'>
                                                 {item.name}
                                             </h3>
                                         </div>
-                                        <div className='text-2xl font-black text-[#FF7A3D]'>{item.price}</div>
+                                        <div className='text-2xl font-black text-[#FACB15]'>{item.price}</div>
                                     </div>
 
                                     {/* <div className='flex items-center gap-4 pt-6 border-t border-[#2D2A26]/5'>
@@ -146,7 +146,7 @@ const MenuPreview = () => {
                                 </div>
 
                                 {/* Tilt highlight effect */}
-                                <div className='absolute inset-0 border-[1.5rem] border-transparent group-hover:border-[#FF7A3D]/5 transition-all duration-700 rounded-[4rem] pointer-events-none'></div>
+                                <div className='absolute inset-0 border-[1.5rem] border-transparent group-hover:border-[#FACB15]/5 transition-all duration-700 rounded-[4rem] pointer-events-none'></div>
                             </motion.div>
                         </motion.div>
                     ))}

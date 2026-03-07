@@ -4,6 +4,7 @@ import Features from '@/app/components/Home/Features'
 import Cook from '@/app/components/Home/Cook'
 import Expert from '@/app/components/Home/Expert'
 import Gallery from '@/app/components/Home/Gallery'
+import PremiumBanner from '@/app/components/Home/PremiumBanner'
 import Newsletter from '@/app/components/Home/Newsletter'
 import MenuPreview from '@/app/components/Home/MenuPreview'
 import HowItWorks from '@/app/components/Home/HowItWorks'
@@ -25,6 +26,7 @@ export default function Home() {
       <Expert />
       <Cook />
       <Gallery />
+      <PremiumBanner />
       {/* <AppDownload /> */}
       <ContactForm />
       <Newsletter />

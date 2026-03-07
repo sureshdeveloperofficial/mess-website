@@ -39,7 +39,7 @@ const Cook = () => {
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className='text-[#FF7A3D] text-sm font-black mb-4 tracking-[0.5em] uppercase'
+              className='text-[#FACB15] text-sm font-black mb-4 tracking-[0.5em] uppercase'
             >
               The Heart of our Mess
             </motion.p>
@@ -50,7 +50,7 @@ const Cook = () => {
               transition={{ delay: 0.1 }}
               className='text-5xl md:text-7xl font-black text-[#2D2A26] tracking-tighter leading-tight mb-8'
             >
-              Crafted with <span className='text-[#FF7A3D]'>Passion</span>, Served with Pride
+              Crafted with <span className='text-[#FACB15]'>Passion</span>, Served with Pride
             </motion.h2>
 
             <div className='space-y-6 text-lg font-medium text-[#2D2A26]/60 leading-relaxed mb-12'>
@@ -69,13 +69,13 @@ const Cook = () => {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className='text-xl font-black rounded-4xl text-white py-6 px-12 bg-[#2D2A26] shadow-2xl transition-all duration-300 hover:bg-[#FF7A3D]'
+                className='text-xl font-black rounded-4xl text-white py-6 px-12 bg-[#2D2A26] shadow-2xl transition-all duration-300 hover:bg-[#FACB15]'
               >
                 Our Story
               </motion.button>
               <div className='flex items-center gap-3'>
-                <div className='w-12 h-12 rounded-full bg-[#FF7A3D]/10 flex items-center justify-center'>
-                  <Icon icon='ion:play' className='text-[#FF7A3D]' />
+                <div className='w-12 h-12 rounded-full bg-[#FACB15]/10 flex items-center justify-center'>
+                  <Icon icon='ion:play' className='text-[#FACB15]' />
                 </div>
                 <span className='font-black text-[#2D2A26] uppercase tracking-widest text-sm'>Watch Video</span>
               </div>
