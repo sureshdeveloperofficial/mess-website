@@ -85,39 +85,39 @@ const GalleryImagesData: GalleryImagesType[] = [
 const FullMenuData: FullMenuType[] = [
   {
     name: 'Grilled Salmon',
-    price: '$18.99',
+    price: 'AED 18.99',
     description: 'Served with lemon butter sauce and grilled vegetables.',
   },
   {
     name: 'Caesar Salad',
-    price: '$9.99',
+    price: 'AED 9.99',
     description: 'Crisp romaine with parmesan, croutons, and Caesar dressing.',
   },
   {
     name: 'Margherita Pizza',
-    price: '$13.49',
+    price: 'AED 13.49',
     description: 'Classic pizza with tomato, mozzarella, and fresh basil.',
   },
   {
     name: 'Tomato Basil Soup',
-    price: '$6.99',
+    price: 'AED 6.99',
     description: 'Creamy tomato soup with a hint of garlic and fresh basil.',
   },
   {
     name: 'Chocolate Lava Cake',
-    price: '$7.99',
+    price: 'AED 7.99',
     description:
       'Warm chocolate cake with a molten center served with vanilla ice cream.',
   },
   {
     name: 'Spaghetti Carbonara',
-    price: '$15.25',
+    price: 'AED 15.25',
     description:
       'Spaghetti tossed with eggs, pancetta, parmesan, and black pepper.',
   },
   {
     name: 'Tiramisu',
-    price: '$8.50',
+    price: 'AED 8.50',
     description:
       'Layered espresso-soaked ladyfingers with mascarpone and cocoa.',
   },

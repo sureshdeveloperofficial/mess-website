@@ -2,6 +2,32 @@ import { NextResponse } from 'next/server'
 import prisma from '@/utils/prisma'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/utils/authOptions'
+import { NextRequest } from 'next/server'
+
+export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+    try {
+        const { id } = await params
+        const foodPlan = await prisma.foodPlan.findUnique({
+            where: { id },
+            include: {
+                foodItems: {
+                    include: {
+                        category: true
+                    }
+                }
+            }
+        })
+
+        if (!foodPlan) {
+            return NextResponse.json({ error: 'Food plan not found' }, { status: 404 })
+        }
+
+        return NextResponse.json(foodPlan)
+    } catch (error) {
+        console.error('GET Food Plan Error:', error)
+        return NextResponse.json({ error: 'Failed to fetch food plan' }, { status: 500 })
+    }
+}
 
 export async function PUT(req: Request, { params }: { params: { id: string } }) {
     const session = await getServerSession(authOptions)

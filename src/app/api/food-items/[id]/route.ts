@@ -2,6 +2,26 @@ import { NextResponse } from 'next/server'
 import prisma from '@/utils/prisma'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/utils/authOptions'
+import { NextRequest } from 'next/server'
+
+export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+    try {
+        const { id } = await params
+        const foodItem = await prisma.foodItem.findUnique({
+            where: { id },
+            include: { category: true, options: true }
+        })
+
+        if (!foodItem) {
+            return NextResponse.json({ error: 'Food item not found' }, { status: 404 })
+        }
+
+        return NextResponse.json(foodItem)
+    } catch (error) {
+        console.error('GET Food Item Error:', error)
+        return NextResponse.json({ error: 'Failed to fetch food item' }, { status: 500 })
+    }
+}
 
 export async function PUT(req: Request, { params }: { params: { id: string } }) {
     const session = await getServerSession(authOptions)
@@ -9,12 +29,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
 
     try {
         const { id } = await params
-        const { name, description, price, image, categoryId, options } = await req.json()
-
-        // First, delete current options to replace them
-        await prisma.option.deleteMany({
-            where: { foodItemId: id }
-        })
+        const { name, description, price, monthlyPrice, image, categoryId, options } = await req.json()
 
         const foodItem = await prisma.foodItem.update({
             where: { id },
@@ -22,9 +37,11 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
                 name,
                 description,
                 price: parseFloat(price),
+                monthlyPrice: monthlyPrice ? parseFloat(monthlyPrice) : null,
                 image,
                 categoryId,
                 options: {
+                    deleteMany: {},
                     create: options?.map((opt: any) => ({
                         name: opt.name,
                         price: parseFloat(opt.price)
@@ -34,8 +51,12 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
             include: { category: true, options: true }
         })
         return NextResponse.json(foodItem)
-    } catch (error) {
-        return NextResponse.json({ error: 'Failed to update food item' }, { status: 500 })
+    } catch (error: any) {
+        console.error('PUT Food Item Error:', error)
+        return NextResponse.json({
+            error: 'Failed to update food item',
+            details: error.message
+        }, { status: 500 })
     }
 }
 

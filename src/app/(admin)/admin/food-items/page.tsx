@@ -26,6 +26,7 @@ type FoodItem = {
     name: string
     description?: string
     price: number
+    monthlyPrice?: number
     image?: string
     categoryId: string
     category: { name: string }
@@ -41,6 +42,7 @@ export default function FoodItemsPage() {
         name: '',
         description: '',
         price: '',
+        monthlyPrice: '',
         image: '',
         categoryId: '',
         options: [] as Option[]
@@ -110,6 +112,7 @@ export default function FoodItemsPage() {
             name: '',
             description: '',
             price: '',
+            monthlyPrice: '',
             image: '',
             categoryId: '',
             options: []
@@ -123,6 +126,7 @@ export default function FoodItemsPage() {
                 name: item.name,
                 description: item.description || '',
                 price: item.price.toString(),
+                monthlyPrice: item.monthlyPrice?.toString() || '',
                 image: item.image || '',
                 categoryId: item.categoryId,
                 options: item.options.map(o => ({ name: o.name, price: o.price }))
@@ -180,12 +184,25 @@ export default function FoodItemsPage() {
             ),
         }),
         columnHelper.accessor('price', {
-            header: 'Price',
+            header: 'Daily Price',
             cell: (info) => (
                 <span className='font-semibold text-primary'>
-                    ${info.getValue().toFixed(2)}
+                    AED {info.getValue().toFixed(2)}
                 </span>
             ),
+        }),
+        columnHelper.accessor('monthlyPrice', {
+            header: 'Monthly Price',
+            cell: (info) => {
+                const value = info.getValue()
+                const dailyPrice = info.row.original.price
+                const displayPrice = value || (dailyPrice * 25)
+                return (
+                    <span className='font-semibold text-green-600'>
+                        AED {displayPrice.toFixed(2)}
+                    </span>
+                )
+            },
         }),
         columnHelper.display({
             id: 'actions',
@@ -366,14 +383,25 @@ export default function FoodItemsPage() {
                                             ))}
                                         </select>
                                     </div>
-                                    <div>
-                                        <label className='block text-sm font-medium text-grey mb-2'>Price ($)</label>
-                                        <input
-                                            type='number' step='0.01' required value={formData.price}
-                                            onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                                            className='block w-full px-4 py-3 border border-grey/10 rounded-xl bg-grey/5 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all'
-                                            placeholder='15.99'
-                                        />
+                                    <div className='grid grid-cols-2 gap-4'>
+                                        <div>
+                                            <label className='block text-sm font-medium text-grey mb-2'>Daily Price (AED)</label>
+                                            <input
+                                                type='number' step='0.01' required value={formData.price}
+                                                onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                                                className='block w-full px-4 py-3 border border-grey/10 rounded-xl bg-grey/5 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all'
+                                                placeholder='15.99'
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className='block text-sm font-medium text-grey mb-2'>Monthly Price (AED)</label>
+                                            <input
+                                                type='number' step='0.01' value={formData.monthlyPrice}
+                                                onChange={(e) => setFormData({ ...formData, monthlyPrice: e.target.value })}
+                                                className='block w-full px-4 py-3 border border-grey/10 rounded-xl bg-grey/5 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all'
+                                                placeholder='350.00'
+                                            />
+                                        </div>
                                     </div>
                                 </div>
 

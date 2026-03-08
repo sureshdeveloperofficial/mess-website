@@ -13,19 +13,23 @@ export default function AdminDashboard() {
         },
     })
 
-    const { data: foodItems = [] } = useQuery({
+    const { data: foodData } = useQuery({
         queryKey: ['food-items'],
         queryFn: async () => {
-            const resp = await axios.get('/api/food-items')
+            const resp = await axios.get('/api/food-items?limit=5')
             return resp.data
         },
     })
 
+    const foodItems = foodData?.data || []
+    const totalFoodItems = foodData?.total || 0
+
+
     const stats = [
         { label: 'Total Categories', value: categories.length, icon: 'ion:list-outline', color: 'bg-blue-500' },
-        { label: 'Total Food Items', value: foodItems.length, icon: 'ion:fast-food-outline', color: 'bg-[#df6853]' },
+        { label: 'Total Food Items', value: totalFoodItems, icon: 'ion:fast-food-outline', color: 'bg-[#df6853]' },
         { label: 'Pending Orders', value: 0, icon: 'ion:receipt-outline', color: 'bg-orange-500' },
-        { label: 'Total Revenue', value: '$0.00', icon: 'ion:cash-outline', color: 'bg-green-500' },
+        { label: 'Total Revenue', value: '0.00 AED', icon: 'ion:cash-outline', color: 'bg-green-500' },
     ]
 
     return (
@@ -67,7 +71,12 @@ export default function AdminDashboard() {
                                         <div className='text-xs text-grey/40'>{item.category.name}</div>
                                     </div>
                                 </div>
-                                <div className='font-bold text-[#df6853]'>${item.price.toFixed(2)}</div>
+                                <div className='text-right'>
+                                    <div className='font-bold text-[#df6853]'>AED {item.price.toFixed(2)}</div>
+                                    <div className='text-[10px] text-green-600 font-bold'>
+                                        AED {(item.monthlyPrice || item.price * 25).toFixed(2)}/mo
+                                    </div>
+                                </div>
                             </div>
                         ))}
                         {foodItems.length === 0 && <p className='text-grey/20 italic text-sm text-center py-4'>No items yet.</p>}

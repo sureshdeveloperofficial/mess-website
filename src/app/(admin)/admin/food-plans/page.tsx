@@ -154,7 +154,7 @@ export default function FoodPlansPage() {
             header: 'Plan Price',
             cell: (info) => (
                 <span className='font-semibold text-primary'>
-                    ${info.getValue().toFixed(2)}
+                    AED {info.getValue().toFixed(2)}
                 </span>
             ),
         }),
@@ -290,7 +290,7 @@ export default function FoodPlansPage() {
                                         />
                                     </div>
                                     <div>
-                                        <label className='block text-sm font-medium text-grey mb-2'>Price ($)</label>
+                                        <label className='block text-sm font-medium text-grey mb-2'>Price (AED)</label>
                                         <input
                                             type='number' step='0.01' required value={formData.price}
                                             readOnly={isViewOnly}

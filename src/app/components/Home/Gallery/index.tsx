@@ -8,12 +8,12 @@ import gsap from 'gsap'
 import { motion } from 'framer-motion'
 
 const GALLERY_DATA = [
-  { name: 'Traditional Thali', price: '12', src: '/images/food/thali.png' },
+  { name: 'Nandan Ghee Rice', price: '14', src: '/images/food/biryani_premium.png' },
   { name: 'Special Biryani', price: '15', src: '/images/food/biryani_premium.png' },
   { name: 'Malabar Parotta', price: '10', src: '/images/food/parotta.png' },
   { name: 'Spicy Fish Curry', price: '14', src: '/images/food/fish_curry.png' },
-  { name: 'Grilled Prawns', price: '18', src: '/images/food/prawns.png' },
-  { name: 'Daily Side Pack', price: '8', src: '/images/food/appetizer.png' },
+  { name: 'Premium Breakfast', price: '10', src: '/images/hero/idli-vada-with-sambar-chutney.jpg' },
+  { name: 'Lacy Appam Set', price: '8', src: '/images/food/appetizer.png' },
 ]
 
 const Gallery = () => {
@@ -45,7 +45,7 @@ const Gallery = () => {
           <motion.p
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
-            className='text-[#FACB15] text-sm font-black mb-4 tracking-[0.5em] uppercase'
+            className='text-primary text-sm font-black mb-4 tracking-[0.5em] uppercase'
           >
             Visual Feast
           </motion.p>
@@ -54,7 +54,7 @@ const Gallery = () => {
             whileInView={{ opacity: 1, y: 0 }}
             className='text-5xl md:text-7xl font-black text-[#2D2A26] tracking-tighter leading-none'
           >
-            Explore Our <span className='text-[#FACB15] italic'>Signature Dishes</span>
+            Explore Our <span className='text-primary italic'>Signature Dishes</span>
           </motion.h2>
         </div>
 
@@ -67,7 +67,7 @@ const Gallery = () => {
             {GALLERY_DATA.map((item, index) => (
               <div
                 key={index}
-                className='gallery-item overflow-hidden rounded-[3rem] mb-10 relative group bg-white shadow-2xl shadow-[#FACB15]/5 border border-[#FACB15]/5'
+                className='gallery-item overflow-hidden rounded-[3rem] mb-10 relative group bg-white shadow-2xl shadow-primary/5 border border-primary/5'
               >
                 <div className='relative aspect-square md:aspect-auto overflow-hidden'>
                   <Image
@@ -82,10 +82,10 @@ const Gallery = () => {
                   <div className='absolute bottom-0 left-0 w-full p-10 translate-y-10 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500'>
                     <p className='text-white text-3xl font-black mb-4 tracking-tight'>{item.name}</p>
                     <div className='flex items-center justify-between'>
-                      <p className='text-white text-xl font-bold'>$ {item.price}</p>
+                      <p className='text-white text-xl font-bold'>AED {item.price}</p>
                       <Link
                         href='/plans'
-                        className='bg-[#FACB15] text-white px-8 py-3 rounded-full text-sm font-black uppercase tracking-widest hover:bg-white hover:text-[#FACB15] transition-all duration-300'
+                        className='bg-primary text-white px-8 py-3 rounded-full text-sm font-black uppercase tracking-widest hover:bg-white hover:text-primary transition-all duration-300'
                       >
                         Order Now
                       </Link>

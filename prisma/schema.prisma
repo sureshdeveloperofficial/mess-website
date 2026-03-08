@@ -22,17 +22,18 @@ model Category {
 }
 
 model FoodItem {
-  id          String     @id @default(cuid())
-  name        String
-  description String?
-  price       Float
-  image       String?
-  categoryId  String
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  category    Category   @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  options     Option[]
-  foodPlans   FoodPlan[] @relation("FoodItemToFoodPlan")
+  id           String     @id @default(cuid())
+  name         String
+  description  String?
+  price        Float
+  image        String?
+  categoryId   String
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  monthlyPrice Float?
+  category     Category   @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  options      Option[]
+  foodPlans    FoodPlan[] @relation("FoodItemToFoodPlan")
 }
 
 model Option {
