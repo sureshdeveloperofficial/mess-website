@@ -11,7 +11,7 @@ const HeaderData: HeaderItem[] = [
   { label: 'About Us', href: '/#aboutus' },
   { label: 'Food Menu', href: '/menu' },
   { label: 'Reserve Table', href: '/#reserve' },
-  { label: 'Docs', href: '/documentation' },
+  { label: 'Get Started', href: '/get-started' },
 ]
 
 const FeaturesData: FeaturesType[] = [
