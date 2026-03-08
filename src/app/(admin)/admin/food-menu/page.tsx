@@ -19,25 +19,27 @@ type FoodItem = {
     category: { name: string }
 }
 
-type FoodPlan = {
+type FoodMenu = {
     id: string
     name: string
     description?: string
     price: number
     foodItems: FoodItem[]
+    availableDays: string[]
 }
 
-const columnHelper = createColumnHelper<FoodPlan>()
+const columnHelper = createColumnHelper<FoodMenu>()
 
-export default function FoodPlansPage() {
+export default function FoodMenusPage() {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [isViewOnly, setIsViewOnly] = useState(false)
-    const [editingPlan, setEditingPlan] = useState<FoodPlan | null>(null)
+    const [editingMenu, setEditingMenu] = useState<FoodMenu | null>(null)
     const [formData, setFormData] = useState({
         name: '',
         description: '',
         price: '',
-        foodItemIds: [] as string[]
+        foodItemIds: [] as string[],
+        availableDays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"] as string[]
     })
     const [searchTerm, setSearchTerm] = useState('')
 
@@ -52,24 +54,24 @@ export default function FoodPlansPage() {
     })
     const foodItems = foodItemsQuery.data?.data || []
 
-    const { data: foodPlans = [], isLoading } = useQuery({
-        queryKey: ['food-plans'],
+    const { data: foodMenus = [], isLoading } = useQuery({
+        queryKey: ['food-menu'],
         queryFn: async () => {
-            const response = await axios.get('/api/food-plans')
+            const response = await axios.get('/api/food-menu')
             return response.data
         },
     })
 
     const mutation = useMutation({
         mutationFn: async (data: any) => {
-            if (editingPlan) {
-                return axios.put(`/api/food-plans/${editingPlan.id}`, data)
+            if (editingMenu) {
+                return axios.put(`/api/food-menu/${editingMenu.id}`, data)
             }
-            return axios.post('/api/food-plans', data)
+            return axios.post('/api/food-menu', data)
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['food-plans'] })
-            toast.success(editingPlan ? 'Plan updated' : 'Plan created')
+            queryClient.invalidateQueries({ queryKey: ['food-menu'] })
+            toast.success(editingMenu ? 'Menu updated' : 'Menu created')
             closeModal()
         },
         onError: (err) => {
@@ -80,36 +82,38 @@ export default function FoodPlansPage() {
 
     const deleteMutation = useMutation({
         mutationFn: async (id: string) => {
-            return axios.delete(`/api/food-plans/${id}`)
+            return axios.delete(`/api/food-menu/${id}`)
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['food-plans'] })
-            toast.success('Food plan deleted')
+            queryClient.invalidateQueries({ queryKey: ['food-menu'] })
+            toast.success('Food menu deleted')
         },
     })
 
     const closeModal = () => {
         setIsModalOpen(false)
         setIsViewOnly(false)
-        setEditingPlan(null)
+        setEditingMenu(null)
         setSearchTerm('')
         setFormData({
             name: '',
             description: '',
             price: '',
-            foodItemIds: []
+            foodItemIds: [],
+            availableDays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
         })
     }
 
-    const openModal = (plan?: FoodPlan, view: boolean = false) => {
+    const openModal = (menu?: FoodMenu, view: boolean = false) => {
         setIsViewOnly(view)
-        if (plan) {
-            setEditingPlan(plan)
+        if (menu) {
+            setEditingMenu(menu)
             setFormData({
-                name: plan.name,
-                description: plan.description || '',
-                price: plan.price.toString(),
-                foodItemIds: plan.foodItems.map(item => item.id)
+                name: menu.name,
+                description: menu.description || '',
+                price: menu.price.toString(),
+                foodItemIds: menu.foodItems.map(item => item.id),
+                availableDays: menu.availableDays || ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
             })
         }
         setIsModalOpen(true)
@@ -151,7 +155,7 @@ export default function FoodPlansPage() {
             ),
         }),
         columnHelper.accessor('price', {
-            header: 'Plan Price',
+            header: 'Menu Price',
             cell: (info) => (
                 <span className='font-semibold text-primary'>
                     AED {info.getValue().toFixed(2)}
@@ -194,7 +198,7 @@ export default function FoodPlansPage() {
     ]
 
     const table = useReactTable({
-        data: foodPlans,
+        data: foodMenus,
         columns,
         getCoreRowModel: getCoreRowModel(),
     })
@@ -203,7 +207,7 @@ export default function FoodPlansPage() {
         <div className='space-y-6'>
             <div className='flex items-center justify-between'>
                 <div>
-                    <h3 className='text-2xl font-bold text-grey'>Food Plans</h3>
+                    <h3 className='text-2xl font-bold text-grey'>Food Menus</h3>
                     <p className='text-grey/40 text-sm'>Create bundled meal packages</p>
                 </div>
                 <button
@@ -211,7 +215,7 @@ export default function FoodPlansPage() {
                     className='px-6 py-3 bg-primary text-white rounded-xl font-semibold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all flex items-center gap-2'
                 >
                     <Icon icon='ion:add-circle-outline' className='text-xl' />
-                    New Plan
+                    New Menu
                 </button>
             </div>
 
@@ -236,10 +240,10 @@ export default function FoodPlansPage() {
                                         <Icon icon='line-md:loading-loop' className='text-3xl text-primary mx-auto' />
                                     </td>
                                 </tr>
-                            ) : foodPlans.length === 0 ? (
+                            ) : foodMenus.length === 0 ? (
                                 <tr>
                                     <td colSpan={columns.length} className='px-6 py-10 text-center text-grey/40'>
-                                        No food plans found.
+                                        No food menus found.
                                     </td>
                                 </tr>
                             ) : (
@@ -263,7 +267,7 @@ export default function FoodPlansPage() {
                     <div className='bg-white rounded-3xl max-w-2xl w-full p-8 shadow-2xl relative my-8'>
                         <div className='flex items-center justify-between mb-6'>
                             <h4 className='text-xl font-bold text-grey'>
-                                {isViewOnly ? 'View Food Plan' : editingPlan ? 'Edit Plan' : 'New Food Plan'}
+                                {isViewOnly ? 'View Food Menu' : editingMenu ? 'Edit Menu' : 'New Food Menu'}
                             </h4>
                             <button onClick={closeModal} className='text-grey/40 hover:text-grey p-1'>
                                 <Icon icon='ion:close-outline' className='text-2xl' />
@@ -280,7 +284,7 @@ export default function FoodPlansPage() {
                             <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                                 <div className='space-y-4'>
                                     <div>
-                                        <label className='block text-sm font-medium text-grey mb-2'>Plan Name</label>
+                                        <label className='block text-sm font-medium text-grey mb-2'>Menu Name</label>
                                         <input
                                             type='text' required value={formData.name}
                                             readOnly={isViewOnly}
@@ -308,6 +312,35 @@ export default function FoodPlansPage() {
                                             className={`block w-full px-4 py-3 border border-grey/10 rounded-xl bg-grey/5 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none ${isViewOnly ? 'cursor-default' : ''}`}
                                             placeholder='Briefly describe this plan...'
                                         />
+                                    </div>
+                                    <div>
+                                        <label className='block text-sm font-medium text-grey mb-3'>Plan Availability</label>
+                                        <div className='flex flex-wrap gap-2'>
+                                            {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((day) => (
+                                                <button
+                                                    key={day}
+                                                    type='button'
+                                                    disabled={isViewOnly}
+                                                    onClick={() => {
+                                                        const current = [...formData.availableDays]
+                                                        if (current.includes(day)) {
+                                                            setFormData({ ...formData, availableDays: current.filter(d => d !== day) })
+                                                        } else {
+                                                            setFormData({ ...formData, availableDays: [...current, day] })
+                                                        }
+                                                    }}
+                                                    className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border transition-all ${formData.availableDays.includes(day)
+                                                        ? 'bg-primary border-primary text-white'
+                                                        : 'bg-white border-grey/10 text-grey/40 hover:border-primary/30'
+                                                        } ${isViewOnly ? 'cursor-default' : 'cursor-pointer'}`}
+                                                >
+                                                    {day.slice(0, 3)}
+                                                </button>
+                                            ))}
+                                        </div>
+                                        {formData.availableDays.length === 0 && (
+                                            <p className='text-[10px] text-red-500 mt-2 font-medium'>Please select at least one day.</p>
+                                        )}
                                     </div>
                                 </div>
 
@@ -358,10 +391,10 @@ export default function FoodPlansPage() {
                                 <div className='flex flex-col gap-3 pt-4'>
                                     <button
                                         type='submit'
-                                        disabled={mutation.isPending || formData.foodItemIds.length === 0}
+                                        disabled={mutation.isPending || formData.foodItemIds.length === 0 || formData.availableDays.length === 0}
                                         className='w-full py-4 bg-primary text-white rounded-xl font-semibold shadow-lg shadow-primary/20 hover:bg-primary/90 disabled:opacity-50 transition-all'
                                     >
-                                        {mutation.isPending ? 'Saving Plan...' : 'Save Food Plan'}
+                                        {mutation.isPending ? 'Saving Menu...' : 'Save Food Menu'}
                                     </button>
                                 </div>
                             )}

@@ -33,7 +33,7 @@ model FoodItem {
   monthlyPrice Float?
   category     Category   @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   options      Option[]
-  foodPlans    FoodPlan[] @relation("FoodItemToFoodPlan")
+  foodMenus    FoodMenu[] @relation("FoodItemToFoodMenu")
 }
 
 model Option {
@@ -46,12 +46,13 @@ model Option {
   foodItem   FoodItem @relation(fields: [foodItemId], references: [id], onDelete: Cascade)
 }
 
-model FoodPlan {
-  id          String     @id @default(cuid())
-  name        String
-  description String?
-  price       Float
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  foodItems   FoodItem[] @relation("FoodItemToFoodPlan")
+model FoodMenu {
+  id            String     @id @default(cuid())
+  name          String
+  description   String?
+  price         Float
+  availableDays String[]   @default(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"])
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  foodItems     FoodItem[] @relation("FoodItemToFoodMenu")
 }

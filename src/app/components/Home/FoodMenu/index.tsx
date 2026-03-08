@@ -19,7 +19,7 @@ type FoodItem = {
     category: { name: string }
 }
 
-type FoodPlan = {
+type FoodMenu = {
     id: string
     name: string
     description: string | null
@@ -158,7 +158,7 @@ const AutoSlidingStack = ({ items }: { items: FoodItem[] }) => {
     )
 }
 
-const PremiumCard = ({ plan, index }: { plan: FoodPlan, index: number }) => {
+const PremiumCard = ({ menu, index }: { menu: FoodMenu, index: number }) => {
     const cardRef = useRef<HTMLDivElement>(null)
     const mouseX = useMotionValue(0)
     const mouseY = useMotionValue(0)
@@ -211,7 +211,7 @@ const PremiumCard = ({ plan, index }: { plan: FoodPlan, index: number }) => {
                 </div>
 
                 <h3 className='text-4xl md:text-6xl font-black text-[#2D2A26] capitalize mb-6 tracking-tighter leading-none whitespace-nowrap'>
-                    {plan.name.split(' ').map((word, i) => (
+                    {menu.name.split(' ').map((word, i) => (
                         <span key={i} className={i === 0 ? 'text-primary' : 'ml-3'}>
                             {word}
                         </span>
@@ -219,7 +219,7 @@ const PremiumCard = ({ plan, index }: { plan: FoodPlan, index: number }) => {
                 </h3>
 
                 <p className='text-[#2D2A26]/60 text-xl mb-12 leading-relaxed font-medium italic max-w-xl border-l-4 border-primary/20 pl-6'>
-                    "{plan.description || "Experience the pinnacle of culinary excellence with our hand-picked selections."}"
+                    "{menu.description || "Experience the pinnacle of culinary excellence with our hand-picked selections."}"
                 </p>
 
                 {/* Stat Grid */}
@@ -230,7 +230,7 @@ const PremiumCard = ({ plan, index }: { plan: FoodPlan, index: number }) => {
                             <div className='w-10 h-10 rounded-2xl bg-[#2D2A26]/5 flex items-center justify-center'>
                                 <Icon icon='ion:restaurant-outline' className='text-primary text-xl' />
                             </div>
-                            <span className='text-2xl font-black text-[#2D2A26]'>{plan.foodItems.length} Dishes</span>
+                            <span className='text-2xl font-black text-[#2D2A26]'>{menu.foodItems.length} Dishes</span>
                         </div>
                     </div>
                     <div className='space-y-2'>
@@ -244,19 +244,19 @@ const PremiumCard = ({ plan, index }: { plan: FoodPlan, index: number }) => {
                     </div>
                 </div>
                 <div className='flex items-center gap-10 mt-10'>
-                    <Link href={`/plans/${plan.id}`}>
+                    <Link href={`/menu/${menu.id}`}>
                         <MagneticButton
                             onClick={() => { }}
                             className='px-12 py-6 bg-primary text-white rounded-[2.5rem] font-black shadow-xl hover:bg-grey transition-all flex items-center gap-3 text-lg group overflow-hidden relative'
                         >
-                            <span className='relative z-10'>Explore Monthly Plan</span>
+                            <span className='relative z-10'>Explore Monthly Menu</span>
                             <Icon icon='ion:arrow-forward' className='relative z-10 group-hover:translate-x-2 transition-transform' />
                         </MagneticButton>
                     </Link>
                 </div>
             </div>
 
-            <AutoSlidingStack items={plan.foodItems.length > 0 ? plan.foodItems : [
+            <AutoSlidingStack items={menu.foodItems.length > 0 ? menu.foodItems : [
                 { id: '1', name: 'Malabar Porata Feast', image: '/images/food/parotta.png', price: 0, category: { name: 'Signature' } },
                 { id: '2', name: 'Chef Special Biryani', image: '/images/food/biryani_premium.png', price: 0, category: { name: 'Royal' } },
                 { id: '3', name: 'Beef Masala Roast', image: '/images/food/appetizer.png', price: 0, category: { name: 'Classic' } },
@@ -266,7 +266,7 @@ const PremiumCard = ({ plan, index }: { plan: FoodPlan, index: number }) => {
     )
 }
 
-const FoodPlans = () => {
+const FoodMenu = () => {
     const sectionRef = useRef<HTMLElement>(null)
     const { scrollYProgress } = useScroll({
         target: sectionRef,
@@ -275,16 +275,16 @@ const FoodPlans = () => {
 
     const y = useTransform(scrollYProgress, [0, 1], [0, -200])
 
-    const { data: plans = [], isLoading } = useQuery<FoodPlan[]>({
-        queryKey: ['public-food-plans'],
+    const { data: menus = [], isLoading } = useQuery<FoodMenu[]>({
+        queryKey: ['public-food-menu'],
         queryFn: async () => {
-            const response = await axios.get('/api/food-plans')
+            const response = await axios.get('/api/food-menu')
             return response.data
         },
     })
 
     useEffect(() => {
-        if (!isLoading && plans.length > 0) {
+        if (!isLoading && menus.length > 0) {
             // Use requestAnimationFrame for smoother initial setup
             const t = setTimeout(() => {
                 gsap.to(".floating-bg-icon", {
@@ -300,10 +300,10 @@ const FoodPlans = () => {
             }, 100)
             return () => clearTimeout(t)
         }
-    }, [isLoading, plans])
+    }, [isLoading, menus])
 
     return (
-        <section ref={sectionRef} id='plans' className='pt-16 pb-32 bg-[#FFF9F5] relative overflow-hidden'>
+        <section ref={sectionRef} id='menu' className='pt-16 pb-32 bg-[#FFF9F5] relative overflow-hidden'>
             {/* Background Narrative Elements */}
             <div className='absolute top-0 left-0 w-full h-full pointer-events-none'>
                 <Icon icon='ion:restaurant-outline' className='floating-bg-icon absolute top-10 left-[5%] text-9xl text-[#2D2A26]/2 opacity-[0.03]' />
@@ -349,10 +349,10 @@ const FoodPlans = () => {
                     </div>
                 ) : (
                     <div className='flex flex-col gap-32 px-4'>
-                        {plans.map((plan, idx) => (
+                        {menus.map((menu, idx) => (
                             <PremiumCard
-                                key={plan.id}
-                                plan={plan}
+                                key={menu.id}
+                                menu={menu}
                                 index={idx}
                             />
                         ))}
@@ -363,4 +363,4 @@ const FoodPlans = () => {
     )
 }
 
-export default FoodPlans
+export default FoodMenu

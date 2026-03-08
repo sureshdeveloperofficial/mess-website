@@ -7,7 +7,7 @@ import { NextRequest } from 'next/server'
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
     try {
         const { id } = await params
-        const foodPlan = await prisma.foodPlan.findUnique({
+        const foodMenu = await prisma.foodMenu.findUnique({
             where: { id },
             include: {
                 foodItems: {
@@ -18,14 +18,14 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
             }
         })
 
-        if (!foodPlan) {
-            return NextResponse.json({ error: 'Food plan not found' }, { status: 404 })
+        if (!foodMenu) {
+            return NextResponse.json({ error: 'Food menu not found' }, { status: 404 })
         }
 
-        return NextResponse.json(foodPlan)
+        return NextResponse.json(foodMenu)
     } catch (error) {
-        console.error('GET Food Plan Error:', error)
-        return NextResponse.json({ error: 'Failed to fetch food plan' }, { status: 500 })
+        console.error('GET Food Menu Error:', error)
+        return NextResponse.json({ error: 'Failed to fetch food menu' }, { status: 500 })
     }
 }
 
@@ -35,24 +35,25 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
 
     try {
         const { id } = await params
-        const { name, description, price, foodItemIds } = await req.json()
+        const { name, description, price, foodItemIds, availableDays } = await req.json()
 
-        const foodPlan = await prisma.foodPlan.update({
+        const foodMenu = await prisma.foodMenu.update({
             where: { id },
             data: {
                 name,
                 description,
                 price: parseFloat(price),
+                availableDays,
                 foodItems: {
                     set: foodItemIds?.map((id: string) => ({ id }))
                 }
             },
             include: { foodItems: true }
         })
-        return NextResponse.json(foodPlan)
+        return NextResponse.json(foodMenu)
     } catch (error) {
         console.error(error)
-        return NextResponse.json({ error: 'Failed to update food plan' }, { status: 500 })
+        return NextResponse.json({ error: 'Failed to update food menu' }, { status: 500 })
     }
 }
 
@@ -62,12 +63,12 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
 
     try {
         const { id } = await params
-        await prisma.foodPlan.delete({
+        await prisma.foodMenu.delete({
             where: { id },
         })
-        return NextResponse.json({ message: 'Food plan deleted successfully' })
+        return NextResponse.json({ message: 'Food menu deleted successfully' })
     } catch (error) {
         console.error(error)
-        return NextResponse.json({ error: 'Failed to delete food plan' }, { status: 500 })
+        return NextResponse.json({ error: 'Failed to delete food menu' }, { status: 500 })
     }
 }

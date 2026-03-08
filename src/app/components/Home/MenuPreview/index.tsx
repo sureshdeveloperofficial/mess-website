@@ -80,7 +80,7 @@ const MenuPreview = () => {
                         </motion.h2>
                     </div>
 
-                    <Link href='/plans'>
+                    <Link href='/menu'>
                         <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}

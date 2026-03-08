@@ -84,7 +84,7 @@ const Gallery = () => {
                     <div className='flex items-center justify-between'>
                       <p className='text-white text-xl font-bold'>AED {item.price}</p>
                       <Link
-                        href='/plans'
+                        href='/menu'
                         className='bg-primary text-white px-8 py-3 rounded-full text-sm font-black uppercase tracking-widest hover:bg-white hover:text-primary transition-all duration-300'
                       >
                         Order Now

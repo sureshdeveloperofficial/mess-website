@@ -5,14 +5,14 @@ import { authOptions } from '@/utils/authOptions'
 
 export async function GET() {
     try {
-        const foodPlans = await prisma.foodPlan.findMany({
+        const foodMenus = await prisma.foodMenu.findMany({
             include: { foodItems: { include: { category: true } } },
             orderBy: { createdAt: 'desc' },
         })
-        return NextResponse.json(foodPlans)
+        return NextResponse.json(foodMenus)
     } catch (error) {
-        console.error('GET Food Plans Error:', error)
-        return NextResponse.json({ error: 'Failed to fetch food plans' }, { status: 500 })
+        console.error('GET Food Menus Error:', error)
+        return NextResponse.json({ error: 'Failed to fetch food menus' }, { status: 500 })
     }
 }
 
@@ -21,26 +21,27 @@ export async function POST(req: Request) {
     if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     try {
-        const { name, description, price, foodItemIds } = await req.json()
+        const { name, description, price, foodItemIds, availableDays } = await req.json()
 
         if (!name || !price) {
             return NextResponse.json({ error: 'Name and price are required' }, { status: 400 })
         }
 
-        const foodPlan = await prisma.foodPlan.create({
+        const foodMenu = await prisma.foodMenu.create({
             data: {
                 name,
                 description,
                 price: parseFloat(price),
+                availableDays,
                 foodItems: {
                     connect: foodItemIds?.map((id: string) => ({ id }))
                 }
             },
             include: { foodItems: true }
         })
-        return NextResponse.json(foodPlan)
+        return NextResponse.json(foodMenu)
     } catch (error) {
         console.error(error)
-        return NextResponse.json({ error: 'Failed to create food plan' }, { status: 500 })
+        return NextResponse.json({ error: 'Failed to create food menu' }, { status: 500 })
     }
 }

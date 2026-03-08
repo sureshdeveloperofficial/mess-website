@@ -11,7 +11,7 @@ const navItems = [
     { label: 'Dashboard', icon: 'ion:grid-outline', href: '/admin' },
     { label: 'Categories', icon: 'ion:list-outline', href: '/admin/categories' },
     { label: 'Food Items', icon: 'ion:fast-food-outline', href: '/admin/food-items' },
-    { label: 'Food Plans', icon: 'ion:calendar-outline', href: '/admin/food-plans' },
+    { label: 'Food Menu', icon: 'ion:calendar-outline', href: '/admin/food-menu' },
     { label: 'Settings', icon: 'ion:settings-outline', href: '/admin/settings' },
 ]
 

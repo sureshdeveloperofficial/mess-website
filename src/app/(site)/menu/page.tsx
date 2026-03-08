@@ -1,13 +1,13 @@
 import React from 'react'
-import FoodPlans from '@/app/components/Home/FoodPlans'
+import FoodMenu from '@/app/components/Home/FoodMenu'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
     title: 'Daily Mess Menu - AL SHAMIL MESS',
-    description: 'Explore our soulful home-cooked meals and daily mess plans.',
+    description: 'Explore our soulful home-cooked meals and daily mess menus.',
 }
 
-export default function PlansPage() {
+export default function MenuPage() {
     return (
         <main className='pt-20'>
             <div className='pt-20 pb-10 bg-linear-to-b from-primary/5 to-white text-center relative overflow-hidden'>
@@ -24,7 +24,7 @@ export default function PlansPage() {
                 </p>
             </div>
             <div className='-mt-10 relative z-20'>
-                <FoodPlans />
+                <FoodMenu />
             </div>
         </main>
     )
