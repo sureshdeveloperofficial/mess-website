@@ -223,23 +223,44 @@ const PremiumCard = ({ menu, index }: { menu: FoodMenu, index: number }) => {
                 </p>
 
                 {/* Stat Grid */}
-                <div className='grid grid-cols-2 gap-8 mb-12'>
-                    <div className='space-y-2'>
-                        <span className='text-[10px] font-black text-[#2D2A26]/40 uppercase tracking-[0.3em] block'>Varieties</span>
+                <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-8 mb-12 pt-10 border-t border-[#2D2A26]/5'>
+                    <div className='px-6 py-4 rounded-[2rem] bg-[#2D2A26]/5 border border-transparent hover:border-primary/20 transition-all'>
+                        <span className='text-[10px] font-black text-[#2D2A26]/40 uppercase tracking-[0.3em] block mb-2'>Dishes</span>
                         <div className='flex items-center gap-3'>
-                            <div className='w-10 h-10 rounded-2xl bg-[#2D2A26]/5 flex items-center justify-center'>
+                            <div className='w-10 h-10 rounded-2xl bg-[#2D2A26]/10 flex items-center justify-center'>
                                 <Icon icon='ion:restaurant-outline' className='text-primary text-xl' />
                             </div>
-                            <span className='text-2xl font-black text-[#2D2A26]'>{menu.foodItems.length} Dishes</span>
+                            <span className='text-2xl font-black text-[#2D2A26]'>{menu.foodItems.length} Variety</span>
                         </div>
                     </div>
-                    <div className='space-y-2'>
-                        <span className='text-[10px] font-black text-[#2D2A26]/40 uppercase tracking-[0.3em] block'>Experience</span>
+
+                    <div className='px-6 py-4 rounded-[2rem] bg-primary/10 border border-primary/20 hover:scale-105 transition-all'>
+                        <span className='text-[10px] font-black text-primary/60 uppercase tracking-[0.3em] block mb-2'>Monthly Hub</span>
                         <div className='flex items-center gap-3'>
-                            <div className='w-10 h-10 rounded-2xl bg-[#2D2A26]/5 flex items-center justify-center'>
-                                <Icon icon='ion:star-outline' className='text-primary text-xl' />
+                            <div className='w-10 h-10 rounded-2xl bg-primary text-white flex items-center justify-center shadow-lg shadow-primary/20'>
+                                <Icon icon='ion:calendar-outline' className='text-xl' />
                             </div>
-                            <span className='text-2xl font-black text-[#2D2A26]'>Premium</span>
+                            <span className='text-3xl font-black text-grey tracking-tighter'>₹ {menu.price.toLocaleString()}</span>
+                        </div>
+                    </div>
+
+                    <div className='px-6 py-4 rounded-[2rem] bg-[#2D2A26]/5 border border-transparent'>
+                        <span className='text-[10px] font-black text-[#2D2A26]/40 uppercase tracking-[0.3em] block mb-2'>Effective Day</span>
+                        <div className='flex items-center gap-3'>
+                            <div className='w-10 h-10 rounded-2xl bg-green-500/20 flex items-center justify-center'>
+                                <Icon icon='ion:flash' className='text-green-600 text-xl' />
+                            </div>
+                            <span className='text-2xl font-black text-[#2D2A26]'>₹ {(menu.price / 30).toFixed(0)}</span>
+                        </div>
+                    </div>
+
+                    <div className='px-6 py-4 rounded-[2rem] bg-[#2D2A26]/5 border border-transparent'>
+                        <span className='text-[10px] font-black text-[#2D2A26]/40 uppercase tracking-[0.3em] block mb-2'>Benefit</span>
+                        <div className='flex items-center gap-3'>
+                            <div className='w-10 h-10 rounded-2xl bg-[#2D2A26]/10 flex items-center justify-center'>
+                                <Icon icon='ion:wallet-outline' className='text-primary text-xl' />
+                            </div>
+                            <span className='text-2xl font-black text-[#2D2A26]'>-40%</span>
                         </div>
                     </div>
                 </div>
