@@ -227,7 +227,18 @@ export default function GetStartedPage() {
                                 </div>
                             </div>
 
-                            <button className='w-full md:w-auto px-12 py-6 bg-primary text-grey rounded-[2.5rem] font-black text-xl shadow-2xl hover:bg-white hover:scale-105 transition-all flex items-center justify-center gap-4 group'>
+                            <button
+                                onClick={() => {
+                                    const selection = {
+                                        menuIds: selectedMenuIds,
+                                        selections: selectedItemIds,
+                                        totalPrice: totalPrice,
+                                    }
+                                    localStorage.setItem('order_selection', JSON.stringify(selection))
+                                    window.location.href = '/checkout'
+                                }}
+                                className='w-full md:w-auto px-12 py-6 bg-primary text-grey rounded-[2.5rem] font-black text-xl shadow-2xl hover:bg-white hover:scale-105 transition-all flex items-center justify-center gap-4 group'
+                            >
                                 Finalize Order
                                 <Icon icon='ion:arrow-forward' className='group-hover:translate-x-2 transition-transform' />
                             </button>

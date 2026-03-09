@@ -55,4 +55,32 @@ model FoodMenu {
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
   foodItems     FoodItem[] @relation("FoodItemToFoodMenu")
+  orders        Order[]    @relation("OrderToFoodMenu")
+}
+
+model Order {
+  id               String   @id @default(cuid())
+  customerName     String
+  customerPhone    String
+  customerEmail    String?
+  whatsappNo       String?
+  address          String
+  buildingName     String?
+  flatRoomNumber   String?
+  startDate        DateTime
+  paymentMethod    String   @default("COD")
+  deliveryLocation String // inside_room, outside_room, security_desk
+  brunchLunchLocation String?
+  dinnerLocation      String?
+  totalAmount      Float
+  status           String   @default("PENDING") // PENDING, CONFIRMED, CANCELLED
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  
+  // Selected menus for this order
+  selectedMenus    FoodMenu[] @relation("OrderToFoodMenu")
+  
+  // JSON to store the specific items selected for each day
+  // Structure: { "menuId": { "Monday": "itemId", ... } }
+  selectionsJson   Json
 }
