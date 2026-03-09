@@ -154,12 +154,12 @@ export default function GetStartedPage() {
             </div>
 
             {/* Horizontal Board */}
-            <div className='max-w-[100vw] overflow-x-auto pb-10 custom-scrollbar'>
-                <div className='min-w-[1300px] px-8 space-y-16'>
+            <div className='max-w-full overflow-x-auto pb-10 custom-scrollbar scroll-smooth'>
+                <div className='min-w-[1240px] max-w-7xl mx-auto px-6 space-y-12'>
 
                     {/* Regular Menus */}
-                    <div className='space-y-10'>
-                        <SectionHeader title="Weekly Packages" subtitle="Monday to Saturday" />
+                    <div className='space-y-8'>
+                        <SectionHeader title="Weekly Subscriptions" subtitle="Standard Plan Selection" />
 
                         {regularMenus.map((menu, idx) => (
                             <MenuHorizontalStrip
@@ -292,72 +292,81 @@ function MenuHorizontalStrip({
                     : 'border-grey/10 border-dashed opacity-90 hover:opacity-100 hover:border-primary/40'}
             `}
         >
-            {/* Left Box: Menu Title + Selection-based Pricing */}
+            {/* Left Box: Menu Title + Pricing */}
             <div
                 onClick={onToggle}
                 className={`
-                    w-full md:w-1/4 p-10 flex flex-col justify-center cursor-pointer transition-all border-r border-grey/5
-                    ${isSelected ? (isSpecial ? 'bg-primary/5' : 'bg-grey/5') : 'bg-white'}
+                    w-full md:w-[320px] p-8 flex flex-col justify-center cursor-pointer transition-all border-b md:border-b-0 md:border-r border-grey/5 relative group/sidebar
+                    ${isSelected ? (isSpecial ? 'bg-primary/5' : 'bg-grey/5') : 'bg-white hover:bg-grey/5'}
                 `}
             >
-                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 shadow-xl transition-all ${isSelected ? (isSpecial ? 'bg-primary text-grey' : 'bg-grey text-white') : 'bg-[#FFF9F5] text-grey/20'}`}>
-                    <Icon icon={isSelected ? 'ion:checkmark-done' : 'ion:add'} className='text-2xl' />
+                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-6 shadow-lg transition-all transform group-hover/sidebar:scale-110 ${isSelected ? (isSpecial ? 'bg-primary text-grey' : 'bg-grey text-white') : 'bg-[#FFF9F5] text-grey/20'}`}>
+                    <Icon icon={isSelected ? 'ion:checkmark-done' : 'ion:add'} className='text-xl' />
                 </div>
-                <h3 className='text-4xl font-black text-grey tracking-tighter mb-2 capitalize'>{menu.name}</h3>
-                <p className='text-[10px] font-bold text-grey/30 uppercase tracking-[0.3em] leading-relaxed mb-8'>
-                    {menu.name} selection based on chosen flavors.
-                </p>
-                <div>
+
+                <div className='space-y-1'>
+                    <h3 className='text-3xl font-black text-grey tracking-tight capitalize leading-none'>{menu.name}</h3>
+                    <p className='text-[9px] font-bold text-grey/30 uppercase tracking-[0.2em] leading-relaxed'>
+                        Signature flavor selection
+                    </p>
+                </div>
+
+                <div className='mt-8 pt-8 border-t border-grey/5'>
                     {hasSelections ? (
-                        <div className='flex items-baseline gap-2'>
-                            <span className='text-4xl font-black text-grey tracking-tighter'>₹ {menuPriceTotal.toLocaleString()}</span>
-                            <span className='text-[10px] font-black text-grey/20 uppercase tracking-widest'>/ Month</span>
+                        <div className='flex flex-col'>
+                            <div className='flex items-baseline gap-1'>
+                                <span className='text-3xl font-black text-grey tracking-tighter'>₹{menuPriceTotal.toLocaleString()}</span>
+                                <span className='text-[9px] font-black text-grey/20 uppercase tracking-widest'>/mo</span>
+                            </div>
+                            <div className='flex items-center gap-2 mt-2'>
+                                <div className='w-1.5 h-1.5 rounded-full bg-primary' />
+                                <span className='text-[8px] font-black text-primary uppercase tracking-widest'>Plan Active</span>
+                            </div>
                         </div>
                     ) : (
-                        <div className='flex items-center gap-2'>
-                            <div className='w-2 h-2 rounded-full bg-primary animate-pulse' />
-                            <p className='text-primary text-[10px] font-black uppercase tracking-widest'>Pick your dishes</p>
+                        <div className='flex items-center gap-2 text-primary'>
+                            <Icon icon='ion:sparkles-outline' className='text-xs animate-pulse' />
+                            <p className='text-[9px] font-black uppercase tracking-widest'>Configure your menu</p>
                         </div>
                     )}
-                    <div className='mt-2 inline-flex items-center gap-2 px-3 py-1 bg-primary/10 rounded-full border border-primary/20'>
-                        <Icon icon='ion:flash' className='text-primary text-[10px]' />
-                        <span className='text-[9px] font-black text-primary uppercase tracking-widest'>Selection Total</span>
-                    </div>
                 </div>
             </div>
 
-            {/* Middle: Horizontal Days */}
-            <div className={`flex flex-1 p-10 gap-8 overflow-x-auto custom-scrollbar transition-all duration-700 ${isSelected ? 'opacity-100' : 'opacity-40 grayscale pointer-events-none'}`}>
+            {/* Middle: Grid Days - All Days Clearly Viewable */}
+            <div className={`flex-1 p-6 md:p-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 transition-all duration-700 ${isSelected ? 'opacity-100' : 'opacity-30 grayscale pointer-events-none'}`}>
                 {menu.availableDays.map(day => (
                     <motion.div
                         key={day}
                         onClick={() => setSelectingDay(day)}
-                        whileHover={{ y: -5 }}
+                        whileHover={{ y: -4, scale: 1.02 }}
                         className={`
-                            flex-1 min-w-[200px] p-2 rounded-[3.5rem] border-2 transition-all cursor-pointer group relative flex flex-col items-center
+                            h-full min-h-[220px] p-2 rounded-[2.5rem] border-2 transition-all cursor-pointer group relative flex flex-col items-center justify-between
                             ${selectedDayItems[day]
-                                ? (isSpecial ? 'bg-primary/5 border-primary shadow-xl shadow-primary/5' : 'bg-grey/5 border-grey shadow-xl shadow-grey/5')
-                                : 'bg-grey/5 border-transparent hover:bg-white hover:border-primary/20'}
-                            ${selectingDay === day ? 'ring-2 ring-primary ring-offset-8' : ''}
+                                ? (isSpecial ? 'bg-primary/5 border-primary shadow-lg shadow-primary/5' : 'bg-grey/5 border-grey shadow-lg shadow-grey/5')
+                                : 'bg-grey/5 border-transparent hover:bg-white hover:border-primary/20 hover:shadow-xl'}
+                            ${selectingDay === day ? 'ring-2 ring-primary ring-offset-4' : ''}
                         `}
                     >
-                        <div className='w-full text-center pt-6 pb-4'>
-                            <span className='text-[10px] font-black uppercase tracking-[0.3em] text-grey/20 group-hover:text-primary/40 transition-colors uppercase'>{day.substring(0, 3)}</span>
+                        <div className='pt-4 pb-2'>
+                            <span className='text-[9px] font-black uppercase tracking-[0.2em] text-grey/30 group-hover:text-primary transition-colors'>{day.substring(0, 3)}</span>
                         </div>
 
-                        <div className='flex-1 w-full flex flex-col items-center justify-center p-4 relative group/card'>
+                        <div className='flex-1 w-full flex flex-col items-center justify-center p-2 relative group/card'>
                             {selectedDayItems[day] ? (
-                                <>
-                                    {/* Quick Clear Button */}
-                                    <button
-                                        onClick={(e) => { e.stopPropagation(); onSetItemForDay(day, '') }}
-                                        className='absolute top-2 right-2 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover/card:opacity-100 transition-all z-10 hover:scale-110 shadow-lg'
-                                        title="Clear selection"
-                                    >
-                                        <Icon icon="ion:trash-outline" />
-                                    </button>
+                                <div className='flex flex-col items-center text-center'>
+                                    {/* Action Buttons Layer */}
+                                    <div className='absolute inset-0 z-10 opacity-0 group-hover/card:opacity-100 transition-all flex flex-col items-center justify-center bg-white/40 backdrop-blur-xs rounded-[2rem]'>
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); onSetItemForDay(day, '') }}
+                                            className='w-10 h-10 bg-red-500 text-white rounded-full flex items-center justify-center hover:scale-110 shadow-lg mb-2'
+                                            title="Clear"
+                                        >
+                                            <Icon icon="ion:trash-outline" className='text-lg' />
+                                        </button>
+                                        <div className='px-3 py-1 bg-grey text-white text-[8px] font-black uppercase rounded-full'>Change</div>
+                                    </div>
 
-                                    <div className='relative w-24 h-24 mb-6 rounded-full overflow-hidden border-4 border-white shadow-inner group-hover/card:scale-110 transition-transform duration-500'>
+                                    <div className='relative w-20 h-20 mb-3 rounded-full overflow-hidden border-2 border-white shadow-md'>
                                         <Image
                                             src={getFullImageUrl(menu.foodItems.find(i => i.id === selectedDayItems[day])?.image) || '/images/food/appetizer.png'}
                                             alt="dish"
@@ -365,21 +374,24 @@ function MenuHorizontalStrip({
                                             className='object-cover'
                                         />
                                     </div>
-                                    <p className='text-sm font-black text-grey text-center leading-tight mb-2 px-2 h-10 flex items-center justify-center'>
+                                    <p className='text-[10px] font-black text-grey leading-tight px-1 line-clamp-2 min-h-[24px]'>
                                         {menu.foodItems.find(i => i.id === selectedDayItems[day])?.name}
                                     </p>
-                                    <div className='w-8 h-8 bg-primary rounded-full flex items-center justify-center text-grey shadow-lg shadow-primary/30'>
-                                        <Icon icon='ion:checkmark' className='text-sm' />
-                                    </div>
-                                </>
+                                </div>
                             ) : (
-                                <div className='flex flex-col items-center gap-4'>
-                                    <div className='w-20 h-20 rounded-full border-2 border-dashed border-grey/10 flex items-center justify-center group-hover:border-primary/40 group-hover:bg-primary/5 transition-all'>
-                                        <Icon icon='ion:restaurant-outline' className='text-2xl text-grey/10 group-hover:text-primary transition-colors' />
+                                <div className='flex flex-col items-center gap-3'>
+                                    <div className='w-16 h-16 rounded-full border border-dashed border-grey/20 flex items-center justify-center group-hover:bg-primary/10 group-hover:border-primary group-hover:border-solid transition-all'>
+                                        <Icon icon='ion:restaurant-outline' className='text-xl text-grey/20 group-hover:text-primary' />
                                     </div>
-                                    <span className='text-[9px] font-black text-grey/20 uppercase tracking-[0.2em] group-hover:text-primary transition-colors'>Set Flavor</span>
+                                    <span className='text-[8px] font-bold text-grey/20 uppercase tracking-widest group-hover:text-primary'>Choose</span>
                                 </div>
                             )}
+                        </div>
+
+                        <div className='pb-4'>
+                            <div className={`w-6 h-6 rounded-full flex items-center justify-center transition-all ${selectedDayItems[day] ? 'bg-primary text-grey shadow-md' : 'bg-grey/5 text-transparent border border-grey/5'}`}>
+                                <Icon icon='ion:checkmark' className='text-[10px]' />
+                            </div>
                         </div>
                     </motion.div>
                 ))}
@@ -388,110 +400,206 @@ function MenuHorizontalStrip({
             {/* Selection Overlay Popover */}
             <AnimatePresence>
                 {selectingDay && (
-                    <motion.div
-                        initial={{ opacity: 0, backdropFilter: 'blur(0px)' }}
-                        animate={{ opacity: 1, backdropFilter: 'blur(10px)' }}
-                        exit={{ opacity: 0, backdropFilter: 'blur(0px)' }}
-                        className='fixed inset-0 z-[100] bg-grey/40 flex items-center justify-center p-6 md:p-12'
-                    >
-                        <motion.div
-                            initial={{ scale: 0.9, opacity: 0, y: 50 }}
-                            animate={{ scale: 1, opacity: 1, y: 0 }}
-                            exit={{ scale: 0.95, opacity: 0, y: 30 }}
-                            className='w-full max-w-7xl h-full max-h-[90vh] bg-white rounded-[4rem] shadow-[0_100px_100px_-50px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden border border-white/20'
+                    <MenuSelectionPopover
+                        menu={menu}
+                        selectingDay={selectingDay}
+                        onClose={() => setSelectingDay(null)}
+                        selectedItemId={selectedDayItems[selectingDay]}
+                        onSelectItem={(itemId) => {
+                            onSetItemForDay(selectingDay, itemId)
+                            setSelectingDay(null)
+                        }}
+                        onClear={() => {
+                            onSetItemForDay(selectingDay, '')
+                            setSelectingDay(null)
+                        }}
+                        onCopyAll={(itemId) => {
+                            onCopyAll(itemId)
+                            setSelectingDay(null)
+                        }}
+                        isSpecial={isSpecial}
+                    />
+                )}
+            </AnimatePresence>
+        </motion.div>
+    )
+}
+
+function MenuSelectionPopover({
+    menu,
+    selectingDay,
+    onClose,
+    selectedItemId,
+    onSelectItem,
+    onClear,
+    onCopyAll,
+    isSpecial
+}: {
+    menu: FoodMenu,
+    selectingDay: string,
+    onClose: () => void,
+    selectedItemId: string | undefined,
+    onSelectItem: (itemId: string) => void,
+    onClear: () => void,
+    onCopyAll: (itemId: string) => void,
+    isSpecial?: boolean
+}) {
+    const [currentPage, setCurrentPage] = useState(1)
+    const [showAll, setShowAll] = useState(false)
+    const itemsPerPage = 12
+
+    const displayedItems = showAll
+        ? menu.foodItems
+        : menu.foodItems.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+
+    const totalPages = Math.ceil(menu.foodItems.length / itemsPerPage)
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, backdropFilter: 'blur(0px)' }}
+            animate={{ opacity: 1, backdropFilter: 'blur(10px)' }}
+            exit={{ opacity: 0, backdropFilter: 'blur(0px)' }}
+            className='fixed inset-0 z-[100] bg-grey/40 flex items-center justify-center p-4 md:p-8'
+        >
+            <motion.div
+                initial={{ scale: 0.9, opacity: 0, y: 50 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 0.95, opacity: 0, y: 30 }}
+                className='w-full max-w-7xl h-full max-h-[95vh] bg-white rounded-[3rem] shadow-[0_100px_100px_-50px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden border border-white/20'
+            >
+                {/* Header */}
+                <div className='flex flex-col md:flex-row items-center justify-between p-6 md:p-8 border-b border-grey/5 bg-linear-to-b from-[#FFFBF7] to-white gap-6'>
+                    <div className='flex items-center gap-6'>
+                        <button
+                            onClick={onClose}
+                            className='w-12 h-12 md:w-16 md:h-16 rounded-[1.5rem] bg-white border border-grey/10 flex items-center justify-center hover:bg-grey hover:text-white transition-all shadow-lg group'
                         >
-                            <div className='flex items-center justify-between p-12 border-b border-grey/5 bg-linear-to-b from-[#FFFBF7] to-white'>
-                                <div className='flex items-center gap-10'>
-                                    <button
-                                        onClick={() => setSelectingDay(null)}
-                                        className='w-20 h-20 rounded-[2.5rem] bg-white border border-grey/10 flex items-center justify-center hover:bg-grey hover:text-white transition-all shadow-xl group'
-                                    >
-                                        <Icon icon='ion:close' className='text-3xl transition-transform group-hover:rotate-90' />
-                                    </button>
-                                    <div>
-                                        <div className='flex items-center gap-4 mb-2'>
-                                            <span className='px-4 py-1 bg-primary text-grey text-[10px] font-black uppercase tracking-widest rounded-full'>{selectingDay}</span>
-                                            <h4 className='text-4xl font-black text-grey tracking-tighter capitalize'>{menu.name}</h4>
+                            <Icon icon='ion:close' className='text-2xl transition-transform group-hover:rotate-90' />
+                        </button>
+                        <div>
+                            <div className='flex items-center gap-3 mb-1'>
+                                <span className='px-3 py-0.5 bg-primary text-grey text-[10px] font-black uppercase tracking-widest rounded-full'>{selectingDay}</span>
+                                <h4 className='text-2xl md:text-3xl font-black text-grey tracking-tighter capitalize'>{menu.name}</h4>
+                            </div>
+                            <p className='text-[10px] font-bold text-grey/40 uppercase tracking-[0.3em]'>Choose your favorite flavor</p>
+                        </div>
+                    </div>
+
+                    <div className='flex flex-wrap items-center justify-center gap-3'>
+                        {/* Show All Toggle */}
+                        <button
+                            onClick={() => setShowAll(!showAll)}
+                            className={`px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all flex items-center gap-2 border ${showAll ? 'bg-primary border-primary text-grey' : 'bg-white border-grey/10 text-grey/40 hover:border-primary/40'}`}
+                        >
+                            <Icon icon={showAll ? 'ion:grid' : 'ion:list'} className='text-lg' />
+                            {showAll ? 'View Paginated' : 'Show All Items'}
+                        </button>
+
+                        {selectedItemId && (
+                            <button
+                                onClick={onClear}
+                                className='px-6 py-3 bg-red-50 text-red-500 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-red-500 hover:text-white transition-all flex items-center gap-2 border border-red-100'
+                            >
+                                <Icon icon='ion:trash-outline' className='text-lg' /> Clear
+                            </button>
+                        )}
+                        {selectedItemId && !isSpecial && (
+                            <button
+                                onClick={() => onCopyAll(selectedItemId)}
+                                className='px-8 py-3 bg-grey text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-primary hover:text-grey shadow-xl transition-all flex items-center gap-3 group'
+                            >
+                                <Icon icon='ion:copy-outline' className='text-xl group-hover:scale-110 transition-transform' />
+                                Copy to All
+                            </button>
+                        )}
+                    </div>
+                </div>
+
+                {/* Grid Content */}
+                <div className='flex-1 overflow-y-auto custom-scrollbar p-6 md:p-10 bg-white'>
+                    <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6'>
+                        {displayedItems.map(item => (
+                            <motion.div
+                                key={item.id}
+                                whileHover={{ y: -5 }}
+                                onClick={() => onSelectItem(item.id)}
+                                className={`
+                                    group relative p-5 rounded-[2.5rem] border-2 transition-all cursor-pointer flex flex-col items-center text-center
+                                    ${selectedItemId === item.id
+                                        ? 'bg-primary border-primary shadow-[0_20px_40px_-10px_rgba(250,203,21,0.4)]'
+                                        : 'bg-[#FFFBF7] border-transparent hover:bg-white hover:border-primary/40 hover:shadow-xl'}
+                                `}
+                            >
+                                <div className='relative w-24 h-24 md:w-32 md:h-32 mb-6 rounded-[2rem] overflow-hidden shadow-xl border-4 border-white group-hover:-rotate-2 transition-all duration-500'>
+                                    <Image
+                                        src={getFullImageUrl(item.image) || '/images/food/appetizer.png'}
+                                        alt={item.name}
+                                        fill
+                                        className='object-cover transform group-hover:scale-110 transition-transform duration-1000'
+                                    />
+                                </div>
+
+                                <div className='flex-1 w-full space-y-3 mb-4'>
+                                    <h5 className={`text-base font-black leading-tight tracking-tight transition-colors line-clamp-2 min-h-[2.5rem] flex items-center justify-center ${selectedItemId === item.id ? 'text-grey' : 'text-grey group-hover:text-primary'}`}>
+                                        {item.name}
+                                    </h5>
+
+                                    <div className='flex flex-col gap-2'>
+                                        <div className={`px-3 py-1.5 rounded-xl flex flex-col items-center justify-center transition-all ${selectedItemId === item.id ? 'bg-white/20' : 'bg-primary/5'}`}>
+                                            <span className={`text-[8px] font-black uppercase tracking-widest ${selectedItemId === item.id ? 'text-grey/60' : 'text-grey/40'}`}>Monthly</span>
+                                            <span className={`text-sm font-black ${selectedItemId === item.id ? 'text-grey' : 'text-primary'}`}>₹{item.monthlyPrice || (item.price * 25).toLocaleString()}</span>
                                         </div>
-                                        <p className='text-sm font-bold text-grey/40 uppercase tracking-[0.4em]'>Choose your signature signature flavor</p>
                                     </div>
                                 </div>
 
-                                <div className='flex items-center gap-4'>
-                                    {selectedDayItems[selectingDay] && (
-                                        <button
-                                            onClick={() => { onSetItemForDay(selectingDay, ''); setSelectingDay(null) }}
-                                            className='px-10 py-6 bg-red-50 text-red-500 rounded-[2rem] text-[10px] font-black uppercase tracking-[0.3em] hover:bg-red-500 hover:text-white transition-all flex items-center gap-3 border border-red-100'
-                                        >
-                                            <Icon icon='ion:trash-outline' className='text-xl' /> Clear Selection
-                                        </button>
-                                    )}
-                                    {selectedDayItems[selectingDay] && !isSpecial && (
-                                        <button
-                                            onClick={() => { onCopyAll(selectedDayItems[selectingDay]); setSelectingDay(null) }}
-                                            className='px-12 py-6 bg-grey text-white rounded-[2rem] text-[10px] font-black uppercase tracking-[0.3em] hover:bg-primary hover:text-grey shadow-2xl transition-all flex items-center gap-4 group'
-                                        >
-                                            <Icon icon='ion:copy-outline' className='text-2xl group-hover:scale-110 transition-transform' />
-                                            Apply to All Days
-                                        </button>
-                                    )}
+                                <div className={`w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all ${selectedItemId === item.id ? 'bg-white border-white text-primary' : 'bg-grey/10 border-transparent text-transparent group-hover:bg-primary group-hover:text-grey'}`}>
+                                    <Icon icon='ion:checkmark' className='text-lg' />
                                 </div>
-                            </div>
+                            </motion.div>
+                        ))}
+                    </div>
 
-                            <div className='flex-1 overflow-y-auto custom-scrollbar p-12 bg-white'>
-                                <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-10'>
-                                    {menu.foodItems.map(item => (
-                                        <motion.div
-                                            key={item.id}
-                                            whileHover={{ scale: 1.02 }}
-                                            onClick={() => { onSetItemForDay(selectingDay, item.id); setSelectingDay(null) }}
-                                            className={`
-                                                group relative p-10 rounded-[4rem] border-2 transition-all cursor-pointer flex flex-col items-center text-center
-                                                ${selectedDayItems[selectingDay] === item.id
-                                                    ? 'bg-primary border-primary shadow-[0_30px_60px_-15px_rgba(250,203,21,0.5)]'
-                                                    : 'bg-[#FFFBF7] border-transparent hover:bg-white hover:border-primary/40 hover:shadow-2xl'}
-                                            `}
-                                        >
-                                            <div className='relative w-40 h-40 mb-10 rounded-[3rem] overflow-hidden shadow-2xl border-[10px] border-white group-hover:-rotate-3 transition-all duration-700'>
-                                                <Image
-                                                    src={getFullImageUrl(item.image) || '/images/food/appetizer.png'}
-                                                    alt={item.name}
-                                                    fill
-                                                    className='object-cover transform group-hover:scale-110 transition-transform duration-1000'
-                                                />
-                                            </div>
+                    {displayedItems.length === 0 && (
+                        <div className='h-full flex flex-col items-center justify-center py-20 text-grey/20'>
+                            <Icon icon="ion:restaurant-outline" className="text-8xl mb-4" />
+                            <p className='text-xl font-bold italic'>No items found for this menu.</p>
+                        </div>
+                    )}
+                </div>
 
-                                            <div className='flex-1 w-full space-y-4 mb-8'>
-                                                <h5 className={`text-2xl font-black leading-tight tracking-tight transition-colors ${selectedDayItems[selectingDay] === item.id ? 'text-grey' : 'text-grey group-hover:text-primary'}`}>
-                                                    {item.name}
-                                                </h5>
+                {/* Pagination Controls */}
+                {!showAll && totalPages > 1 && (
+                    <div className='p-6 border-t border-grey/5 bg-[#FFFBF7] flex items-center justify-center gap-8'>
+                        <button
+                            disabled={currentPage === 1}
+                            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                            className={`w-12 h-12 rounded-2xl flex items-center justify-center border-2 transition-all ${currentPage === 1 ? 'border-grey/5 text-grey/10 cursor-not-allowed' : 'border-grey/10 text-grey hover:border-primary hover:bg-primary'}`}
+                        >
+                            <Icon icon='ion:chevron-back' className='text-xl' />
+                        </button>
 
-                                                <div className='flex flex-col gap-3'>
-                                                    {/* Price Badge */}
-                                                    <div className={`px-4 py-2 rounded-2xl flex flex-col items-center justify-center transition-all ${selectedDayItems[selectingDay] === item.id ? 'bg-white/20' : 'bg-primary/10'}`}>
-                                                        <span className={`text-[10px] font-black uppercase tracking-widest ${selectedDayItems[selectingDay] === item.id ? 'text-grey/60' : 'text-grey/40'}`}>Monthly Rate</span>
-                                                        <span className={`text-xl font-black ${selectedDayItems[selectingDay] === item.id ? 'text-grey' : 'text-primary'}`}>₹{item.monthlyPrice || (item.price * 25).toLocaleString()}</span>
-                                                    </div>
+                        <div className='flex items-center gap-3'>
+                            {[...Array(totalPages)].map((_, i) => (
+                                <button
+                                    key={i}
+                                    onClick={() => setCurrentPage(i + 1)}
+                                    className={`w-10 h-10 rounded-xl text-xs font-black transition-all ${currentPage === i + 1 ? 'bg-grey text-white scale-110' : 'bg-white border border-grey/5 text-grey/40 hover:border-primary'}`}
+                                >
+                                    {i + 1}
+                                </button>
+                            ))}
+                        </div>
 
-                                                    {/* Daily Indicator */}
-                                                    <div className={`text-xs font-bold flex items-center justify-center gap-1.5 ${selectedDayItems[selectingDay] === item.id ? 'text-grey/70' : 'text-grey/60'}`}>
-                                                        <Icon icon="ion:flash" className="text-primary text-sm" />
-                                                        ₹{item.price} <span className="text-[10px] font-medium uppercase tracking-tighter italic">per day equiv.</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div className={`w-14 h-14 rounded-full border-2 flex items-center justify-center transition-all ${selectedDayItems[selectingDay] === item.id ? 'bg-white border-white text-primary' : 'bg-grey/10 border-transparent text-transparent group-hover:bg-primary group-hover:text-grey group-hover:border-primary'}`}>
-                                                <Icon icon='ion:checkmark' className='text-2xl' />
-                                            </div>
-                                        </motion.div>
-                                    ))}
-                                </div>
-                            </div>
-                        </motion.div>
-                    </motion.div>
+                        <button
+                            disabled={currentPage === totalPages}
+                            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                            className={`w-12 h-12 rounded-2xl flex items-center justify-center border-2 transition-all ${currentPage === totalPages ? 'border-grey/5 text-grey/10 cursor-not-allowed' : 'border-grey/10 text-grey hover:border-primary hover:bg-primary'}`}
+                        >
+                            <Icon icon='ion:chevron-forward' className='text-xl' />
+                        </button>
+                    </div>
                 )}
-            </AnimatePresence>
+            </motion.div>
         </motion.div>
     )
 }
