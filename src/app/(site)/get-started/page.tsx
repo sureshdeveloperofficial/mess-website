@@ -88,6 +88,32 @@ export default function GetStartedPage() {
         }, 0)
     }, [selectedMenuIds, selectedItemIds, menus])
 
+    // Load state from localStorage on mount
+    React.useEffect(() => {
+        const savedSelection = localStorage.getItem('order_selection')
+        if (savedSelection) {
+            try {
+                const { menuIds, selections } = JSON.parse(savedSelection)
+                if (menuIds) setSelectedMenuIds(menuIds)
+                if (selections) setSelectedItemIds(selections)
+            } catch (error) {
+                console.error('Failed to parse saved selection:', error)
+            }
+        }
+    }, [])
+
+    // Save state to localStorage whenever it changes
+    React.useEffect(() => {
+        if (selectedMenuIds.length > 0) {
+            const selection = {
+                menuIds: selectedMenuIds,
+                selections: selectedItemIds,
+                totalPrice: totalPrice,
+            }
+            localStorage.setItem('order_selection', JSON.stringify(selection))
+        }
+    }, [selectedMenuIds, selectedItemIds, totalPrice])
+
     if (isLoading) return (
         <div className='min-h-screen flex items-center justify-center bg-[#FFFBF7]'>
             <div className='relative'>
@@ -222,7 +248,7 @@ export default function GetStartedPage() {
                                 <div>
                                     <span className='text-[10px] font-black text-primary uppercase tracking-[0.3em] block mb-1'>Monthly Total</span>
                                     <p className='text-white font-black text-3xl tracking-tighter'>
-                                        ₹ {totalPrice.toLocaleString()} <span className='text-sm text-white/40 font-medium'>/mo</span>
+                                        AED {totalPrice.toLocaleString()} <span className='text-sm text-white/40 font-medium'>/mo</span>
                                     </p>
                                 </div>
                             </div>
@@ -326,7 +352,7 @@ function MenuHorizontalStrip({
                     {hasSelections ? (
                         <div className='flex flex-col'>
                             <div className='flex items-baseline gap-1'>
-                                <span className='text-3xl font-black text-grey tracking-tighter'>₹{menuPriceTotal.toLocaleString()}</span>
+                                <span className='text-3xl font-black text-grey tracking-tighter'>AED {menuPriceTotal.toLocaleString()}</span>
                                 <span className='text-[9px] font-black text-grey/20 uppercase tracking-widest'>/mo</span>
                             </div>
                             <div className='flex items-center gap-2 mt-2'>
@@ -558,7 +584,7 @@ function MenuSelectionPopover({
                                     <div className='flex flex-col gap-2'>
                                         <div className={`px-3 py-1.5 rounded-xl flex flex-col items-center justify-center transition-all ${selectedItemId === item.id ? 'bg-white/20' : 'bg-primary/5'}`}>
                                             <span className={`text-[8px] font-black uppercase tracking-widest ${selectedItemId === item.id ? 'text-grey/60' : 'text-grey/40'}`}>Monthly</span>
-                                            <span className={`text-sm font-black ${selectedItemId === item.id ? 'text-grey' : 'text-primary'}`}>₹{item.monthlyPrice || (item.price * 25).toLocaleString()}</span>
+                                            <span className={`text-sm font-black ${selectedItemId === item.id ? 'text-grey' : 'text-primary'}`}>AED {item.monthlyPrice || (item.price * 25).toLocaleString()}</span>
                                         </div>
                                     </div>
                                 </div>

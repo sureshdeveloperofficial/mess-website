@@ -58,12 +58,21 @@ model FoodMenu {
   orders        Order[]    @relation("OrderToFoodMenu")
 }
 
+model Customer {
+  id             String   @id @default(cuid())
+  name           String
+  phone          String   @unique
+  email          String?  @unique
+  password       String?
+  whatsappNo     String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  orders         Order[]
+}
+
 model Order {
   id               String   @id @default(cuid())
-  customerName     String
-  customerPhone    String
-  customerEmail    String?
-  whatsappNo       String?
+  customerId       String
   address          String
   buildingName     String?
   flatRoomNumber   String?
@@ -77,10 +86,15 @@ model Order {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
   
-  // Selected menus for this order
+  // Subscription details
+  includeSundays   Boolean  @default(true)
+  sundaysCount     Int      @default(0)
+  activeDates      String[] @default([])
+  
+  // Relationships
+  customer         Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
   selectedMenus    FoodMenu[] @relation("OrderToFoodMenu")
   
   // JSON to store the specific items selected for each day
-  // Structure: { "menuId": { "Monday": "itemId", ... } }
   selectionsJson   Json
 }

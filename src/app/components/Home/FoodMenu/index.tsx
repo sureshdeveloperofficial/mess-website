@@ -240,7 +240,7 @@ const PremiumCard = ({ menu, index }: { menu: FoodMenu, index: number }) => {
                             <div className='w-10 h-10 rounded-2xl bg-primary text-white flex items-center justify-center shadow-lg shadow-primary/20'>
                                 <Icon icon='ion:calendar-outline' className='text-xl' />
                             </div>
-                            <span className='text-3xl font-black text-grey tracking-tighter'>₹ {menu.price.toLocaleString()}</span>
+                            <span className='text-3xl font-black text-grey tracking-tighter'>AED {menu.price.toLocaleString()}</span>
                         </div>
                     </div>
 
@@ -250,7 +250,7 @@ const PremiumCard = ({ menu, index }: { menu: FoodMenu, index: number }) => {
                             <div className='w-10 h-10 rounded-2xl bg-green-500/20 flex items-center justify-center'>
                                 <Icon icon='ion:flash' className='text-green-600 text-xl' />
                             </div>
-                            <span className='text-2xl font-black text-[#2D2A26]'>₹ {(menu.price / 30).toFixed(0)}</span>
+                            <span className='text-2xl font-black text-[#2D2A26]'>AED {(menu.price / 30).toFixed(0)}</span>
                         </div>
                     </div>
 

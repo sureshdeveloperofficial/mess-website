@@ -8,11 +8,13 @@ export const metadata: Metadata = {
 
 const SignupPage = () => {
   return (
-    <>
+    <div className="bg-gray-50/50 min-h-screen pb-20">
       <Breadcrumb pageName='Sign Up Page' />
 
-      <SignUp />
-    </>
+      <div className="container mx-auto px-4 mt-[-40px] relative z-20">
+        <SignUp />
+      </div>
+    </div>
   )
 }
 

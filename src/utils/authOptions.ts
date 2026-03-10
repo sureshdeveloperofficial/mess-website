@@ -15,26 +15,64 @@ export const authOptions: NextAuthOptions = {
                 if (!credentials?.email || !credentials?.password) {
                     throw new Error("Invalid credentials");
                 }
+
+                // First, check Admin table
                 const admin = await prisma.admin.findUnique({
                     where: { email: credentials.email }
                 });
-                if (!admin) {
-                    throw new Error("Invalid credentials");
+
+                if (admin) {
+                    const isPasswordMatch = await bcrypt.compare(credentials.password, admin.password);
+                    if (isPasswordMatch) {
+                        return { id: admin.id, email: admin.email, name: "Admin", role: "admin" };
+                    }
                 }
-                // @ts-ignore
-                const isPasswordMatch = await bcrypt.compare(credentials.password, admin.password);
-                if (!isPasswordMatch) {
-                    throw new Error("Invalid credentials");
+
+                // If not Admin, check Customer table
+                const customer = await prisma.customer.findUnique({
+                    where: { email: credentials.email }
+                });
+
+                if (customer && customer.password) {
+                    const isPasswordMatch = await bcrypt.compare(credentials.password, customer.password);
+                    if (isPasswordMatch) {
+                        return {
+                            id: customer.id,
+                            email: customer.email,
+                            name: customer.name,
+                            role: "user",
+                            phone: customer.phone
+                        };
+                    }
                 }
-                return { id: admin.id, email: admin.email };
+
+                throw new Error("Invalid email or password");
             }
         })
     ],
+    callbacks: {
+        async jwt({ token, user }) {
+            if (user) {
+                token.id = user.id;
+                token.role = (user as any).role;
+                token.phone = (user as any).phone;
+            }
+            return token;
+        },
+        async session({ session, token }) {
+            if (token) {
+                (session.user as any).id = token.id;
+                (session.user as any).role = token.role;
+                (session.user as any).phone = token.phone;
+            }
+            return session;
+        }
+    },
     session: {
         strategy: "jwt",
     },
     secret: process.env.NEXTAUTH_SECRET,
     pages: {
-        signIn: "/admin-login",
+        signIn: "/signin",
     },
 };
