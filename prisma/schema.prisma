@@ -65,42 +65,40 @@ model FoodMenu {
 }
 
 model Customer {
-  id             String   @id @default(cuid())
-  name           String
-  phone          String   @unique
-  email          String?  @unique
-  password       String?
-  whatsappNo     String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  orders         Order[]
+  id         String   @id @default(cuid())
+  name       String
+  phone      String   @unique
+  email      String?  @unique
+  whatsappNo String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  password   String?
+  orders     Order[]
 }
 
 model Order {
-  id               String   @id @default(cuid())
-  customerId       String
-  address          String
-  buildingName     String?
-  flatRoomNumber   String?
-  startDate        DateTime
-  paymentMethod    String   @default("COD")
-  deliveryLocation String // inside_room, outside_room, security_desk
+  id                  String     @id @default(cuid())
+  address             String
+  paymentMethod       String     @default("COD")
+  paymentStatus       String     @default("PENDING")
+  paymentRemarks      String?
+  paymentReceiptUrl   String?
+  deliveryLocation    String
+  totalAmount         Float
+  status              String     @default("PENDING")
+  orderRemarks        String?
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
+  buildingName        String?
+  flatRoomNumber      String?
+  selectionsJson      Json
+  startDate           DateTime
   brunchLunchLocation String?
   dinnerLocation      String?
-  totalAmount      Float
-  status           String   @default("PENDING") // PENDING, CONFIRMED, CANCELLED
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  
-  // Subscription details
-  includeSundays   Boolean  @default(true)
-  sundaysCount     Int      @default(0)
-  activeDates      String[] @default([])
-  
-  // Relationships
-  customer         Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  selectedMenus    FoodMenu[] @relation("OrderToFoodMenu")
-  
-  // JSON to store the specific items selected for each day
-  selectionsJson   Json
+  activeDates         String[]   @default([])
+  customerId          String
+  includeSundays      Boolean    @default(true)
+  sundaysCount        Int        @default(0)
+  customer            Customer   @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  selectedMenus       FoodMenu[] @relation("OrderToFoodMenu")
 }

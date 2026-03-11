@@ -2,13 +2,14 @@
 
 import React from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Icon } from '@iconify/react'
 import axios from 'axios'
 import { format } from 'date-fns'
 import Link from 'next/link'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import toast from 'react-hot-toast'
+import { useState } from 'react'
 
 type Customer = {
     id: string
@@ -42,6 +43,10 @@ type Order = {
     deliveryLocation: string
     totalAmount: number
     status: string
+    paymentStatus: string
+    orderRemarks?: string
+    paymentRemarks?: string
+    paymentReceiptUrl?: string
     createdAt: string
     selectedMenus: FoodMenu[]
     selectionsJson: any
@@ -61,6 +66,76 @@ export default function OrderDetailsPage() {
         },
         enabled: !!id,
     })
+
+    const queryClient = useQueryClient()
+    const { mutate: updateStatus, isPending: isUpdating } = useMutation({
+        mutationFn: async (newData: any) => {
+            const res = await axios.patch(`/api/orders/${id}`, newData)
+            return res.data
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['order', id] })
+            toast.success('Updated successfully')
+            setIsStatusModalOpen(false)
+            setIsPaymentModalOpen(false)
+            setReceiptFile(null)
+        },
+        onError: () => {
+            toast.error('Failed to update')
+        }
+    })
+
+    const [isStatusModalOpen, setIsStatusModalOpen] = useState(false)
+    const [statusValue, setStatusValue] = useState('PENDING')
+    const [orderRemarks, setOrderRemarks] = useState('')
+
+    const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false)
+    const [paymentStatusValue, setPaymentStatusValue] = useState('PENDING')
+    const [paymentRemarks, setPaymentRemarks] = useState('')
+    const [receiptFile, setReceiptFile] = useState<File | null>(null)
+    const [isUploading, setIsUploading] = useState(false)
+
+    const openStatusModal = () => {
+        setStatusValue(order?.status || 'PENDING')
+        setOrderRemarks(order?.orderRemarks || '')
+        setIsStatusModalOpen(true)
+    }
+
+    const openPaymentModal = () => {
+        setPaymentStatusValue(order?.paymentStatus || 'PENDING')
+        setPaymentRemarks(order?.paymentRemarks || '')
+        setReceiptFile(null) // Reset on open
+        setIsPaymentModalOpen(true)
+    }
+
+    const handleSaveStatus = () => {
+        updateStatus({ status: statusValue, orderRemarks })
+    }
+
+    const handleSavePayment = async () => {
+        let uploadedUrl = order?.paymentReceiptUrl
+
+        if (receiptFile) {
+            setIsUploading(true)
+            const formData = new FormData()
+            formData.append('file', receiptFile)
+            try {
+                const res = await axios.post('/api/upload', formData)
+                uploadedUrl = res.data.secure_url || res.data.path
+            } catch (error) {
+                toast.error('Failed to upload receipt')
+                setIsUploading(false)
+                return
+            }
+            setIsUploading(false)
+        }
+
+        updateStatus({
+            paymentStatus: paymentStatusValue,
+            paymentRemarks,
+            paymentReceiptUrl: uploadedUrl
+        })
+    }
 
     if (isLoading) {
         return (
@@ -102,19 +177,41 @@ export default function OrderDetailsPage() {
                         <Icon icon='ion:arrow-back' className='text-xl' />
                     </button>
                     <div>
-                        <div className='flex items-center gap-3 mb-1'>
-                            <span className='px-3 py-1 bg-primary/10 text-primary rounded-full text-[10px] font-bold tracking-widest uppercase'>
+                        <div className='flex items-center gap-3 mb-2 flex-wrap'>
+                            <span className='px-3 py-1.5 bg-primary/10 text-primary rounded-full text-[10px] font-black tracking-widest uppercase'>
                                 Order #{order.id.slice(-8).toUpperCase()}
                             </span>
-                            <span className={`px-3 py-1 rounded-full text-[10px] font-bold border ${
-                                {
-                                    PENDING: 'bg-yellow-50 text-yellow-600 border-yellow-100',
-                                    CONFIRMED: 'bg-green-50 text-green-600 border-green-100',
-                                    CANCELLED: 'bg-red-50 text-red-600 border-red-100',
-                                }[order.status] || 'bg-grey/5 text-grey/60 border-grey/10'
-                            }`}>
-                                {order.status}
-                            </span>
+                            <button
+                                onClick={openStatusModal}
+                                disabled={isUpdating}
+                                className={`px-4 py-2 rounded-full text-[10px] font-black border disabled:opacity-50 transition-all text-center flex items-center gap-2 ${
+                                    {
+                                        PENDING: 'bg-yellow-50 text-yellow-600 border-yellow-100 hover:bg-yellow-100',
+                                        CONFIRMED: 'bg-green-50 text-green-600 border-green-100 hover:bg-green-100',
+                                        CANCELLED: 'bg-red-50 text-red-600 border-red-100 hover:bg-red-100',
+                                    }[order.status] || 'bg-grey/5 text-grey/60 border-grey/10 hover:bg-grey/10'
+                                }`}
+                            >
+                                Status: {order.status}
+                                <Icon icon="ion:chevron-down" className="text-sm opacity-50" />
+                            </button>
+
+                            <button
+                                onClick={openPaymentModal}
+                                disabled={isUpdating}
+                                className={`px-4 py-2 rounded-full text-[10px] font-black border disabled:opacity-50 transition-all text-center flex items-center gap-2 ${
+                                    {
+                                        PENDING: 'bg-orange-50 text-orange-600 border-orange-100 hover:bg-orange-100',
+                                        PAID: 'bg-blue-50 text-blue-600 border-blue-100 hover:bg-blue-100',
+                                        FAILED: 'bg-red-50 text-red-600 border-red-100 hover:bg-red-100',
+                                    }[order.paymentStatus || 'PENDING'] || 'bg-grey/5 text-grey/60 border-grey/10 hover:bg-grey/10'
+                                }`}
+                            >
+                                Payment: {order.paymentStatus || 'PENDING'}
+                                <Icon icon="ion:chevron-down" className="text-sm opacity-50" />
+                            </button>
+                            
+                            {isUpdating && <Icon icon="line-md:loading-loop" className="text-primary text-xl ml-2" />}
                         </div>
                         <h2 className='text-3xl font-black text-grey uppercase tracking-tighter'>Order View</h2>
                     </div>
@@ -299,6 +396,133 @@ export default function OrderDetailsPage() {
                     </section>
                 </div>
             </div>
+
+            {/* Modals */}
+            <AnimatePresence>
+                {isStatusModalOpen && (
+                    <div className='fixed inset-0 z-50 flex items-center justify-center p-4 bg-grey/40 backdrop-blur-sm'>
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                            className='bg-white rounded-[2.5rem] w-full max-w-md overflow-hidden shadow-2xl border border-grey/5'
+                        >
+                            <div className='p-8 space-y-6'>
+                                <div className='flex justify-between items-center'>
+                                    <h3 className='text-2xl font-black text-grey uppercase tracking-tighter'>Update Status</h3>
+                                    <button onClick={() => setIsStatusModalOpen(false)} className='w-10 h-10 bg-grey/5 rounded-full flex items-center justify-center text-grey/40 hover:text-grey hover:bg-grey/10 transition-all'>
+                                        <Icon icon='ion:close' className='text-xl' />
+                                    </button>
+                                </div>
+                                <div className='space-y-4'>
+                                    <div className='space-y-2'>
+                                        <label className='text-[10px] font-black text-grey/40 uppercase tracking-widest ml-1'>Fulfillment Status</label>
+                                        <select
+                                            value={statusValue}
+                                            onChange={(e) => setStatusValue(e.target.value)}
+                                            className='w-full p-4 bg-grey/5 rounded-2xl font-bold text-grey outline-none border border-transparent focus:border-primary/20 appearance-none'
+                                        >
+                                            <option value="PENDING">Pending Setup</option>
+                                            <option value="CONFIRMED">Food Delivery Confirmed</option>
+                                            <option value="CANCELLED">Order Cancelled</option>
+                                        </select>
+                                    </div>
+                                    <div className='space-y-2'>
+                                        <label className='text-[10px] font-black text-grey/40 uppercase tracking-widest ml-1'>Order Remarks</label>
+                                        <textarea
+                                            value={orderRemarks}
+                                            onChange={(e) => setOrderRemarks(e.target.value)}
+                                            rows={3}
+                                            placeholder='Add any internal notes about fulfillment...'
+                                            className='w-full p-4 bg-grey/5 rounded-2xl text-sm font-medium text-grey outline-none border border-transparent focus:border-primary/20 resize-none'
+                                        />
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={handleSaveStatus}
+                                    disabled={isUpdating}
+                                    className='w-full py-4 bg-primary text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-primary/90 transition-all flex justify-center items-center gap-2 disabled:opacity-50'
+                                >
+                                    {isUpdating ? <Icon icon="line-md:loading-loop" className='text-xl' /> : 'Save Status Update'}
+                                </button>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+
+                {isPaymentModalOpen && (
+                    <div className='fixed inset-0 z-50 flex items-center justify-center p-4 bg-grey/40 backdrop-blur-sm'>
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                            className='bg-white rounded-[2.5rem] w-full max-w-md overflow-hidden shadow-2xl border border-grey/5 max-h-[90vh] overflow-y-auto'
+                        >
+                            <div className='p-8 space-y-6'>
+                                <div className='flex justify-between items-center'>
+                                    <h3 className='text-2xl font-black text-grey uppercase tracking-tighter'>Payment Log</h3>
+                                    <button onClick={() => setIsPaymentModalOpen(false)} className='w-10 h-10 bg-grey/5 rounded-full flex items-center justify-center text-grey/40 hover:text-grey hover:bg-grey/10 transition-all'>
+                                        <Icon icon='ion:close' className='text-xl' />
+                                    </button>
+                                </div>
+                                <div className='space-y-4'>
+                                    <div className='space-y-2'>
+                                        <label className='text-[10px] font-black text-grey/40 uppercase tracking-widest ml-1'>Payment Status</label>
+                                        <select
+                                            value={paymentStatusValue}
+                                            onChange={(e) => setPaymentStatusValue(e.target.value)}
+                                            className='w-full p-4 bg-grey/5 rounded-2xl font-bold text-grey outline-none border border-transparent focus:border-primary/20 appearance-none'
+                                        >
+                                            <option value="PENDING">Awaiting Payment</option>
+                                            <option value="PAID">Successfully Paid</option>
+                                            <option value="FAILED">Payment Failed/Rejected</option>
+                                        </select>
+                                    </div>
+                                    <div className='space-y-2'>
+                                        <label className='text-[10px] font-black text-grey/40 uppercase tracking-widest ml-1'>Payment Remarks</label>
+                                        <textarea
+                                            value={paymentRemarks}
+                                            onChange={(e) => setPaymentRemarks(e.target.value)}
+                                            rows={2}
+                                            placeholder='Reference ID, reason for failure, etc.'
+                                            className='w-full p-4 bg-grey/5 rounded-2xl text-sm font-medium text-grey outline-none border border-transparent focus:border-primary/20 resize-none'
+                                        />
+                                    </div>
+                                    
+                                    <div className='space-y-2 pt-2'>
+                                        <label className='text-[10px] font-black text-grey/40 uppercase tracking-widest ml-1'>Upload Receipt</label>
+                                        
+                                        {order?.paymentReceiptUrl && !receiptFile && (
+                                            <div className='p-4 bg-blue-50/50 border border-blue-100 rounded-2xl flex items-center justify-between mb-2'>
+                                                <div className='flex items-center gap-2 text-blue-600'>
+                                                    <Icon icon='ion:document-attach-outline' className='text-xl' />
+                                                    <span className='text-xs font-bold'>Existing Receipt</span>
+                                                </div>
+                                                <a href={order.paymentReceiptUrl} target="_blank" rel="noopener noreferrer" className='text-[10px] font-black uppercase tracking-widest bg-blue-100 px-3 py-1.5 rounded-full text-blue-700 hover:bg-blue-200 transition-colors'>View</a>
+                                            </div>
+                                        )}
+
+                                        <label className='w-full flex flex-col items-center justify-center p-6 border-2 border-dashed border-grey/20 rounded-2xl cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all text-center group'>
+                                            <Icon icon='ion:cloud-upload-outline' className='text-3xl text-grey/30 group-hover:text-primary mb-2 transition-colors' />
+                                            <span className='text-xs font-black text-grey uppercase tracking-widest bg-grey/5 px-4 py-2 rounded-full group-hover:bg-primary group-hover:text-white transition-colors'>Choose File</span>
+                                            {receiptFile && <span className='text-xs text-primary font-bold mt-3 truncate w-full px-4'>{receiptFile.name}</span>}
+                                            <input type='file' className='hidden' accept='image/*,.pdf' onChange={(e) => setReceiptFile(e.target.files?.[0] || null)} />
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <button
+                                    onClick={handleSavePayment}
+                                    disabled={isUpdating || isUploading}
+                                    className='w-full py-4 bg-primary text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-primary/90 transition-all flex justify-center items-center gap-2 disabled:opacity-50'
+                                >
+                                    {(isUpdating || isUploading) ? <Icon icon="line-md:loading-loop" className='text-xl' /> : 'Confirm Payment Log'}
+                                </button>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
         </div>
     )
 }

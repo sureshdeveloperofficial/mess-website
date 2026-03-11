@@ -13,6 +13,7 @@ const navItems = [
     { label: 'Food Items', icon: 'ion:fast-food-outline', href: '/admin/food-items' },
     { label: 'Food Menu', icon: 'ion:calendar-outline', href: '/admin/food-menu' },
     { label: 'Orders', icon: 'ion:cart-outline', href: '/admin/orders' },
+    { label: 'Customers', icon: 'ion:people-outline', href: '/admin/customers' },
     { label: 'Settings', icon: 'ion:settings-outline', href: '/admin/settings' },
 ]
 

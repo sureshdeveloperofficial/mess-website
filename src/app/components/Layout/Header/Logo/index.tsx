@@ -12,7 +12,7 @@ const Logo: React.FC = () => {
         className='w-fit'
         quality={100}
       />
-      <p className='text-black text-2xl font-semibold '>AL SHAMIL MESS.</p>
+      <p className='text-black text-xl xl:text-2xl font-bold whitespace-nowrap'>AL SHAMIL MESS.</p>
     </Link>
   )
 }

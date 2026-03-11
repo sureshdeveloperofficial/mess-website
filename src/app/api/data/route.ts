@@ -10,7 +10,7 @@ import { FullMenuType } from '@/app/types/fullmenu'
 const HeaderData: HeaderItem[] = [
   { label: 'About Us', href: '/#aboutus' },
   { label: 'Food Menu', href: '/menu' },
-  { label: 'Reserve Table', href: '/#reserve' },
+  { label: 'Contact Us', href: '/contact' },
   { label: 'Get Started', href: '/get-started' },
 ]
 
@@ -130,7 +130,7 @@ const FooterLinkData: FooterLinkType[] = [
       { label: 'Home', href: '/' },
       { label: 'About Us', href: '/#aboutus' },
       { label: 'Food Menu', href: '/menu' },
-      { label: 'Reserve Table', href: '/#reserve' },
+      { label: 'Contact Us', href: '/contact' },
     ],
   },
   {

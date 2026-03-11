@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server'
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from '@/utils/authOptions'
 import prisma from '@/utils/prisma'
 
 export async function GET() {
@@ -25,6 +27,7 @@ export async function GET() {
 
 export async function POST(req: Request) {
     try {
+        const session = await getServerSession(authOptions)
         const body = await req.json()
         const {
             customerName,
@@ -48,21 +51,42 @@ export async function POST(req: Request) {
         } = body
 
         const order = await prisma.$transaction(async (tx) => {
-            // Upsert customer based on phone (unique)
-            const customer = await tx.customer.upsert({
-                where: { phone: customerPhone },
-                update: {
-                    name: customerName,
-                    email: customerEmail,
-                    whatsappNo: whatsappNo,
-                },
-                create: {
-                    name: customerName,
-                    phone: customerPhone,
-                    email: customerEmail,
-                    whatsappNo: whatsappNo,
-                }
-            })
+            let customer;
+
+            // Senior Software Engineer best practice: 
+            // If user is authenticated, use session identifying info (email) as primary key.
+            if (session?.user?.email) {
+                customer = await tx.customer.upsert({
+                    where: { email: session.user.email },
+                    update: {
+                        name: customerName,
+                        phone: customerPhone,
+                        whatsappNo: whatsappNo,
+                    },
+                    create: {
+                        name: customerName,
+                        email: session.user.email,
+                        phone: customerPhone,
+                        whatsappNo: whatsappNo,
+                    }
+                })
+            } else {
+                // Fallback to phone-based identification for guests or unauthenticated users
+                customer = await tx.customer.upsert({
+                    where: { phone: customerPhone },
+                    update: {
+                        name: customerName,
+                        email: customerEmail,
+                        whatsappNo: whatsappNo,
+                    },
+                    create: {
+                        name: customerName,
+                        phone: customerPhone,
+                        email: customerEmail,
+                        whatsappNo: whatsappNo,
+                    }
+                })
+            }
 
             return tx.order.create({
                 data: {
