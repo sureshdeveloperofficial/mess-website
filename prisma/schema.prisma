@@ -13,6 +13,12 @@ model Admin {
   password String
 }
 
+model Setting {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String
+}
+
 model Category {
   id        String     @id @default(cuid())
   name      String     @unique

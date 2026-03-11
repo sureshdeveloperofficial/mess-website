@@ -1,6 +1,28 @@
 import { NextResponse } from 'next/server'
 import prisma from '@/utils/prisma'
 
+export async function GET() {
+    try {
+        const orders = await prisma.order.findMany({
+            include: {
+                customer: true,
+                selectedMenus: {
+                    include: {
+                        foodItems: true
+                    }
+                }
+            },
+            orderBy: {
+                createdAt: 'desc'
+            }
+        })
+        return NextResponse.json(orders)
+    } catch (error: any) {
+        console.error('Orders fetch error:', error)
+        return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 })
+    }
+}
+
 export async function POST(req: Request) {
     try {
         const body = await req.json()

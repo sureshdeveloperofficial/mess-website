@@ -79,8 +79,8 @@ export default function CheckoutForm({ selectedMenuIds, selectionsJson, totalPri
         } else if (session?.user) {
             setFormData(prev => ({
                 ...prev,
-                customerName: session.user.name || prev.customerName,
-                customerEmail: session.user.email || prev.customerEmail,
+                customerName: session.user?.name || prev.customerName,
+                customerEmail: session.user?.email || prev.customerEmail,
                 customerPhone: (session.user as any)?.phone || prev.customerPhone,
             }))
         }
@@ -166,6 +166,14 @@ export default function CheckoutForm({ selectedMenuIds, selectionsJson, totalPri
     }
 
     const finalPrice = calculateFinalPrice()
+
+    const { data: dynamicSettings } = useQuery({
+        queryKey: ['settings'],
+        queryFn: async () => {
+            const response = await axios.get('/api/settings')
+            return response.data
+        }
+    })
 
     const toggleDate = (date: string, isSelectable: boolean) => {
         if (!isSelectable) return
@@ -386,7 +394,7 @@ export default function CheckoutForm({ selectedMenuIds, selectionsJson, totalPri
                                     transition={{ delay: idx * 0.02 }}
                                     onClick={() => toggleDate(day.date, isSelectable)}
                                     className={`
-                                        p-4 rounded-[2rem] border-2 transition-all flex flex-col items-center gap-3 text-center
+                                        p-4 rounded-4xl border-2 transition-all flex flex-col items-center gap-3 text-center
                                         ${!isSelectable
                                             ? 'bg-grey/5 border-transparent opacity-20 grayscale cursor-not-allowed'
                                             : isSelected
@@ -508,6 +516,62 @@ export default function CheckoutForm({ selectedMenuIds, selectionsJson, totalPri
                                 <option value="BANK">Bank Transfer</option>
                             </select>
                         </div>
+
+                        {/* Bank Details Display */}
+                        <AnimatePresence>
+                            {formData.paymentMethod === 'BANK' && (
+                                <motion.div
+                                    initial={{ opacity: 0, height: 0 }}
+                                    animate={{ opacity: 1, height: 'auto' }}
+                                    exit={{ opacity: 0, height: 0 }}
+                                    className="md:col-span-2 overflow-hidden"
+                                >
+                                    <div className="bg-primary/5 border-2 border-primary/20 rounded-4xl p-8 space-y-6">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center text-white shadow-lg shadow-primary/20">
+                                                <Icon icon="ion:business-outline" className="text-2xl" />
+                                            </div>
+                                            <div>
+                                                <h4 className="text-lg font-black text-grey uppercase tracking-tight">Collection Bank Details</h4>
+                                                <p className="text-[10px] font-bold text-primary uppercase tracking-widest">Transfer to the account below</p>
+                                            </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                            <div className="space-y-1">
+                                                <p className="text-[10px] font-black text-grey/30 uppercase tracking-widest">Bank Name</p>
+                                                <p className="font-black text-grey">{dynamicSettings?.bank_name || 'Emirates NBD'}</p>
+                                            </div>
+                                            <div className="space-y-1">
+                                                <p className="text-[10px] font-black text-grey/30 uppercase tracking-widest">Account Name</p>
+                                                <p className="font-black text-grey">{dynamicSettings?.account_name || 'Al Shamil Mess Services'}</p>
+                                            </div>
+                                            <div className="space-y-1">
+                                                <p className="text-[10px] font-black text-grey/30 uppercase tracking-widest">Account Number</p>
+                                                <p className="font-black text-grey">{dynamicSettings?.account_number || '10123456789'}</p>
+                                            </div>
+                                            <div className="space-y-1">
+                                                <p className="text-[10px] font-black text-grey/30 uppercase tracking-widest">Swift Code</p>
+                                                <p className="font-black text-grey">{dynamicSettings?.swift_code || 'ENBD AEAA'}</p>
+                                            </div>
+                                            <div className="sm:col-span-2 p-4 bg-white rounded-2xl border border-primary/10">
+                                                <p className="text-[10px] font-black text-grey/30 uppercase tracking-widest mb-1">IBAN Number</p>
+                                                <p className="font-black text-primary tracking-wider break-all text-sm md:text-base">
+                                                    {dynamicSettings?.iban_number || 'AE12 0310 0000 1012 3456 7890'}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex items-start gap-3 p-4 bg-yellow-50 rounded-2xl text-yellow-700">
+                                            <Icon icon="ion:warning-outline" className="text-xl shrink-0 mt-0.5" />
+                                            <p className="text-[10px] font-bold leading-relaxed uppercase tracking-wide">
+                                                {dynamicSettings?.whatsapp_instruction || 'Please share a screenshot of the transfer confirmation on WhatsApp (+971 XXX XXX XXXX) after completing the payment to activate your subscription.'}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
                     </div>
                 </section>
 
