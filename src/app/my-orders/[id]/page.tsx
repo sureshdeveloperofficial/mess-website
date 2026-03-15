@@ -245,13 +245,23 @@ export default function OrderDetailsPage() {
                             <p className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-2">Order ID Hash</p>
                             <p className="text-xs font-mono text-white/40 break-all">{order.id}</p>
                         </div>
-                        <button 
-                            onClick={() => window.print()}
-                            className="mt-10 bg-white text-grey px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-primary transition-all flex items-center gap-3"
-                        >
-                            <Icon icon="solar:printer-minimalistic-bold" className="text-lg" />
-                            Print Schedule
-                        </button>
+                        <div className="flex flex-col sm:flex-row gap-4 mt-10">
+                            <Link 
+                                href={`/invoice/${order.id}?print=true`}
+                                target="_blank"
+                                className="bg-white text-grey px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-primary hover:text-white transition-all flex items-center gap-3 border border-white/10"
+                            >
+                                <Icon icon="solar:download-square-bold" className="text-lg" />
+                                Download Invoice
+                            </Link>
+                            <button 
+                                onClick={() => window.print()}
+                                className="bg-primary text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:shadow-lg hover:shadow-primary/30 transition-all flex items-center gap-3"
+                            >
+                                <Icon icon="solar:printer-minimalistic-bold" className="text-lg" />
+                                Print Schedule
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

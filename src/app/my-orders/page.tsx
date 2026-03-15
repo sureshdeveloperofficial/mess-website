@@ -211,10 +211,20 @@ export default function MyOrdersPage() {
                                             <div className="lg:w-2/3 border-t lg:border-t-0 lg:border-l border-grey/5 pt-10 lg:pt-0 lg:pl-10">
                                                 <div className="flex items-center justify-between mb-8">
                                                     <p className="text-[10px] font-black text-grey/30 uppercase tracking-[0.2em]">Food Schedule Snapshot</p>
-                                                    <Link href={`/my-orders/${order.id}`} className="text-[10px] font-black text-primary uppercase tracking-widest hover:underline flex items-center gap-1 group/link">
-                                                        View Full details
-                                                        <Icon icon="solar:arrow-right-up-bold" className="group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform" />
-                                                    </Link>
+                                                    <div className="flex items-center gap-4">
+                                                        <Link 
+                                                            href={`/invoice/${order.id}?print=true`}
+                                                            target="_blank"
+                                                            className="w-8 h-8 rounded-lg bg-primary/5 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all group/invoice"
+                                                            title="Download Invoice"
+                                                        >
+                                                            <Icon icon="solar:download-square-bold" className="text-base" />
+                                                        </Link>
+                                                        <Link href={`/my-orders/${order.id}`} className="text-[10px] font-black text-primary uppercase tracking-widest hover:underline flex items-center gap-1 group/link">
+                                                            View Full details
+                                                            <Icon icon="solar:arrow-right-up-bold" className="group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform" />
+                                                        </Link>
+                                                    </div>
                                                 </div>
 
                                                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
