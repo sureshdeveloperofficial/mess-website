@@ -10,7 +10,7 @@ import MenuPreview from '@/app/components/Home/MenuPreview'
 import HowItWorks from '@/app/components/Home/HowItWorks'
 // import AppDownload from '@/app/components/Home/AppDownload'
 import { Metadata } from 'next'
-import ContactForm from '@/app/components/Contact/Form'
+
 
 export const metadata: Metadata = {
   title: 'AL SHAMIL MESS | Authentic Home-Style Daily Meals',
@@ -28,7 +28,6 @@ export default function Home() {
       <Gallery />
       <PremiumBanner />
       {/* <AppDownload /> */}
-      <ContactForm />
       <Newsletter />
     </main>
   )

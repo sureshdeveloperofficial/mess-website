@@ -133,16 +133,6 @@ const FooterLinkData: FooterLinkType[] = [
       { label: 'Contact Us', href: '/contact' },
     ],
   },
-  {
-    section: 'Support',
-    links: [
-      { label: 'Help/FAQ', href: '/' },
-      { label: 'Press', href: '/' },
-      { label: 'Affiliates', href: '/' },
-      { label: 'Hotel owners', href: '/' },
-      { label: 'Partners', href: '/' },
-    ],
-  },
 ]
 
 export const GET = () => {

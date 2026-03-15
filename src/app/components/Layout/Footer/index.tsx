@@ -24,61 +24,57 @@ const Footer: FC = () => {
   }, [])
 
   return (
-    <footer className='pt-8'>
-      <div className='container'>
-        <div className='grid grid-cols-1 sm:grid-cols-6 lg:gap-20 md:gap-24 sm:gap-12 gap-12 pb-10'>
-          <div className='col-span-2'>
+    <footer className='relative bg-neutral-50/50 pt-16 pb-12 overflow-hidden'>
+      {/* Premium Animated Top Border */}
+      <div className='absolute top-0 left-0 w-full h-[2px] animate-gradient-border opacity-70'></div>
+
+      <div className='container relative z-10'>
+        <div className='grid grid-cols-1 md:grid-cols-11 gap-12 lg:gap-16 pb-16 border-b border-grey/10'>
+          {/* Logo and About Section */}
+          <div className='md:col-span-5 lg:col-span-5'>
             <Logo />
-            <p className='text-sm font-medium text-grey my-5 max-w-70%'>
+            <p className='text-grey/80 text-base font-medium mt-6 mb-8 leading-relaxed max-w-sm'>
               Authentic home-style meals served daily with love. High quality,
-              hygienic, and nutritious dining for every guest.
+              hygienic, and nutritious dining for every guest since 2015.
             </p>
-            <div className='flex gap-6 items-center'>
-              <Link
-                href='#'
-                className='group bg-white hover:bg-primary rounded-full shadow-xl p-3'>
-                <Icon
-                  icon='fa6-brands:facebook-f'
-                  width='16'
-                  height='16'
-                  className=' group-hover:text-white text-black'
-                />
-              </Link>
-              <Link
-                href='#'
-                className='group bg-white hover:bg-primary rounded-full shadow-xl p-3'>
-                <Icon
-                  icon='fa6-brands:instagram'
-                  width='16'
-                  height='16'
-                  className=' group-hover:text-white text-black'
-                />
-              </Link>
-              <Link
-                href='#'
-                className='group bg-white hover:bg-primary rounded-full shadow-xl p-3'>
-                <Icon
-                  icon='fa6-brands:x-twitter'
-                  width='16'
-                  height='16'
-                  className=' group-hover:text-white text-black'
-                />
-              </Link>
+            <div className='flex gap-4 items-center'>
+              {[
+                { icon: 'fa6-brands:facebook-f', href: '#' },
+                { icon: 'fa6-brands:instagram', href: '#' },
+                { icon: 'fa6-brands:x-twitter', href: '#' },
+              ].map((social, idx) => (
+                <Link
+                  key={idx}
+                  href={social.href}
+                  className='group bg-white hover:bg-primary transition-all duration-300 rounded-full shadow-md hover:shadow-primary/20 p-3 flex items-center justify-center'
+                >
+                  <Icon
+                    icon={social.icon}
+                    width='18'
+                    height='18'
+                    className='group-hover:text-white text-grey transition-colors'
+                  />
+                </Link>
+              ))}
             </div>
           </div>
-          <div className='col-span-2'>
-            <div className='flex gap-20'>
+
+          {/* Dynamic Links Sections */}
+          <div className='md:col-span-2 lg:col-span-2'>
+            <div className='space-y-6'>
               {footerlink.map((product, i) => (
-                <div key={i} className='group relative col-span-2'>
-                  <p className='text-black text-xl font-semibold mb-9'>
+                <div key={i} className='space-y-6'>
+                  <h4 className='text-black text-lg font-bold uppercase tracking-wider'>
                     {product.section}
-                  </p>
-                  <ul>
-                    {product.links.map((item, i) => (
-                      <li key={i} className='mb-3'>
+                  </h4>
+                  <ul className='space-y-4'>
+                    {product.links.map((item, idx) => (
+                      <li key={idx}>
                         <Link
                           href={item.href}
-                          className='text-black/60 hover:text-black text-base font-normal mb-6'>
+                          className='text-grey/70 hover:text-primary transition-colors text-base font-medium flex items-center group'
+                        >
+                          <span className='w-0 group-hover:w-2 h-[2px] bg-primary mr-0 group-hover:mr-2 transition-all duration-300'></span>
                           {item.label}
                         </Link>
                       </li>
@@ -88,62 +84,55 @@ const Footer: FC = () => {
               ))}
             </div>
           </div>
-          <div className='col-span-2 sm:col-span-6 md:col-span-2'>
-            <div className='flex flex-col gap-5'>
-              <div className='flex'>
-                <Icon
-                  icon='solar:point-on-map-perspective-bold'
-                  className='text-primary text-3xl lg:text-2xl inline-block me-2'
-                />
-                <p className='text-black text-base'>
-                  925 Filbert Street Pennsylvania 18072
-                </p>
+
+          {/* Newsletter Section */}
+          <div className='md:col-span-4 lg:col-span-4 space-y-6'>
+            <h4 className='text-black text-lg font-bold uppercase tracking-wider'>
+              Newsletter
+            </h4>
+            <p className='text-grey/70 text-sm'>
+              Subscribe to get the latest menus and special offers.
+            </p>
+            <div className='relative mt-4'>
+              <input
+                type='email'
+                placeholder='Your Email'
+                className='w-full bg-white border border-grey/10 rounded-full py-4 px-6 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all shadow-sm pr-32'
+              />
+              <button className='absolute right-2 top-2 bottom-2 bg-primary hover:bg-primary/90 text-white font-bold px-6 rounded-full transition-all text-sm shadow-md'>
+                Join
+              </button>
+            </div>
+            
+            {/* Contact Details Integration */}
+            <div className='pt-6 space-y-4'>
+              <div className='flex items-start gap-3'>
+                <Icon icon='solar:point-on-map-perspective-bold' className='text-primary text-xl mt-1 shrink-0' />
+                <p className='text-grey/70 text-sm'>925 Filbert Street Pennsylvania 18072</p>
               </div>
-              <Link href='tel:+1(909) 235-9814'>
-                <div className='flex'>
-                  <Icon
-                    icon='solar:phone-bold'
-                    className='text-primary text-3xl lg:text-2xl inline-block me-2'
-                  />
-                  <p className='text-black/60 hover:text-black text-base'>
-                    +1(909) 235-9814
-                  </p>
-                </div>
-              </Link>
-              <Link href='/'>
-                <div className='flex'>
-                  <Icon
-                    icon='solar:mailbox-bold'
-                    className='text-primary text-3xl lg:text-2xl inline-block me-2'
-                  />
-                  <p className='text-black/60 hover:text-black text-base'>
-                    info@gmail.com
-                  </p>
-                </div>
-              </Link>
+              <div className='flex items-center gap-3'>
+                <Icon icon='solar:phone-bold' className='text-primary text-xl shrink-0' />
+                <p className='text-grey/70 text-sm'>+1 (909) 235-9814</p>
+              </div>
             </div>
           </div>
         </div>
-        <div className='border-t border-grey/15 py-5 flex flex-col sm:flex-row justify-between sm:items-center gap-5'>
-          <p className='text-sm text-black/70'>
-            @2025 - AL SHAMIL MESS. All Rights Reserved by{' '}
-            <Link
-              href='https://getnextjstemplates.com/'
-              className='hover:text-primary hover:underline'>
-              GetNextjsTemplates
+
+        {/* Bottom Bar */}
+        <div className='pt-8 flex flex-col md:flex-row justify-between items-center gap-6'>
+          <p className='text-sm font-medium text-grey/60 text-center md:text-left'>
+            © {new Date().getFullYear()} AL SHAMIL MESS. Crafted with ❤️ by{' '}
+            <Link href='#' className='text-primary hover:underline font-bold'>
+              PremiumTeam
             </Link>
           </p>
 
-          <div className=''>
-            <Link
-              href='#'
-              className='text-sm text-black/70 px-5 border-r border-grey/15 hover:text-primary hover:underline'>
-              Privacy policy
+          <div className='flex gap-8'>
+            <Link href='#' className='text-xs font-bold text-grey/50 hover:text-primary uppercase tracking-widest transition-colors'>
+              Privacy Policy
             </Link>
-            <Link
-              href='#'
-              className='text-sm text-black/70 px-5 hover:text-primary hover:underline'>
-              Terms & conditions
+            <Link href='#' className='text-xs font-bold text-grey/50 hover:text-primary uppercase tracking-widest transition-colors'>
+              Terms of Use
             </Link>
           </div>
         </div>
