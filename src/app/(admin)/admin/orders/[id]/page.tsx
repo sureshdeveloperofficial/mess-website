@@ -218,13 +218,6 @@ export default function OrderDetailsPage() {
                 </div>
 
                 <div className='flex items-center gap-3'>
-                    <button 
-                        onClick={() => window.print()}
-                        className='px-6 py-3 bg-white border border-grey/10 text-grey rounded-2xl font-bold hover:bg-grey/5 transition-all flex items-center gap-2'
-                    >
-                        <Icon icon='ion:print-outline' className='text-xl' />
-                        Print View
-                    </button>
                 </div>
             </div>
 
