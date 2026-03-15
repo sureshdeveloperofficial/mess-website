@@ -112,7 +112,7 @@ const Footer: FC = () => {
               </div>
               <div className='flex items-center gap-3'>
                 <Icon icon='solar:phone-bold' className='text-primary text-xl shrink-0' />
-                <p className='text-grey/70 text-sm'>+1 (909) 235-9814</p>
+                <p className='text-grey/70 text-sm'>+971 4 264 2613</p>
               </div>
             </div>
           </div>
@@ -121,18 +121,15 @@ const Footer: FC = () => {
         {/* Bottom Bar */}
         <div className='pt-8 flex flex-col md:flex-row justify-between items-center gap-6'>
           <p className='text-sm font-medium text-grey/60 text-center md:text-left'>
-            © {new Date().getFullYear()} AL SHAMIL MESS. Crafted with ❤️ by{' '}
-            <Link href='#' className='text-primary hover:underline font-bold'>
-              PremiumTeam
-            </Link>
+            © {new Date().getFullYear()} AL SHAMIL MESS.
           </p>
 
           <div className='flex gap-8'>
-            <Link href='#' className='text-xs font-bold text-grey/50 hover:text-primary uppercase tracking-widest transition-colors'>
+            <Link href='/privacy' className='text-xs font-bold text-grey/50 hover:text-primary uppercase tracking-widest transition-colors'>
               Privacy Policy
             </Link>
-            <Link href='#' className='text-xs font-bold text-grey/50 hover:text-primary uppercase tracking-widest transition-colors'>
-              Terms of Use
+            <Link href='/terms' className='text-xs font-bold text-grey/50 hover:text-primary uppercase tracking-widest transition-colors'>
+              Terms & Conditions
             </Link>
           </div>
         </div>

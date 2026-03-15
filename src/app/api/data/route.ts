@@ -8,9 +8,9 @@ import { FooterLinkType } from '@/app/types/footerlink'
 import { FullMenuType } from '@/app/types/fullmenu'
 
 const HeaderData: HeaderItem[] = [
-  { label: 'About Us', href: '/#aboutus' },
-  { label: 'Food Menu', href: '/menu' },
-  { label: 'Contact Us', href: '/contact' },
+  { label: 'About', href: '/#aboutus' },
+  { label: 'Menu', href: '/menu' },
+  { label: 'Contact', href: '/contact' },
   { label: 'Get Started', href: '/get-started' },
 ]
 
@@ -131,6 +131,13 @@ const FooterLinkData: FooterLinkType[] = [
       { label: 'About Us', href: '/#aboutus' },
       { label: 'Food Menu', href: '/menu' },
       { label: 'Contact Us', href: '/contact' },
+    ],
+  },
+  {
+    section: 'Legal',
+    links: [
+      { label: 'Privacy Policy', href: '/privacy' },
+      { label: 'Terms & Conditions', href: '/terms' },
     ],
   },
 ]

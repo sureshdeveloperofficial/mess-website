@@ -98,7 +98,7 @@ const Header: React.FC = () => {
                 icon='solar:phone-bold'
                 className='text-primary text-2xl inline-block me-1'
               />
-              +1(909) 235-9814
+              +971 4 264 2613
             </Link>
 
             {status === 'authenticated' ? (
@@ -225,7 +225,7 @@ const Header: React.FC = () => {
               icon='solar:phone-bold'
               className='text-primary text-3xl lg:text-2xl inline-block me-2'
             />
-            +1(909) 235-9814
+            +971 4 264 2613
           </Link>
           <nav className='flex flex-col items-start p-4'>
             {headerLink.map((item, index) => (
