@@ -280,10 +280,10 @@ function SectionHeader({ title, subtitle, isSpecial }: { title: string, subtitle
     return (
         <div className='flex items-center gap-6'>
             <div className='flex-col'>
-                <h2 className={`text-sm font-black uppercase tracking-[0.6em] whitespace-nowrap ${isSpecial ? 'text-primary' : 'text-grey/30'}`}>{title}</h2>
-                <p className='text-[10px] font-bold text-grey/20 uppercase tracking-[0.4em] mt-1'>{subtitle}</p>
+                <h2 className={`text-sm font-black uppercase tracking-[0.6em] whitespace-nowrap ${isSpecial ? 'text-primary' : 'text-black'}`}>{title}</h2>
+                <p className='text-[10px] font-black text-black uppercase tracking-[0.4em] mt-1'>{subtitle}</p>
             </div>
-            <div className={`h-px grow ${isSpecial ? 'bg-primary/20' : 'bg-grey/5'}`}></div>
+            <div className={`h-px grow ${isSpecial ? 'bg-primary/20' : 'bg-grey/10'}`}></div>
         </div>
     )
 }
