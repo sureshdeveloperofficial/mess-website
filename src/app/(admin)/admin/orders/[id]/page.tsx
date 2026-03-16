@@ -261,7 +261,7 @@ export default function OrderDetailsPage() {
                         View Invoice
                     </Link>
                     <button
-                        onClick={() => downloadInvoice(order.id, order)}
+                        onClick={() => downloadInvoice(order.id)}
                         disabled={isDownloadingInvoice}
                         className='px-6 py-3 bg-grey text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-grey/90 transition-all flex items-center gap-2 shadow-lg shadow-grey/20 disabled:opacity-50'
                     >

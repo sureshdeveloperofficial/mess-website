@@ -160,7 +160,7 @@ export default function OrdersPage() {
                             {/* Invoice Actions Row */}
                             <div className='mb-4'>
                                 <button
-                                    onClick={() => downloadInvoice(order.id, order as any)}
+                                    onClick={() => downloadInvoice(order.id)}
                                     disabled={isGenerating}
                                     className='w-full py-3 bg-grey/5 border border-grey/5 rounded-xl text-[9px] font-black uppercase tracking-widest text-grey hover:bg-grey/10 transition-all flex items-center justify-center gap-2 disabled:opacity-50'
                                 >

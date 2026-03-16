@@ -215,7 +215,7 @@ export default function MyOrdersPage() {
                                                     <p className="text-[10px] font-black text-grey/30 uppercase tracking-[0.2em]">Food Schedule Snapshot</p>
                                                     <div className="flex items-center gap-4">
                                                         <button 
-                                                            onClick={() => downloadInvoice(order.id, order as any)}
+                                                            onClick={() => downloadInvoice(order.id)}
                                                             disabled={isGenerating}
                                                             className="w-8 h-8 rounded-lg bg-primary/5 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all group/invoice disabled:opacity-50"
                                                             title="Download Invoice"

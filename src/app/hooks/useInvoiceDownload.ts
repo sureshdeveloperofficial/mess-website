@@ -11,7 +11,7 @@ import { Order } from '@/app/types/order'
 export const useInvoiceDownload = () => {
     const [isGenerating, setIsGenerating] = useState(false)
 
-    const downloadInvoice = async (orderId: string, orderData?: Order) => {
+    const downloadInvoice = async (orderId: string) => {
         if (isGenerating) return
         
         const toastId = toast.loading('Architecting your futuristic premium invoice...')
