@@ -15,11 +15,6 @@ import {
     useReactTable,
 } from '@tanstack/react-table'
 
-type Option = {
-    id?: string
-    name: string
-    price: number
-}
 
 type FoodItem = {
     id: string
@@ -30,7 +25,6 @@ type FoodItem = {
     image?: string
     categoryId: string
     category: { name: string }
-    options: Option[]
 }
 
 const columnHelper = createColumnHelper<FoodItem>()
@@ -45,7 +39,6 @@ export default function FoodItemsPage() {
         monthlyPrice: '',
         image: '',
         categoryId: '',
-        options: [] as Option[]
     })
 
     // Pagination State
@@ -117,7 +110,6 @@ export default function FoodItemsPage() {
             monthlyPrice: '',
             image: '',
             categoryId: '',
-            options: []
         })
     }
 
@@ -131,35 +123,11 @@ export default function FoodItemsPage() {
                 monthlyPrice: item.monthlyPrice?.toString() || '',
                 image: item.image || '',
                 categoryId: item.categoryId,
-                options: item.options.map(o => ({ name: o.name, price: o.price }))
             })
         }
         setIsModalOpen(true)
     }
 
-    const addOption = () => {
-        setFormData(prev => ({
-            ...prev,
-            options: [...prev.options, { name: '', price: 0 }]
-        }))
-    }
-
-    const updateOption = (index: number, field: 'name' | 'price', value: string) => {
-        const updatedOptions = [...formData.options]
-        if (field === 'price') {
-            updatedOptions[index].price = parseFloat(value) || 0
-        } else {
-            updatedOptions[index].name = value
-        }
-        setFormData({ ...formData, options: updatedOptions })
-    }
-
-    const removeOption = (index: number) => {
-        setFormData(prev => ({
-            ...prev,
-            options: prev.options.filter((_, i) => i !== index)
-        }))
-    }
 
     const columns = [
         columnHelper.accessor('image', {
@@ -252,21 +220,25 @@ export default function FoodItemsPage() {
                     <p className='text-grey/40 text-sm'>Manage your signature dishes</p>
                 </div>
                 <div className='flex items-center gap-4'>
-                    <div className='flex items-center gap-2 bg-white px-4 py-2 rounded-xl border border-grey/10 shadow-sm'>
-                        <span className='text-xs font-bold text-grey/40 uppercase'>Filter:</span>
+                    <div className='flex items-center gap-3 bg-white px-4 py-2.5 rounded-2xl border border-grey/10 shadow-sm hover:border-primary/30 transition-all group'>
+                        <div className='flex items-center gap-2 pr-3 border-r border-grey/10'>
+                            <Icon icon='ion:filter-outline' className='text-lg text-primary' />
+                            <span className='text-[10px] font-black text-grey/30 uppercase tracking-widest'>Filter</span>
+                        </div>
                         <select
                             value={selectedCategory}
                             onChange={(e) => {
                                 setSelectedCategory(e.target.value)
                                 table.setPageIndex(0)
                             }}
-                            className='bg-transparent text-sm font-semibold text-grey focus:outline-none min-w-[150px]'
+                            className='bg-transparent text-sm font-bold text-grey focus:outline-none min-w-[140px] cursor-pointer appearance-none'
                         >
                             <option value=''>All Categories</option>
                             {categories.map((c: any) => (
                                 <option key={c.id} value={c.id}>{c.name}</option>
                             ))}
                         </select>
+                        <Icon icon='ion:chevron-down-outline' className='text-grey/30 group-hover:text-primary transition-colors text-xs' />
                     </div>
                     <button
                         onClick={() => openModal()}
@@ -445,36 +417,6 @@ export default function FoodItemsPage() {
                                 </div>
                             </div>
 
-                            <div>
-                                <div className='flex items-center justify-between mb-4'>
-                                    <label className='block text-sm font-medium text-grey'>Extra Options / Variants</label>
-                                    <button type='button' onClick={addOption} className='text-xs text-primary font-bold flex items-center gap-1 hover:underline'>
-                                        <Icon icon='ion:add-outline' /> Add Option
-                                    </button>
-                                </div>
-                                <div className='space-y-3'>
-                                    {formData.options.map((opt, index) => (
-                                        <div key={index} className='flex items-center gap-2'>
-                                            <input
-                                                placeholder='Name (e.g. Extra Cheese)'
-                                                value={opt.name}
-                                                onChange={(e) => updateOption(index, 'name', e.target.value)}
-                                                className='flex-1 px-3 py-2 border border-grey/10 rounded-lg text-sm bg-grey/5'
-                                            />
-                                            <input
-                                                type='number' step='0.01' placeholder='Price'
-                                                value={opt.price}
-                                                onChange={(e) => updateOption(index, 'price', e.target.value)}
-                                                className='w-24 px-3 py-2 border border-grey/10 rounded-lg text-sm bg-grey/5'
-                                            />
-                                            <button onClick={() => removeOption(index)} type='button' className='text-red-400 hover:text-red-600 p-2'>
-                                                <Icon icon='ion:close-circle-outline' className='text-xl' />
-                                            </button>
-                                        </div>
-                                    ))}
-                                    {formData.options.length === 0 && <p className='text-xs text-grey/20 italic'>No options added yet.</p>}
-                                </div>
-                            </div>
 
                             <div className='flex flex-col gap-3 pt-4'>
                                 <button

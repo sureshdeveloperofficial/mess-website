@@ -21,7 +21,7 @@ export async function GET(req: Request) {
                 where,
                 skip,
                 take: limit,
-                include: { category: true, options: true },
+                include: { category: true },
                 orderBy: { createdAt: 'desc' },
             }),
             prisma.foodItem.count({ where })
@@ -43,7 +43,7 @@ export async function POST(req: Request) {
     if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     try {
-        const { name, description, price, monthlyPrice, image, categoryId, options } = await req.json()
+        const { name, description, price, monthlyPrice, image, categoryId } = await req.json()
 
         if (!name || !price || !categoryId) {
             return NextResponse.json({ error: 'Name, price, and category are required' }, { status: 400 })
@@ -57,14 +57,8 @@ export async function POST(req: Request) {
                 monthlyPrice: monthlyPrice ? parseFloat(monthlyPrice) : null,
                 image,
                 categoryId,
-                options: {
-                    create: options?.map((opt: any) => ({
-                        name: opt.name,
-                        price: parseFloat(opt.price)
-                    }))
-                }
             },
-            include: { category: true, options: true }
+            include: { category: true }
         })
         return NextResponse.json(foodItem)
     } catch (error: any) {

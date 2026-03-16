@@ -9,7 +9,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         const { id } = await params
         const foodItem = await prisma.foodItem.findUnique({
             where: { id },
-            include: { category: true, options: true }
+            include: { category: true }
         })
 
         if (!foodItem) {
@@ -29,8 +29,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
 
     try {
         const { id } = await params
-        const { name, description, price, monthlyPrice, image, categoryId, options } = await req.json()
-
+        const { name, description, price, monthlyPrice, image, categoryId } = await req.json()
         const foodItem = await prisma.foodItem.update({
             where: { id },
             data: {
@@ -40,15 +39,8 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
                 monthlyPrice: monthlyPrice ? parseFloat(monthlyPrice) : null,
                 image,
                 categoryId,
-                options: {
-                    deleteMany: {},
-                    create: options?.map((opt: any) => ({
-                        name: opt.name,
-                        price: parseFloat(opt.price)
-                    }))
-                }
             },
-            include: { category: true, options: true }
+            include: { category: true }
         })
         return NextResponse.json(foodItem)
     } catch (error: any) {
