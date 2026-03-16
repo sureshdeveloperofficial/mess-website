@@ -1,0 +1,66 @@
+﻿node.exe : [31mFailed to compile.
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" 
+"C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpeci    
+fied: ([31mFailed to compile.:Str    ing) 
+[], RemoteException
+    + FullyQualifiedErrorId : NativeCo    
+mmandError
+ 
+[39m
+[36m.next/types/validator.ts[39m:[33m342
+[39m:[33m31[39m
+[31m[1mType error[22m[39m: Type 
+'typeof import("D:/Personal/mess-website/sr
+c/app/api/food-items/[id]/route")' does 
+not satisfy the constraint 'RouteHandlerCon
+fig<"/api/food-items/[id]">'.
+  Types of property 'GET' are incompatible.
+    Type '(req: NextRequest, { params }: { 
+params: { id: string; }; }) => 
+Promise<NextResponse<{ error: string; }> | 
+NextResponse<{ category: { id: string; 
+createdAt: Date; updatedAt: Date; name: 
+string; }; } & { ...; }>>' is not 
+assignable to type '(request: NextRequest, 
+context: { params: Promise<{ id: string; 
+}>; }) => void | Response | Promise<void | 
+Response>'.
+      Types of parameters '__1' and 
+'context' are incompatible.
+        Type '{ params: Promise<{ id: 
+string; }>; }' is not assignable to type 
+'{ params: { id: string; }; }'.
+          Types of property 'params' are 
+incompatible.
+            Property 'id' is missing in 
+type 'Promise<{ id: string; }>' but 
+required in type '{ id: string; }'.
+
+[0m [90m 340 |[39m   type 
+__IsExpected[33m<[39m[33mSpecific[39m 
+[36mextends[39m [33mRouteHandlerConfig[
+39m[33m<[39m[32m"/api/food-items/[id]"[
+39m[33m>>[39m [33m=[39m 
+[33mSpecific[39m
+ [90m 341 |[39m   [36mconst[39m 
+handler [33m=[39m {} [36mas[39m 
+[36mtypeof[39m [36mimport[39m([32m"../
+../src/app/api/food-items/[id]/route.js"[3
+9m)
+[31m[1m>[22m[39m[90m 342 |[39m   
+type __Check [33m=[39m 
+__IsExpected[33m<[39m[36mtypeof[39m 
+handler[33m>[39m
+ [90m     |[39m                          
+     [31m[1m^[22m[39m
+ [90m 343 |[39m   [90m// @ts-ignore[39m
+ [90m 344 |[39m   type __Unused 
+[33m=[39m __Check
+ [90m 345 |[39m }[0m
+Next.js build worker exited with code: 1 
+and signal: null
+[?25h
