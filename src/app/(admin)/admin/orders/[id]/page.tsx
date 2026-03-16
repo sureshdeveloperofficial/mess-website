@@ -10,6 +10,7 @@ import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import toast from 'react-hot-toast'
 import { useState } from 'react'
+import { useInvoiceDownload } from '@/app/hooks/useInvoiceDownload'
 
 type Customer = {
     id: string
@@ -57,6 +58,7 @@ export default function OrderDetailsPage() {
     const params = useParams()
     const router = useRouter()
     const id = params?.id as string
+    const { downloadInvoice, isGenerating: isDownloadingInvoice } = useInvoiceDownload()
 
     const { data: order, isLoading, error } = useQuery<Order>({
         queryKey: ['order', id],
@@ -73,15 +75,37 @@ export default function OrderDetailsPage() {
             const res = await axios.patch(`/api/orders/${id}`, newData)
             return res.data
         },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['order', id] })
+        onMutate: async (newData) => {
+            // Cancel any outgoing refetches
+            await queryClient.cancelQueries({ queryKey: ['order', id] })
+
+            // Snapshot the previous value
+            const previousOrder = queryClient.getQueryData(['order', id])
+
+            // Optimistically update to the new value
+            queryClient.setQueryData(['order', id], (old: any) => ({
+                ...old,
+                ...newData
+            }))
+
+            return { previousOrder }
+        },
+        onError: (err, newData, context) => {
+            // Roll back to the previous value if mutation fails
+            queryClient.setQueryData(['order', id], context?.previousOrder)
+            toast.error('Failed to update status')
+        },
+        onSuccess: (data) => {
+            // Update cache with real data from server
+            queryClient.setQueryData(['order', id], data)
             toast.success('Updated successfully')
             setIsStatusModalOpen(false)
             setIsPaymentModalOpen(false)
             setReceiptFile(null)
         },
-        onError: () => {
-            toast.error('Failed to update')
+        onSettled: () => {
+            // Refetch to ensure sync
+            queryClient.invalidateQueries({ queryKey: ['order', id] })
         }
     })
 
@@ -93,7 +117,7 @@ export default function OrderDetailsPage() {
     const [paymentStatusValue, setPaymentStatusValue] = useState('PENDING')
     const [paymentRemarks, setPaymentRemarks] = useState('')
     const [receiptFile, setReceiptFile] = useState<File | null>(null)
-    const [isUploading, setIsUploading] = useState(false)
+    const [isUploadingReceipt, setIsUploadingReceipt] = useState(false)
 
     const openStatusModal = () => {
         setStatusValue(order?.status || 'PENDING')
@@ -116,7 +140,7 @@ export default function OrderDetailsPage() {
         let uploadedUrl = order?.paymentReceiptUrl
 
         if (receiptFile) {
-            setIsUploading(true)
+            setIsUploadingReceipt(true)
             const formData = new FormData()
             formData.append('file', receiptFile)
             try {
@@ -124,10 +148,10 @@ export default function OrderDetailsPage() {
                 uploadedUrl = res.data.secure_url || res.data.path
             } catch (error) {
                 toast.error('Failed to upload receipt')
-                setIsUploading(false)
+                setIsUploadingReceipt(false)
                 return
             }
-            setIsUploading(false)
+            setIsUploadingReceipt(false)
         }
 
         updateStatus({
@@ -172,19 +196,19 @@ export default function OrderDetailsPage() {
                 <div className='flex items-center gap-4'>
                     <button 
                         onClick={() => router.back()}
-                        className='p-3 bg-white border border-grey/10 rounded-2xl text-grey/40 hover:text-grey hover:border-grey transition-all'
+                        className='p-3 bg-white border border-grey/10 rounded-2xl text-grey/40 hover:text-grey hover:border-grey transition-all shadow-sm'
                     >
                         <Icon icon='ion:arrow-back' className='text-xl' />
                     </button>
                     <div>
                         <div className='flex items-center gap-3 mb-2 flex-wrap'>
-                            <span className='px-3 py-1.5 bg-primary/10 text-primary rounded-full text-[10px] font-black tracking-widest uppercase'>
+                            <span className='px-3 py-1.5 bg-primary/10 text-primary rounded-full text-[10px] font-black tracking-widest uppercase border border-primary/5 shadow-sm'>
                                 Order #{order.id.slice(-8).toUpperCase()}
                             </span>
                             <button
                                 onClick={openStatusModal}
                                 disabled={isUpdating}
-                                className={`px-4 py-2 rounded-full text-[10px] font-black border disabled:opacity-50 transition-all text-center flex items-center gap-2 ${
+                                className={`px-4 py-2 rounded-full text-[10px] font-black border disabled:opacity-50 transition-all text-center flex items-center gap-2 shadow-sm ${
                                     {
                                         PENDING: 'bg-yellow-50 text-yellow-600 border-yellow-100 hover:bg-yellow-100',
                                         CONFIRMED: 'bg-green-50 text-green-600 border-green-100 hover:bg-green-100',
@@ -199,7 +223,7 @@ export default function OrderDetailsPage() {
                             <button
                                 onClick={openPaymentModal}
                                 disabled={isUpdating}
-                                className={`px-4 py-2 rounded-full text-[10px] font-black border disabled:opacity-50 transition-all text-center flex items-center gap-2 ${
+                                className={`px-4 py-2 rounded-full text-[10px] font-black border disabled:opacity-50 transition-all text-center flex items-center gap-2 shadow-sm ${
                                     {
                                         PENDING: 'bg-orange-50 text-orange-600 border-orange-100 hover:bg-orange-100',
                                         PAID: 'bg-blue-50 text-blue-600 border-blue-100 hover:bg-blue-100',
@@ -211,13 +235,43 @@ export default function OrderDetailsPage() {
                                 <Icon icon="ion:chevron-down" className="text-sm opacity-50" />
                             </button>
                             
-                            {isUpdating && <Icon icon="line-md:loading-loop" className="text-primary text-xl ml-2" />}
+                            <AnimatePresence>
+                                {isUpdating && (
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.5 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        exit={{ opacity: 0, scale: 0.5 }}
+                                    >
+                                        <Icon icon="line-md:loading-loop" className="text-primary text-xl ml-2" />
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
                         </div>
-                        <h2 className='text-3xl font-black text-grey uppercase tracking-tighter'>Order View</h2>
+                        <h1 className='text-3xl font-black text-grey uppercase tracking-tighter'>Order View</h1>
                     </div>
                 </div>
 
                 <div className='flex items-center gap-3'>
+                    <Link
+                        href={`/invoice/${order.id}`}
+                        target="_blank"
+                        className='px-6 py-3 bg-white border border-grey/10 rounded-2xl text-[10px] font-black uppercase tracking-widest text-grey hover:bg-grey/5 transition-all flex items-center gap-2 shadow-sm'
+                    >
+                        <Icon icon='ion:document-text-outline' className='text-lg' />
+                        View Invoice
+                    </Link>
+                    <button
+                        onClick={() => downloadInvoice(order.id, order)}
+                        disabled={isDownloadingInvoice}
+                        className='px-6 py-3 bg-grey text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-grey/90 transition-all flex items-center gap-2 shadow-lg shadow-grey/20 disabled:opacity-50'
+                    >
+                        {isDownloadingInvoice ? (
+                            <Icon icon='line-md:loading-loop' className='text-lg' />
+                        ) : (
+                            <Icon icon='ion:download-outline' className='text-lg' />
+                        )}
+                        {isDownloadingInvoice ? 'Architecting...' : 'Download'}
+                    </button>
                 </div>
             </div>
 
@@ -390,6 +444,62 @@ export default function OrderDetailsPage() {
                 </div>
             </div>
 
+            {/* Premium Delivery Footer (Inspired by Website Flow) */}
+            <div className="bg-grey rounded-[3rem] p-10 md:p-16 text-white relative overflow-hidden shadow-2xl">
+                <Icon icon="solar:map-point-bold-duotone" className="absolute -right-20 -bottom-20 text-[20rem] text-white/5 rotate-12" />
+                <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-12">
+                    <div>
+                        <h3 className="text-2xl font-black uppercase tracking-tight italic mb-8 flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center">
+                                <Icon icon="solar:home-2-bold-duotone" className="text-primary text-xl" />
+                            </div>
+                            Administrative Delivery Specs
+                        </h3>
+                        <div className="space-y-4">
+                            <p className="text-white/60 font-bold uppercase tracking-widest text-[10px]">Primary Destination</p>
+                            <p className="text-lg font-black leading-tight">{order.address}</p>
+                            <div className="grid grid-cols-2 gap-4 mt-6">
+                                <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
+                                    <p className="text-[10px] font-black text-white/30 uppercase mb-1">Building/City</p>
+                                    <p className="font-black text-sm uppercase">{order.buildingName || 'N/A'}</p>
+                                </div>
+                                <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
+                                    <p className="text-[10px] font-black text-white/30 uppercase mb-1">Flat/Room</p>
+                                    <p className="font-black text-sm uppercase">{order.flatRoomNumber || 'N/A'}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="flex flex-col justify-center items-end">
+                        <div className="text-right">
+                            <p className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-2">Internal Order ID Hash</p>
+                            <p className="text-xs font-mono text-white/40 break-all">{order.id}</p>
+                        </div>
+                        <div className="flex flex-col sm:flex-row gap-4 mt-10">
+                            <button 
+                                onClick={() => downloadInvoice(order.id)}
+                                disabled={isDownloadingInvoice}
+                                className="bg-white text-grey px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-primary hover:text-white transition-all flex items-center gap-3 border border-white/10 shadow-lg disabled:opacity-50"
+                            >
+                                {isDownloadingInvoice ? (
+                                    <Icon icon="solar:refresh-bold" className="text-lg animate-spin" />
+                                ) : (
+                                    <Icon icon="solar:download-square-bold" className="text-lg" />
+                                )}
+                                {isDownloadingInvoice ? 'Architecting...' : 'Download Invoice'}
+                            </button>
+                            <button 
+                                onClick={openStatusModal}
+                                className="bg-primary text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:shadow-lg hover:shadow-primary/30 transition-all flex items-center gap-3 active:scale-95"
+                            >
+                                <Icon icon="solar:settings-bold-duotone" className="text-lg" />
+                                Manage Status
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             {/* Modals */}
             <AnimatePresence>
                 {isStatusModalOpen && (
@@ -506,10 +616,10 @@ export default function OrderDetailsPage() {
 
                                 <button
                                     onClick={handleSavePayment}
-                                    disabled={isUpdating || isUploading}
+                                    disabled={isUpdating || isUploadingReceipt}
                                     className='w-full py-4 bg-primary text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-primary/90 transition-all flex justify-center items-center gap-2 disabled:opacity-50'
                                 >
-                                    {(isUpdating || isUploading) ? <Icon icon="line-md:loading-loop" className='text-xl' /> : 'Confirm Payment Log'}
+                                    {(isUpdating || isUploadingReceipt) ? <Icon icon="line-md:loading-loop" className='text-xl' /> : 'Confirm Payment Log'}
                                 </button>
                             </div>
                         </motion.div>

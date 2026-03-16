@@ -150,7 +150,7 @@ const Header: React.FC = () => {
                           className="flex items-center gap-3 px-4 py-3 rounded-xl text-grey/60 hover:bg-primary/10 hover:text-primary transition-all font-bold text-sm"
                         >
                           <Icon icon="solar:box-bold-duotone" className="text-xl" />
-                          My Subscriptions
+                          My Orders
                         </Link>
                         
                         <hr className="border-grey/5 my-2" />
@@ -255,7 +255,7 @@ const Header: React.FC = () => {
                       className="flex items-center gap-3 px-6 py-4 rounded-2xl bg-grey/5 text-grey font-black uppercase tracking-widest text-xs hover:bg-primary/10 hover:text-primary transition-all"
                     >
                       <Icon icon="solar:box-bold-duotone" className="text-xl" />
-                      My Subscriptions
+                      My Orders
                     </Link>
                   </div>
 

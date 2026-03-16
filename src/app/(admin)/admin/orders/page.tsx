@@ -7,6 +7,7 @@ import axios from 'axios'
 import { format } from 'date-fns'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
+import { useInvoiceDownload } from '@/app/hooks/useInvoiceDownload'
 
 type Customer = {
     id: string
@@ -42,6 +43,7 @@ type Order = {
 }
 
 export default function OrdersPage() {
+    const { downloadInvoice, isGenerating } = useInvoiceDownload()
     const { data: orders = [], isLoading } = useQuery<Order[]>({
         queryKey: ['orders'],
         queryFn: async () => {
@@ -155,12 +157,28 @@ export default function OrdersPage() {
                                 </div>
                             </div>
 
+                            {/* Invoice Actions Row */}
+                            <div className='mb-4'>
+                                <button
+                                    onClick={() => downloadInvoice(order.id, order as any)}
+                                    disabled={isGenerating}
+                                    className='w-full py-3 bg-grey/5 border border-grey/5 rounded-xl text-[9px] font-black uppercase tracking-widest text-grey hover:bg-grey/10 transition-all flex items-center justify-center gap-2 disabled:opacity-50'
+                                >
+                                    {isGenerating ? (
+                                        <Icon icon='line-md:loading-loop' className='text-base' />
+                                    ) : (
+                                        <Icon icon='ion:download-outline' className='text-base' />
+                                    )}
+                                    {isGenerating ? 'Architecting...' : 'Download Invoice'}
+                                </button>
+                            </div>
+
                             <Link
                                 href={`/admin/orders/${order.id}`}
-                                className='w-full py-4 bg-grey/5 hover:bg-primary text-grey/60 hover:text-white rounded-[1.25rem] font-black text-xs uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-3 active:scale-95'
+                                className='w-full py-4 bg-primary text-white rounded-[1.25rem] font-black text-xs uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-3 active:scale-95 shadow-lg shadow-primary/20 hover:bg-primary/90'
                             >
-                                Open Order View
-                                <Icon icon='ion:open-outline' className='text-lg' />
+                                Open Full View
+                                <Icon icon='ion:arrow-forward' className='text-lg' />
                             </Link>
                         </motion.div>
                     ))

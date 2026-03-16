@@ -17,14 +17,19 @@ export async function GET(
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
 
+        const isAdmin = (session.user as any).role === 'admin'
+
         const order = await prisma.order.findFirst({
             where: {
                 id,
-                customer: {
-                    email: session.user.email
-                }
+                ...(isAdmin ? {} : {
+                    customer: {
+                        email: session.user.email
+                    }
+                })
             },
             include: {
+                customer: true,
                 selectedMenus: {
                     include: {
                         foodItems: true

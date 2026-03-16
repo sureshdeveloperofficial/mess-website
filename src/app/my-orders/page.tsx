@@ -8,6 +8,7 @@ import { Icon } from '@iconify/react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { useInvoiceDownload } from '@/app/hooks/useInvoiceDownload'
 
 type Order = {
     id: string
@@ -43,6 +44,7 @@ export default function MyOrdersPage() {
     const { data: session } = useSession()
     const router = useRouter()
     const [page, setPage] = useState(1)
+    const { downloadInvoice, isGenerating } = useInvoiceDownload()
 
     const { data, isLoading, isPlaceholderData } = useQuery<PaginatedResponse>({
         queryKey: ['user-orders', page],
@@ -212,14 +214,18 @@ export default function MyOrdersPage() {
                                                 <div className="flex items-center justify-between mb-8">
                                                     <p className="text-[10px] font-black text-grey/30 uppercase tracking-[0.2em]">Food Schedule Snapshot</p>
                                                     <div className="flex items-center gap-4">
-                                                        <Link 
-                                                            href={`/invoice/${order.id}?print=true`}
-                                                            target="_blank"
-                                                            className="w-8 h-8 rounded-lg bg-primary/5 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all group/invoice"
+                                                        <button 
+                                                            onClick={() => downloadInvoice(order.id, order as any)}
+                                                            disabled={isGenerating}
+                                                            className="w-8 h-8 rounded-lg bg-primary/5 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all group/invoice disabled:opacity-50"
                                                             title="Download Invoice"
                                                         >
-                                                            <Icon icon="solar:download-square-bold" className="text-base" />
-                                                        </Link>
+                                                            {isGenerating ? (
+                                                                <Icon icon="line-md:loading-loop" className="text-base" />
+                                                            ) : (
+                                                                <Icon icon="solar:download-square-bold" className="text-base" />
+                                                            )}
+                                                        </button>
                                                         <Link href={`/my-orders/${order.id}`} className="text-[10px] font-black text-primary uppercase tracking-widest hover:underline flex items-center gap-1 group/link">
                                                             View Full details
                                                             <Icon icon="solar:arrow-right-up-bold" className="group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform" />

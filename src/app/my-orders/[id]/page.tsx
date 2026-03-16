@@ -8,6 +8,7 @@ import { Icon } from '@iconify/react'
 import { motion } from 'framer-motion'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
+import { useInvoiceDownload } from '@/app/hooks/useInvoiceDownload'
 
 type FoodItem = {
     id: string
@@ -41,6 +42,7 @@ export default function OrderDetailsPage() {
     const router = useRouter()
     const params = useParams()
     const id = params.id as string
+    const { downloadInvoice, isGenerating: isDownloadingInvoice } = useInvoiceDownload()
 
     const { data: order, isLoading } = useQuery<Order>({
         queryKey: ['user-order', id],
@@ -246,20 +248,17 @@ export default function OrderDetailsPage() {
                             <p className="text-xs font-mono text-white/40 break-all">{order.id}</p>
                         </div>
                         <div className="flex flex-col sm:flex-row gap-4 mt-10">
-                            <Link 
-                                href={`/invoice/${order.id}?print=true`}
-                                target="_blank"
-                                className="bg-white text-grey px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-primary hover:text-white transition-all flex items-center gap-3 border border-white/10"
-                            >
-                                <Icon icon="solar:download-square-bold" className="text-lg" />
-                                Download Invoice
-                            </Link>
                             <button 
-                                onClick={() => window.print()}
-                                className="bg-primary text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:shadow-lg hover:shadow-primary/30 transition-all flex items-center gap-3"
+                                onClick={() => downloadInvoice(order.id)}
+                                disabled={isDownloadingInvoice}
+                                className="bg-white text-grey px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-primary hover:text-white transition-all flex items-center gap-3 border border-white/10 disabled:opacity-50"
                             >
-                                <Icon icon="solar:printer-minimalistic-bold" className="text-lg" />
-                                Print Schedule
+                                {isDownloadingInvoice ? (
+                                    <Icon icon="solar:refresh-bold" className="text-lg animate-spin" />
+                                ) : (
+                                    <Icon icon="solar:download-square-bold" className="text-lg" />
+                                )}
+                                {isDownloadingInvoice ? 'Architecting...' : 'Download Invoice'}
                             </button>
                         </div>
                     </div>

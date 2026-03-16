@@ -15,7 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en' suppressHydrationWarning>
-      <body className={`${font.className}`}>
+      <body className={`${font.className}`} suppressHydrationWarning>
         <SmoothScrollProvider>
           <Providers>
             {children}
