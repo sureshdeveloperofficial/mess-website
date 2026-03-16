@@ -54,6 +54,8 @@ export default function FoodItemsPage() {
         pageSize: 5,
     })
 
+    const [selectedCategory, setSelectedCategory] = useState('')
+
     const pagination = {
         pageIndex,
         pageSize,
@@ -70,9 +72,9 @@ export default function FoodItemsPage() {
     })
 
     const { data: { data: foodItems = [], totalPages = 0 } = {}, isLoading } = useQuery({
-        queryKey: ['food-items', pageIndex, pageSize],
+        queryKey: ['food-items', pageIndex, pageSize, selectedCategory],
         queryFn: async () => {
-            const response = await axios.get(`/api/food-items?page=${pageIndex + 1}&limit=${pageSize}`)
+            const response = await axios.get(`/api/food-items?page=${pageIndex + 1}&limit=${pageSize}&categoryId=${selectedCategory}`)
             return response.data
         },
     })
@@ -249,13 +251,31 @@ export default function FoodItemsPage() {
                     <h3 className='text-2xl font-bold text-grey'>Food Menu Items</h3>
                     <p className='text-grey/40 text-sm'>Manage your signature dishes</p>
                 </div>
-                <button
-                    onClick={() => openModal()}
-                    className='px-6 py-3 bg-primary text-white rounded-xl font-semibold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all flex items-center gap-2'
-                >
-                    <Icon icon='ion:add-circle-outline' className='text-xl' />
-                    Add Item
-                </button>
+                <div className='flex items-center gap-4'>
+                    <div className='flex items-center gap-2 bg-white px-4 py-2 rounded-xl border border-grey/10 shadow-sm'>
+                        <span className='text-xs font-bold text-grey/40 uppercase'>Filter:</span>
+                        <select
+                            value={selectedCategory}
+                            onChange={(e) => {
+                                setSelectedCategory(e.target.value)
+                                table.setPageIndex(0)
+                            }}
+                            className='bg-transparent text-sm font-semibold text-grey focus:outline-none min-w-[150px]'
+                        >
+                            <option value=''>All Categories</option>
+                            {categories.map((c: any) => (
+                                <option key={c.id} value={c.id}>{c.name}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <button
+                        onClick={() => openModal()}
+                        className='px-6 py-3 bg-primary text-white rounded-xl font-semibold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all flex items-center gap-2'
+                    >
+                        <Icon icon='ion:add-circle-outline' className='text-xl' />
+                        Add Item
+                    </button>
+                </div>
             </div>
 
             <div className='bg-white rounded-3xl border border-grey/10 overflow-hidden shadow-sm'>
