@@ -1,6 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server'
-import puppeteer from 'puppeteer'
+import puppeteer from 'puppeteer-core'
 import prisma from '@/utils/prisma'
+
+// Function to get chromium on Vercel
+async function getChromium() {
+    try {
+        // Try to import @sparticuz/chromium dynamically
+        // This allows the build to pass locally even if not installed
+        const chromium = require('@sparticuz/chromium')
+        return {
+            args: chromium.args,
+            defaultViewport: chromium.defaultViewport,
+            executablePath: await chromium.executablePath(),
+            headless: chromium.headless,
+        }
+    } catch (e) {
+        // Fallback for local development
+        return {
+            args: ['--no-sandbox', '--disable-setuid-sandbox'],
+            executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe', // Typical Windows path
+            headless: true,
+        }
+    }
+}
 
 export async function GET(
     request: NextRequest,
@@ -20,10 +42,12 @@ export async function GET(
         }
 
         // 2. Launch Puppeteer
+        const chromium = await getChromium()
         const browser = await puppeteer.launch({
-            executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
-            headless: true,
-            args: ['--no-sandbox', '--disable-setuid-sandbox']
+            executablePath: chromium.executablePath,
+            headless: chromium.headless as any,
+            args: chromium.args,
+            defaultViewport: chromium.defaultViewport as any
         })
 
         const page = await browser.newPage()
