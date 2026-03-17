@@ -10,6 +10,7 @@ import toast from 'react-hot-toast'
 export default function AdminLogin() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [showPassword, setShowPassword] = useState(false)
     const [loading, setLoading] = useState(false)
     const router = useRouter()
 
@@ -79,13 +80,20 @@ export default function AdminLogin() {
                                     <Icon icon='ion:lock-closed-outline' />
                                 </span>
                                 <input
-                                    type='password'
+                                    type={showPassword ? 'text' : 'password'}
                                     required
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className='block w-full pl-10 pr-3 py-3 border border-grey/10 rounded-xl bg-grey/5 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#df6853]/20 focus:border-[#df6853] transition-all'
+                                    className='block w-full pl-10 pr-10 py-3 border border-grey/10 rounded-xl bg-grey/5 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#df6853]/20 focus:border-[#df6853] transition-all'
                                     placeholder='••••••••'
                                 />
+                                <button
+                                    type='button'
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className='absolute inset-y-0 right-0 pr-3 flex items-center text-grey/40 hover:text-grey transition-colors'
+                                >
+                                    <Icon icon={showPassword ? 'ion:eye-off-outline' : 'ion:eye-outline'} className='text-xl' />
+                                </button>
                             </div>
                         </div>
 
