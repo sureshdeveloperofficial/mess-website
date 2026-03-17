@@ -3,6 +3,8 @@ import prisma from '@/utils/prisma'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/utils/authOptions'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(req: Request) {
     try {
         const { searchParams } = new URL(req.url)
@@ -33,8 +35,13 @@ export async function GET(req: Request) {
             page,
             totalPages: Math.ceil(total / limit)
         })
-    } catch (error) {
-        return NextResponse.json({ error: 'Failed to fetch food items' }, { status: 500 })
+    } catch (error: any) {
+        console.error('GET Food Items Error:', error)
+        return NextResponse.json({ 
+            error: 'Failed to fetch food items',
+            details: error.message,
+            code: error.code
+        }, { status: 500 })
     }
 }
 

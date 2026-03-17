@@ -3,6 +3,8 @@ import prisma from '@/utils/prisma'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/utils/authOptions'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
     try {
         const foodMenus = await prisma.foodMenu.findMany({
@@ -10,9 +12,13 @@ export async function GET() {
             orderBy: { createdAt: 'desc' },
         })
         return NextResponse.json(foodMenus)
-    } catch (error) {
+    } catch (error: any) {
         console.error('GET Food Menus Error:', error)
-        return NextResponse.json({ error: 'Failed to fetch food menus' }, { status: 500 })
+        return NextResponse.json({ 
+            error: 'Failed to fetch food menus',
+            details: error.message,
+            code: error.code // Prisma error code if available
+        }, { status: 500 })
     }
 }
 
