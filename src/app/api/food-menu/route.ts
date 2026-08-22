@@ -5,10 +5,37 @@ import { authOptions } from '@/utils/authOptions'
 
 export const dynamic = 'force-dynamic'
 
+function extractAllDishIds(scheduleJson: any, foodItemIds?: string[]): string[] {
+    const set = new Set<string>()
+    if (Array.isArray(foodItemIds)) {
+        foodItemIds.forEach((id) => set.add(id))
+    }
+
+    if (scheduleJson && typeof scheduleJson === 'object') {
+        Object.values(scheduleJson).forEach((dayVal: any) => {
+            if (Array.isArray(dayVal)) {
+                dayVal.forEach((id: string) => {
+                    if (typeof id === 'string') set.add(id)
+                })
+            } else if (dayVal && typeof dayVal === 'object') {
+                Object.values(dayVal).forEach((mealVal: any) => {
+                    if (Array.isArray(mealVal)) {
+                        mealVal.forEach((id: string) => {
+                            if (typeof id === 'string') set.add(id)
+                        })
+                    }
+                })
+            }
+        })
+    }
+    return Array.from(set)
+}
+
 export async function GET(req: Request) {
     try {
         const { searchParams } = new URL(req.url)
         const activeOnly = searchParams.get('activeOnly') === 'true'
+        const mealTypeId = searchParams.get('mealTypeId')
 
         const where: any = {}
         if (activeOnly) {
@@ -17,17 +44,55 @@ export async function GET(req: Request) {
 
         const foodMenus = await prisma.foodMenu.findMany({
             where,
-            include: { foodItems: { include: { category: true } } },
+            include: {
+                foodItems: { include: { category: true } },
+            },
             orderBy: { createdAt: 'desc' },
         })
-        return NextResponse.json(foodMenus)
+
+        // Map mealTypeId, scheduleJson, and MealType safely
+        const rawPlans = await prisma.$queryRawUnsafe<any[]>(`SELECT id, "mealTypeId", "scheduleJson" FROM "FoodMenu";`)
+        const planMetaMap = new Map(rawPlans.map((rp) => [rp.id, { mealTypeId: rp.mealTypeId, scheduleJson: rp.scheduleJson }]))
+
+        const allMealTypes = await prisma.$queryRawUnsafe<any[]>(`SELECT * FROM "MealType";`)
+        const mealTypeMap = new Map(allMealTypes.map((mt) => [mt.id, mt]))
+
+        let enriched = foodMenus.map((m: any) => {
+            const meta = planMetaMap.get(m.id)
+            const mId = meta?.mealTypeId || null
+            return {
+                ...m,
+                mealTypeId: mId,
+                scheduleJson: meta?.scheduleJson || null,
+                mealType: mId ? mealTypeMap.get(mId) || null : null,
+            }
+        })
+
+        if (mealTypeId) {
+            enriched = enriched.filter((m: any) => {
+                if (m.mealTypeId === mealTypeId) return true
+                // Check inside nested scheduleJson if this mealTypeId has items
+                if (m.scheduleJson && typeof m.scheduleJson === 'object') {
+                    for (const day of Object.values(m.scheduleJson)) {
+                        if (day && typeof day === 'object' && !Array.isArray(day) && Array.isArray((day as any)[mealTypeId]) && (day as any)[mealTypeId].length > 0) {
+                            return true
+                        }
+                    }
+                }
+                return false
+            })
+        }
+
+        return NextResponse.json(enriched)
     } catch (error: any) {
         console.error('GET Food Menus Error:', error)
-        return NextResponse.json({ 
-            error: 'Failed to fetch food menus',
-            details: error.message,
-            code: error.code // Prisma error code if available
-        }, { status: 500 })
+        return NextResponse.json(
+            {
+                error: 'Failed to fetch food menus',
+                details: error.message,
+            },
+            { status: 500 }
+        )
     }
 }
 
@@ -36,13 +101,15 @@ export async function POST(req: Request) {
     if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     try {
-        const { name, description, price, foodItemIds, availableDays, isActive = true } = await req.json()
+        const { name, description, price, foodItemIds, scheduleJson, availableDays, mealTypeId, isActive = true } = await req.json()
 
         if (!name || !price) {
             return NextResponse.json({ error: 'Name and price are required' }, { status: 400 })
         }
 
-        const foodMenu = await (prisma.foodMenu as any).create({
+        const allDishIds = extractAllDishIds(scheduleJson, foodItemIds)
+
+        const foodMenu = await prisma.foodMenu.create({
             data: {
                 name,
                 description,
@@ -50,14 +117,22 @@ export async function POST(req: Request) {
                 availableDays,
                 isActive,
                 foodItems: {
-                    connect: foodItemIds?.map((id: string) => ({ id }))
-                }
+                    connect: allDishIds.map((id: string) => ({ id })),
+                },
             },
-            include: { foodItems: true }
+            include: { foodItems: true },
         })
-        return NextResponse.json(foodMenu)
-    } catch (error) {
-        console.error(error)
-        return NextResponse.json({ error: 'Failed to create food menu' }, { status: 500 })
+
+        await prisma.$executeRawUnsafe(
+            `UPDATE "FoodMenu" SET "mealTypeId" = $1, "scheduleJson" = $2::jsonb WHERE "id" = $3;`,
+            mealTypeId || null,
+            scheduleJson ? JSON.stringify(scheduleJson) : null,
+            foodMenu.id
+        )
+
+        return NextResponse.json({ ...foodMenu, mealTypeId, scheduleJson })
+    } catch (error: any) {
+        console.error('Create food menu error:', error)
+        return NextResponse.json({ error: error.message || 'Failed to create food menu' }, { status: 500 })
     }
 }

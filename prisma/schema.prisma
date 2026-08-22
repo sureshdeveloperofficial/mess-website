@@ -55,6 +55,16 @@ model Option {
   foodItem   FoodItem @relation(fields: [foodItemId], references: [id], onDelete: Cascade)
 }
 
+model MealType {
+  id        String     @id @default(cuid())
+  name      String     @unique
+  icon      String?    @default("solar:cup-hot-bold-duotone")
+  isActive  Boolean    @default(true)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  foodMenus FoodMenu[]
+}
+
 model FoodMenu {
   id            String     @id @default(cuid())
   name          String
@@ -62,6 +72,9 @@ model FoodMenu {
   price         Float
   isActive      Boolean    @default(true)
   availableDays String[]   @default(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"])
+  scheduleJson  Json?
+  mealTypeId    String?
+  mealType      MealType?  @relation(fields: [mealTypeId], references: [id], onDelete: SetNull)
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
   foodItems     FoodItem[] @relation("FoodItemToFoodMenu")
