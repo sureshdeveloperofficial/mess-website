@@ -403,7 +403,7 @@ export default function CustomersPage() {
                 onFilterChange={setActiveFilter}
                 emptyMessage='No customers found'
                 emptySubtext='Try adjusting your search criteria or add a new customer.'
-                initialPageSize={10}
+                initialPageSize={5}
             />
 
             {/* Add / Edit Customer Modal */}

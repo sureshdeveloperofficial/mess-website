@@ -23,6 +23,7 @@ model Setting {
 model Category {
   id        String     @id @default(cuid())
   name      String     @unique
+  isActive  Boolean    @default(true)
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
   foodItems FoodItem[]
@@ -35,6 +36,7 @@ model FoodItem {
   price        Float
   image        String?
   categoryId   String
+  isActive     Boolean    @default(true)
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
   monthlyPrice Float?
@@ -58,6 +60,7 @@ model FoodMenu {
   name          String
   description   String?
   price         Float
+  isActive      Boolean    @default(true)
   availableDays String[]   @default(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"])
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt

@@ -27,6 +27,8 @@ interface DataTableProps<TData> {
     filterOptions?: FilterOption[]
     activeFilter?: string
     onFilterChange?: (filterId: string) => void
+    filterVariant?: 'tabs' | 'dropdown'
+    filterLabel?: string
     headerActions?: React.ReactNode
     emptyMessage?: string
     emptySubtext?: string
@@ -41,10 +43,12 @@ export function DataTable<TData>({
     filterOptions,
     activeFilter,
     onFilterChange,
+    filterVariant = 'tabs',
+    filterLabel = 'Category',
     headerActions,
     emptyMessage = 'No records found',
     emptySubtext = 'Try adjusting your search query or filters',
-    initialPageSize = 10,
+    initialPageSize = 5,
     viewToggle,
 }: DataTableProps<TData>) {
     const [sorting, setSorting] = useState<SortingState>([])
@@ -112,8 +116,26 @@ export function DataTable<TData>({
                         )}
                     </div>
 
-                    {/* Filter Pills */}
-                    {filterOptions && filterOptions.length > 0 && (
+                    {/* Dropdown-based Filter Variant */}
+                    {filterOptions && filterOptions.length > 0 && filterVariant === 'dropdown' && (
+                        <div className='flex items-center gap-2 bg-grey/5 hover:bg-grey/10 border border-grey/10 rounded-2xl px-3.5 py-2 transition-all'>
+                            <Icon icon='solar:filter-bold-duotone' className='text-primary text-base shrink-0' />
+                            <select
+                                value={activeFilter}
+                                onChange={(e) => onFilterChange && onFilterChange(e.target.value)}
+                                className='bg-transparent text-xs font-extrabold text-grey-dark focus:outline-none cursor-pointer pr-1'
+                            >
+                                {filterOptions.map((opt) => (
+                                    <option key={opt.id} value={opt.id}>
+                                        {opt.label} {opt.count !== undefined ? `(${opt.count})` : ''}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
+
+                    {/* Tab-based Filter Variant */}
+                    {filterOptions && filterOptions.length > 0 && filterVariant === 'tabs' && (
                         <div className='flex items-center gap-1.5 p-1 bg-grey/5 rounded-2xl border border-grey/10 overflow-x-auto'>
                             {filterOptions.map((opt) => {
                                 const isActive = activeFilter === opt.id

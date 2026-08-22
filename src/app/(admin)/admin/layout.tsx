@@ -14,7 +14,7 @@ const navItems = [
     { label: 'Dashboard', icon: 'solar:widget-bold-duotone', href: '/admin' },
     { label: 'Food Categories', icon: 'solar:list-bold-duotone', href: '/admin/categories' },
     { label: 'Food Items', icon: 'solar:hamburger-menu-bold-duotone', href: '/admin/food-items' },
-    { label: 'Food Menu', icon: 'solar:calendar-bold-duotone', href: '/admin/food-menu' },
+    { label: 'Food Plans', icon: 'solar:calendar-bold-duotone', href: '/admin/food-menu' },
     { label: 'Orders', icon: 'solar:cart-large-bold', href: '/admin/orders' },
     { label: 'Customers', icon: 'solar:users-group-two-rounded-bold-duotone', href: '/admin/customers' },
     { label: 'Website Settings', icon: 'solar:settings-bold-duotone', href: '/admin/website-settings' },

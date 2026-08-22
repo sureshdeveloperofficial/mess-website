@@ -11,11 +11,15 @@ export async function GET(req: Request) {
         const page = parseInt(searchParams.get('page') || '1')
         const limit = parseInt(searchParams.get('limit') || '10')
         const categoryId = searchParams.get('categoryId')
+        const activeOnly = searchParams.get('activeOnly') === 'true'
         const skip = (page - 1) * limit
 
         const where: any = {}
         if (categoryId) {
             where.categoryId = categoryId
+        }
+        if (activeOnly) {
+            where.isActive = true
         }
 
         const [foodItems, total] = await Promise.all([
@@ -53,13 +57,13 @@ export async function POST(req: Request) {
     if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     try {
-        const { name, description, price, monthlyPrice, image, categoryId } = await req.json()
+        const { name, description, price, monthlyPrice, image, categoryId, isActive = true } = await req.json()
 
         if (!name || !price || !categoryId) {
             return NextResponse.json({ error: 'Name, price, and category are required' }, { status: 400 })
         }
 
-        const foodItem = await prisma.foodItem.create({
+        const foodItem = await (prisma.foodItem as any).create({
             data: {
                 name,
                 description,
@@ -67,6 +71,7 @@ export async function POST(req: Request) {
                 monthlyPrice: monthlyPrice ? parseFloat(monthlyPrice) : null,
                 image,
                 categoryId,
+                isActive,
             },
             include: { category: true }
         })

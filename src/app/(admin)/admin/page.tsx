@@ -36,7 +36,7 @@ export default function AdminDashboard() {
         <div className='space-y-8'>
             <div>
                 <h1 className='admin-page-title'>Restaurant Dashboard</h1>
-                <p className='admin-page-subtitle'>Overview of current food menu, categories, and subscription performance</p>
+                <p className='admin-page-subtitle'>Overview of current food plans, categories, and subscription performance</p>
             </div>
 
             <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6'>

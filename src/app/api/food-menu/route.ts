@@ -5,9 +5,18 @@ import { authOptions } from '@/utils/authOptions'
 
 export const dynamic = 'force-dynamic'
 
-export async function GET() {
+export async function GET(req: Request) {
     try {
+        const { searchParams } = new URL(req.url)
+        const activeOnly = searchParams.get('activeOnly') === 'true'
+
+        const where: any = {}
+        if (activeOnly) {
+            where.isActive = true
+        }
+
         const foodMenus = await prisma.foodMenu.findMany({
+            where,
             include: { foodItems: { include: { category: true } } },
             orderBy: { createdAt: 'desc' },
         })
@@ -27,18 +36,19 @@ export async function POST(req: Request) {
     if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     try {
-        const { name, description, price, foodItemIds, availableDays } = await req.json()
+        const { name, description, price, foodItemIds, availableDays, isActive = true } = await req.json()
 
         if (!name || !price) {
             return NextResponse.json({ error: 'Name and price are required' }, { status: 400 })
         }
 
-        const foodMenu = await prisma.foodMenu.create({
+        const foodMenu = await (prisma.foodMenu as any).create({
             data: {
                 name,
                 description,
                 price: parseFloat(price),
                 availableDays,
+                isActive,
                 foodItems: {
                     connect: foodItemIds?.map((id: string) => ({ id }))
                 }

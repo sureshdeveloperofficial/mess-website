@@ -35,25 +35,63 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
     try {
         const { id } = await params
-        const { name, description, price, foodItemIds, availableDays } = await req.json()
+        const body = await req.json()
+        const { name, description, price, foodItemIds, availableDays, isActive } = body
 
-        const foodMenu = await prisma.foodMenu.update({
+        const updateData: any = {}
+        if (name !== undefined) updateData.name = name
+        if (description !== undefined) updateData.description = description
+        if (price !== undefined) updateData.price = parseFloat(price)
+        if (availableDays !== undefined) updateData.availableDays = availableDays
+        if (isActive !== undefined) updateData.isActive = isActive
+        if (foodItemIds !== undefined) {
+            updateData.foodItems = {
+                set: foodItemIds?.map((itemId: string) => ({ id: itemId }))
+            }
+        }
+
+        const foodMenu = await (prisma.foodMenu as any).update({
             where: { id },
-            data: {
-                name,
-                description,
-                price: parseFloat(price),
-                availableDays,
-                foodItems: {
-                    set: foodItemIds?.map((id: string) => ({ id }))
-                }
-            },
+            data: updateData,
             include: { foodItems: true }
         })
         return NextResponse.json(foodMenu)
     } catch (error) {
         console.error(error)
         return NextResponse.json({ error: 'Failed to update food menu' }, { status: 500 })
+    }
+}
+
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+    const session = await getServerSession(authOptions)
+    if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+    try {
+        const { id } = await params
+        const body = await req.json()
+        const { name, description, price, foodItemIds, availableDays, isActive } = body
+
+        const updateData: any = {}
+        if (name !== undefined) updateData.name = name
+        if (description !== undefined) updateData.description = description
+        if (price !== undefined) updateData.price = parseFloat(price)
+        if (availableDays !== undefined) updateData.availableDays = availableDays
+        if (isActive !== undefined) updateData.isActive = isActive
+        if (foodItemIds !== undefined) {
+            updateData.foodItems = {
+                set: foodItemIds?.map((itemId: string) => ({ id: itemId }))
+            }
+        }
+
+        const foodMenu = await (prisma.foodMenu as any).update({
+            where: { id },
+            data: updateData,
+            include: { foodItems: true }
+        })
+        return NextResponse.json(foodMenu)
+    } catch (error) {
+        console.error(error)
+        return NextResponse.json({ error: 'Failed to patch food menu' }, { status: 500 })
     }
 }
 

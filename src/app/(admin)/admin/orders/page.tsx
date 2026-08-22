@@ -326,7 +326,7 @@ export default function OrdersPage() {
                 onFilterChange={setActiveFilter}
                 emptyMessage='No active orders found'
                 emptySubtext='When customers place meal subscriptions, they will appear here.'
-                initialPageSize={10}
+                initialPageSize={5}
             />
 
             {/* Centralized Order View Dialog */}
