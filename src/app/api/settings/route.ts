@@ -5,7 +5,7 @@ export async function GET() {
     try {
         let settings: any[] = []
         try {
-            settings = await (prisma as any).setting.findMany()
+            settings = await prisma.setting.findMany()
         } catch (e) {
             console.warn('Prisma model "setting" not found in client, trying raw query...')
             settings = await prisma.$queryRaw`SELECT * FROM "Setting"`
@@ -26,40 +26,31 @@ export async function GET() {
 export async function POST(req: Request) {
     try {
         const body = await req.json()
-        const { settings } = body // Expected format: { settings: { key1: value1, key2: value2 } }
+        const targetSettings = body.settings || body
 
-        if (!settings || typeof settings !== 'object') {
+        if (!targetSettings || typeof targetSettings !== 'object') {
             return NextResponse.json({ error: 'Invalid settings format' }, { status: 400 })
         }
 
-        const upsertPromises = Object.entries(settings).map(([key, value]) => {
-            const safeKey = String(key)
-            const safeValue = String(value)
-            
-            try {
-                if ((prisma as any).setting) {
-                    return (prisma as any).setting.upsert({
-                        where: { key: safeKey },
-                        update: { value: safeValue },
-                        create: { key: safeKey, value: safeValue },
-                    })
-                }
-                throw new Error('Prisma model "setting" not found in client')
-            } catch (e) {
-                // Raw SQL fallback for Upsert
-                return prisma.$executeRaw`
-                    INSERT INTO "Setting" ("id", "key", "value")
-                    VALUES (gen_random_uuid()::text, ${safeKey}, ${safeValue})
-                    ON CONFLICT ("key") DO UPDATE SET "value" = ${safeValue}
-                `
-            }
-        })
+        for (const [key, value] of Object.entries(targetSettings)) {
+            const safeKey = String(key).trim()
+            if (!safeKey) continue
+            const safeValue = value !== undefined && value !== null ? String(value).trim() : ''
 
-        await Promise.all(upsertPromises)
+            await prisma.setting.upsert({
+                where: { key: safeKey },
+                update: { value: safeValue },
+                create: {
+                    key: safeKey,
+                    value: safeValue
+                }
+            })
+        }
 
         return NextResponse.json({ message: 'Settings updated successfully' })
-    } catch (error) {
+    } catch (error: any) {
         console.error('Settings update error:', error)
-        return NextResponse.json({ error: 'Failed to update settings' }, { status: 500 })
+        return NextResponse.json({ error: error.message || 'Failed to update settings' }, { status: 500 })
     }
 }
+

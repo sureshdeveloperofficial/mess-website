@@ -26,24 +26,29 @@ export default function AdminDashboard() {
 
 
     const stats = [
-        { label: 'Total Categories', value: categories.length, icon: 'ion:list-outline', color: 'bg-blue-500' },
-        { label: 'Total Food Items', value: totalFoodItems, icon: 'ion:fast-food-outline', color: 'bg-[#df6853]' },
-        { label: 'Pending Orders', value: 0, icon: 'ion:receipt-outline', color: 'bg-orange-500' },
-        { label: 'Total Revenue', value: '0.00 AED', icon: 'ion:cash-outline', color: 'bg-green-500' },
+        { label: 'Food Categories', value: categories.length, icon: 'solar:list-bold-duotone', color: 'bg-blue-500' },
+        { label: 'Total Food Items', value: totalFoodItems, icon: 'solar:hamburger-menu-bold-duotone', color: 'bg-primary' },
+        { label: 'Pending Orders', value: 0, icon: 'solar:receipt-bold-duotone', color: 'bg-amber-500' },
+        { label: 'Total Revenue', value: '0.00 AED', icon: 'solar:wallet-money-bold-duotone', color: 'bg-emerald-500' },
     ]
 
     return (
         <div className='space-y-8'>
-            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
+            <div>
+                <h1 className='admin-page-title'>Restaurant Dashboard</h1>
+                <p className='admin-page-subtitle'>Overview of current food menu, categories, and subscription performance</p>
+            </div>
+
+            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6'>
                 {stats.map((stat, i) => (
-                    <div key={i} className='bg-white p-6 rounded-3xl border border-grey/10 shadow-sm'>
+                    <div key={i} className='bg-white p-6 rounded-3xl border border-grey/10 shadow-sm hover:shadow-md transition-all'>
                         <div className='flex items-center gap-4'>
-                            <div className={`${stat.color} w-12 h-12 rounded-2xl flex items-center justify-center text-white text-xl shadow-lg shadow-${stat.color.split('-')[1]}/20`}>
+                            <div className={`${stat.color} w-12 h-12 rounded-2xl flex items-center justify-center text-white text-2xl shadow-sm shrink-0`}>
                                 <Icon icon={stat.icon} />
                             </div>
                             <div>
-                                <div className='text-sm text-grey/40 font-medium'>{stat.label}</div>
-                                <div className='text-2xl font-bold text-grey capitalize'>{stat.value}</div>
+                                <div className='text-xs font-bold uppercase tracking-wider text-grey-muted'>{stat.label}</div>
+                                <div className='text-2xl font-extrabold text-grey-dark capitalize mt-0.5'>{stat.value}</div>
                             </div>
                         </div>
                     </div>
@@ -51,45 +56,58 @@ export default function AdminDashboard() {
             </div>
 
             <div className='grid grid-cols-1 lg:grid-cols-2 gap-8'>
-                <div className='bg-white p-8 rounded-3xl border border-grey/10 shadow-sm'>
-                    <h4 className='text-xl font-bold text-grey mb-6'>Recent Food Items</h4>
-                    <div className='space-y-4'>
+                <div className='bg-white p-6 sm:p-8 rounded-3xl border border-grey/10 shadow-sm space-y-6'>
+                    <div className='flex items-center justify-between border-b border-grey/10 pb-4'>
+                        <h4 className='text-xl font-bold text-grey-dark flex items-center gap-2.5'>
+                            <Icon icon='solar:hamburger-menu-bold-duotone' className='text-primary text-2xl' />
+                            Recent Food Items
+                        </h4>
+                    </div>
+                    <div className='space-y-3'>
                         {foodItems.slice(0, 5).map((item: any) => (
-                            <div key={item.id} className='flex items-center justify-between p-4 bg-grey/5 rounded-2xl hover:bg-grey/10 transition-colors'>
+                            <div key={item.id} className='flex items-center justify-between p-3.5 bg-grey/5 rounded-2xl hover:bg-grey/10 transition-colors border border-grey/5'>
                                 <div className='flex items-center gap-3'>
                                     {item.image ? (
-                                        <div className='w-10 h-10 rounded-lg overflow-hidden relative'>
+                                        <div className='w-11 h-11 rounded-xl overflow-hidden relative border border-grey/10'>
                                             <img src={item.image} alt='' className='w-full h-full object-cover' />
                                         </div>
                                     ) : (
-                                        <div className='w-10 h-10 bg-grey/10 rounded-lg flex items-center justify-center text-grey/20 text-xl'>
-                                            <Icon icon='ion:fast-food-outline' />
+                                        <div className='w-11 h-11 bg-grey/10 rounded-xl flex items-center justify-center text-grey-muted text-xl'>
+                                            <Icon icon='solar:fastfood-bold-duotone' />
                                         </div>
                                     )}
                                     <div>
-                                        <div className='font-semibold text-grey text-sm capitalize'>{item.name}</div>
-                                        <div className='text-xs text-grey/40'>{item.category.name}</div>
+                                        <div className='font-bold text-grey-dark text-sm capitalize'>{item.name}</div>
+                                        <div className='text-xs font-medium text-grey-muted'>{item.category.name}</div>
                                     </div>
                                 </div>
                                 <div className='text-right'>
-                                    <div className='font-bold text-[#df6853]'>AED {item.price.toFixed(2)}</div>
+                                    <div className='font-bold text-grey-dark text-sm'>AED {item.price.toFixed(2)}</div>
                                     <div className='text-[10px] text-green-600 font-bold'>
                                         AED {(item.monthlyPrice || item.price * 25).toFixed(2)}/mo
                                     </div>
                                 </div>
                             </div>
                         ))}
-                        {foodItems.length === 0 && <p className='text-grey/20 italic text-sm text-center py-4'>No items yet.</p>}
+                        {foodItems.length === 0 && <p className='text-grey-muted italic text-xs text-center py-6'>No items added yet.</p>}
                     </div>
                 </div>
 
-                <div className='bg-white p-8 rounded-3xl border border-grey/10 shadow-sm'>
-                    <h4 className='text-xl font-bold text-grey mb-6'>Quick Overview</h4>
+                <div className='bg-white p-6 sm:p-8 rounded-3xl border border-grey/10 shadow-sm space-y-6'>
+                    <div className='flex items-center justify-between border-b border-grey/10 pb-4'>
+                        <h4 className='text-xl font-bold text-grey-dark flex items-center gap-2.5'>
+                            <Icon icon='solar:info-circle-bold-duotone' className='text-primary text-2xl' />
+                            Quick Overview
+                        </h4>
+                    </div>
                     <div className='space-y-6'>
-                        <p className='text-grey/40 text-sm'>Your restaurant is currently active. You can manage your menu items and categories from this dashboard.</p>
-                        <div className='p-6 bg-[#df6853]/5 rounded-3xl border border-[#df6853]/10'>
-                            <h5 className='font-bold text-[#df6853] text-sm mb-2'>Pro-Tip: Performance</h5>
-                            <p className='text-grey/60 text-xs leading-relaxed'>We use TanStack Query for efficient data fetching and caching, ensuring your admin panel stays fast and responsive even with large menus.</p>
+                        <p className='text-grey-muted text-sm leading-relaxed'>Your restaurant is currently live and active. You can manage your menu items, customer subscriptions, and billing configurations directly from this portal.</p>
+                        <div className='p-6 bg-primary/10 rounded-3xl border border-primary/20 space-y-2'>
+                            <h5 className='font-bold text-grey-dark text-sm flex items-center gap-2'>
+                                <Icon icon='solar:bolt-bold-duotone' className='text-primary text-lg' />
+                                <span>High-Performance Caching</span>
+                            </h5>
+                            <p className='text-grey-muted text-xs leading-relaxed'>TanStack Query caches and validates administrative states instantly, ensuring zero lag even with thousands of orders and dishes.</p>
                         </div>
                     </div>
                 </div>

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/utils/authOptions'
 import prisma from '@/utils/prisma'
+import { sendOrderConfirmationEmail } from '@/utils/mail'
 
 export async function GET() {
     try {
@@ -107,8 +108,16 @@ export async function POST(req: Request) {
                     selectedMenus: {
                         connect: menuIds.map((id: string) => ({ id }))
                     }
+                },
+                include: {
+                    customer: true
                 }
             })
+        })
+
+        // Asynchronously dispatch order receipt email to customer
+        sendOrderConfirmationEmail(order).catch(err => {
+            console.warn('⚠️ Order confirmation email dispatch failed:', err.message)
         })
 
         return NextResponse.json(order)

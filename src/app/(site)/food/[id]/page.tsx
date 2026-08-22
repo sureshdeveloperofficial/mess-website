@@ -224,7 +224,7 @@ export default function FoodSelectionPage() {
                                 </div>
                             </motion.div>
 
-                            {item.options.length > 0 && (
+                            {item.options && item.options.length > 0 && (
                                 <div className='pt-4 space-y-4'>
                                     <h4 className='text-xs font-black uppercase tracking-[0.2em] text-grey/30'>Customize Your Experience</h4>
                                     <div className='flex flex-wrap gap-3'>

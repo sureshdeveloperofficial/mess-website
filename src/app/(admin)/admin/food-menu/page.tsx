@@ -139,8 +139,8 @@ export default function FoodMenusPage() {
             header: 'Plan Name',
             cell: (info) => (
                 <div>
-                    <div className='font-bold text-grey capitalize'>{info.getValue()}</div>
-                    <div className='text-xs text-grey/40 truncate max-w-[200px]'>
+                    <div className='font-bold text-grey-dark text-sm capitalize tracking-tight'>{info.getValue()}</div>
+                    <div className='text-xs font-medium text-grey-muted truncate max-w-[220px] mt-0.5'>
                         {info.row.original.foodItems.map(i => i.name).join(', ')}
                     </div>
                 </div>
@@ -149,7 +149,8 @@ export default function FoodMenusPage() {
         columnHelper.accessor('foodItems', {
             header: 'Items Count',
             cell: (info) => (
-                <span className='px-3 py-1 bg-grey/5 rounded-full text-xs font-semibold text-grey'>
+                <span className='admin-badge'>
+                    <span className='w-1.5 h-1.5 rounded-full bg-primary inline-block' />
                     {info.getValue().length} Items
                 </span>
             ),
@@ -157,7 +158,7 @@ export default function FoodMenusPage() {
         columnHelper.accessor('price', {
             header: 'Menu Price',
             cell: (info) => (
-                <span className='font-semibold text-primary'>
+                <span className='font-bold text-grey-dark text-sm'>
                     AED {info.getValue().toFixed(2)}
                 </span>
             ),
@@ -166,20 +167,20 @@ export default function FoodMenusPage() {
             id: 'actions',
             header: 'Actions',
             cell: (info) => (
-                <div className='flex items-center gap-2'>
+                <div className='flex items-center gap-1'>
                     <button
                         onClick={() => openModal(info.row.original, true)}
-                        className='p-2 text-grey/40 hover:text-primary hover:bg-primary/5 rounded-lg transition-all'
+                        className='p-2 text-grey-muted hover:text-primary hover:bg-primary/10 rounded-xl transition-all'
                         title='View Plan'
                     >
-                        <Icon icon='ion:eye-outline' className='text-xl' />
+                        <Icon icon='solar:eye-bold-duotone' className='text-lg' />
                     </button>
                     <button
                         onClick={() => openModal(info.row.original)}
-                        className='p-2 text-grey/40 hover:text-primary hover:bg-primary/5 rounded-lg transition-all'
+                        className='p-2 text-grey-muted hover:text-primary hover:bg-primary/10 rounded-xl transition-all'
                         title='Edit Plan'
                     >
-                        <Icon icon='ion:create-outline' className='text-xl' />
+                        <Icon icon='solar:pen-bold-duotone' className='text-lg' />
                     </button>
                     <button
                         onClick={() => {
@@ -187,10 +188,10 @@ export default function FoodMenusPage() {
                                 deleteMutation.mutate(info.row.original.id)
                             }
                         }}
-                        className='p-2 text-grey/40 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all'
+                        className='p-2 text-grey-muted hover:text-red-500 hover:bg-red-50 rounded-xl transition-all'
                         title='Delete Plan'
                     >
-                        <Icon icon='ion:trash-outline' className='text-xl' />
+                        <Icon icon='solar:trash-bin-trash-bold-duotone' className='text-lg' />
                     </button>
                 </div>
             ),
@@ -204,18 +205,18 @@ export default function FoodMenusPage() {
     })
 
     return (
-        <div className='space-y-6'>
-            <div className='flex items-center justify-between'>
+        <div className='space-y-8'>
+            <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-4'>
                 <div>
-                    <h3 className='text-2xl font-bold text-grey'>Food Menus</h3>
-                    <p className='text-grey/40 text-sm'>Create bundled meal packages</p>
+                    <h1 className='admin-page-title'>Food Menus</h1>
+                    <p className='admin-page-subtitle'>Create bundled meal packages and subscription plans</p>
                 </div>
                 <button
                     onClick={() => openModal()}
-                    className='px-6 py-3 bg-primary text-white rounded-xl font-semibold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all flex items-center gap-2'
+                    className='admin-btn-primary'
                 >
-                    <Icon icon='ion:add-circle-outline' className='text-xl' />
-                    New Menu
+                    <Icon icon='solar:add-circle-bold-duotone' className='text-xl' />
+                    <span>New Menu</span>
                 </button>
             </div>
 
@@ -226,7 +227,7 @@ export default function FoodMenusPage() {
                             {table.getHeaderGroups().map((headerGroup) => (
                                 <tr key={headerGroup.id}>
                                     {headerGroup.headers.map((header) => (
-                                        <th key={header.id} className='px-6 py-4 text-xs font-bold text-grey/40 uppercase tracking-wider'>
+                                        <th key={header.id} className='px-6 py-4 text-xs font-bold text-grey/60 uppercase tracking-wider'>
                                             {flexRender(header.column.columnDef.header, header.getContext())}
                                         </th>
                                     ))}
@@ -236,13 +237,13 @@ export default function FoodMenusPage() {
                         <tbody className='divide-y divide-grey/10'>
                             {isLoading ? (
                                 <tr>
-                                    <td colSpan={columns.length} className='px-6 py-10 text-center'>
+                                    <td colSpan={columns.length} className='px-6 py-12 text-center'>
                                         <Icon icon='line-md:loading-loop' className='text-3xl text-primary mx-auto' />
                                     </td>
                                 </tr>
                             ) : foodMenus.length === 0 ? (
                                 <tr>
-                                    <td colSpan={columns.length} className='px-6 py-10 text-center text-grey/40'>
+                                    <td colSpan={columns.length} className='px-6 py-12 text-center text-grey-muted text-sm font-medium'>
                                         No food menus found.
                                     </td>
                                 </tr>
@@ -250,7 +251,7 @@ export default function FoodMenusPage() {
                                 table.getRowModel().rows.map((row) => (
                                     <tr key={row.id} className='hover:bg-grey/5 transition-colors'>
                                         {row.getVisibleCells().map((cell) => (
-                                            <td key={cell.id} className='px-6 py-4'>
+                                            <td key={cell.id} className='px-6 py-4 align-middle'>
                                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                             </td>
                                         ))}
@@ -264,13 +265,14 @@ export default function FoodMenusPage() {
 
             {isModalOpen && (
                 <div className='fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm overflow-y-auto'>
-                    <div className='bg-white rounded-3xl max-w-2xl w-full p-8 shadow-2xl relative my-8'>
-                        <div className='flex items-center justify-between mb-6'>
-                            <h4 className='text-xl font-bold text-grey'>
+                    <div className='bg-white rounded-3xl max-w-2xl w-full p-8 shadow-2xl relative my-8 border border-grey/10 space-y-6'>
+                        <div className='flex items-center justify-between border-b border-grey/10 pb-4'>
+                            <h4 className='text-xl font-bold text-grey-dark flex items-center gap-2.5'>
+                                <Icon icon='solar:calendar-bold-duotone' className='text-primary text-2xl' />
                                 {isViewOnly ? 'View Food Menu' : editingMenu ? 'Edit Menu' : 'New Food Menu'}
                             </h4>
-                            <button onClick={closeModal} className='text-grey/40 hover:text-grey p-1'>
-                                <Icon icon='ion:close-outline' className='text-2xl' />
+                            <button onClick={closeModal} className='text-grey-muted hover:text-grey p-1.5 rounded-xl hover:bg-grey/5 transition-colors'>
+                                <Icon icon='solar:close-circle-bold' className='text-2xl' />
                             </button>
                         </div>
 
@@ -284,37 +286,37 @@ export default function FoodMenusPage() {
                             <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                                 <div className='space-y-4'>
                                     <div>
-                                        <label className='block text-sm font-medium text-grey mb-2'>Menu Name</label>
+                                        <label className='admin-label'>Menu Name *</label>
                                         <input
                                             type='text' required value={formData.name}
                                             readOnly={isViewOnly}
                                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                            className={`block w-full px-4 py-3 border border-grey/10 rounded-xl bg-grey/5 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all ${isViewOnly ? 'cursor-default' : ''}`}
+                                            className={`admin-input ${isViewOnly ? 'cursor-default' : ''}`}
                                             placeholder='e.g. Weekly Feast'
                                         />
                                     </div>
                                     <div>
-                                        <label className='block text-sm font-medium text-grey mb-2'>Price (AED)</label>
+                                        <label className='admin-label'>Price (AED) *</label>
                                         <input
                                             type='number' step='0.01' required value={formData.price}
                                             readOnly={isViewOnly}
                                             onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                                            className={`block w-full px-4 py-3 border border-grey/10 rounded-xl bg-grey/5 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all ${isViewOnly ? 'cursor-default' : ''}`}
+                                            className={`admin-input ${isViewOnly ? 'cursor-default' : ''}`}
                                             placeholder='99.00'
                                         />
                                     </div>
                                     <div>
-                                        <label className='block text-sm font-medium text-grey mb-2'>Description</label>
+                                        <label className='admin-label'>Description</label>
                                         <textarea
-                                            rows={4} value={formData.description}
+                                            rows={3} value={formData.description}
                                             readOnly={isViewOnly}
                                             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                            className={`block w-full px-4 py-3 border border-grey/10 rounded-xl bg-grey/5 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none ${isViewOnly ? 'cursor-default' : ''}`}
+                                            className={`admin-input resize-none ${isViewOnly ? 'cursor-default' : ''}`}
                                             placeholder='Briefly describe this plan...'
                                         />
                                     </div>
                                     <div>
-                                        <label className='block text-sm font-medium text-grey mb-3'>Plan Availability</label>
+                                        <label className='admin-label'>Plan Availability</label>
                                         <div className='flex flex-wrap gap-2'>
                                             {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((day) => (
                                                 <button
@@ -329,72 +331,76 @@ export default function FoodMenusPage() {
                                                             setFormData({ ...formData, availableDays: [...current, day] })
                                                         }
                                                     }}
-                                                    className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border transition-all ${formData.availableDays.includes(day)
-                                                        ? 'bg-primary border-primary text-white'
-                                                        : 'bg-white border-grey/10 text-grey/40 hover:border-primary/30'
+                                                    className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${formData.availableDays.includes(day)
+                                                        ? 'bg-primary border-primary text-white shadow-xs'
+                                                        : 'bg-white border-grey/10 text-grey-muted hover:border-primary/40'
                                                         } ${isViewOnly ? 'cursor-default' : 'cursor-pointer'}`}
                                                 >
                                                     {day.slice(0, 3)}
                                                 </button>
                                             ))}
                                         </div>
-                                        {formData.availableDays.length === 0 && (
-                                            <p className='text-[10px] text-red-500 mt-2 font-medium'>Please select at least one day.</p>
-                                        )}
                                     </div>
                                 </div>
 
                                 <div className='space-y-4'>
                                     <div className='flex items-center justify-between'>
-                                        <label className='block text-sm font-medium text-grey'>Select Food Items</label>
+                                        <label className='admin-label mb-0'>Select Food Items</label>
                                         <div className='relative'>
-                                            <Icon icon='ion:search-outline' className='absolute left-3 top-1/2 -translate-y-1/2 text-grey/40' />
+                                            <Icon icon='solar:magnifer-bold' className='absolute left-3 top-1/2 -translate-y-1/2 text-grey-muted text-xs' />
                                             <input
                                                 type='text'
                                                 placeholder='Search items...'
                                                 value={searchTerm}
                                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                                className='pl-9 pr-4 py-1.5 text-xs border border-grey/10 rounded-lg bg-grey/5 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all w-40'
+                                                className='pl-8 pr-3 py-1 text-xs border border-grey/15 rounded-lg bg-grey/5 focus:bg-white focus:outline-none focus:ring-1 focus:ring-primary/20 w-36 font-medium'
                                             />
                                         </div>
                                     </div>
-                                    <div className='border border-grey/10 rounded-xl bg-grey/5 p-4 h-[300px] overflow-y-auto space-y-2'>
+                                    <div className='border border-grey/10 rounded-2xl bg-grey/5 p-3 h-[280px] overflow-y-auto space-y-2'>
                                         {filteredFoodItems.map((item: any) => (
                                             <div
                                                 key={item.id}
                                                 onClick={() => toggleFoodItem(item.id)}
                                                 className={`flex items-center justify-between p-3 rounded-xl transition-all border ${formData.foodItemIds.includes(item.id)
-                                                    ? 'bg-primary/10 border-primary text-primary'
-                                                    : 'bg-white border-transparent text-grey hover:bg-grey/5'
+                                                    ? 'bg-primary/10 border-primary text-grey-dark font-bold'
+                                                    : 'bg-white border-transparent text-grey-dark hover:bg-grey/5 font-semibold'
                                                     } ${isViewOnly ? 'cursor-default' : 'cursor-pointer'}`}
                                             >
                                                 <div className='flex flex-col'>
-                                                    <span className='text-sm font-bold'>{item.name}</span>
-                                                    <span className='text-[10px] opacity-60'>{item.category.name}</span>
+                                                    <span className='text-xs font-bold'>{item.name}</span>
+                                                    <span className='text-[10px] text-grey-muted font-normal'>{item.category.name}</span>
                                                 </div>
                                                 <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${formData.foodItemIds.includes(item.id)
                                                     ? 'border-primary bg-primary text-white'
-                                                    : 'border-grey/10'
+                                                    : 'border-grey/20'
                                                     }`}>
-                                                    {formData.foodItemIds.includes(item.id) && <Icon icon='ion:checkmark' className='text-xs' />}
+                                                    {formData.foodItemIds.includes(item.id) && <Icon icon='solar:check-read-bold' className='text-xs' />}
                                                 </div>
                                             </div>
                                         ))}
                                     </div>
-                                    <p className='text-[10px] text-grey/40 text-center italic'>
+                                    <p className='text-xs font-bold text-grey-muted text-center'>
                                         {formData.foodItemIds.length} items selected
                                     </p>
                                 </div>
                             </div>
 
                             {!isViewOnly && (
-                                <div className='flex flex-col gap-3 pt-4'>
+                                <div className='flex flex-col gap-3 pt-2'>
                                     <button
                                         type='submit'
                                         disabled={mutation.isPending || formData.foodItemIds.length === 0 || formData.availableDays.length === 0}
-                                        className='w-full py-4 bg-primary text-white rounded-xl font-semibold shadow-lg shadow-primary/20 hover:bg-primary/90 disabled:opacity-50 transition-all'
+                                        className='admin-btn-primary w-full py-3.5'
                                     >
-                                        {mutation.isPending ? 'Saving Menu...' : 'Save Food Menu'}
+                                        {mutation.isPending ? (
+                                            <>
+                                                <Icon icon='line-md:loading-loop' className='text-xl' />
+                                                <span>Saving Menu...</span>
+                                            </>
+                                        ) : (
+                                            <span>Save Food Menu</span>
+                                        )}
                                     </button>
                                 </div>
                             )}

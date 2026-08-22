@@ -148,15 +148,15 @@ export default function FoodItemsPage() {
             header: 'Item Details',
             cell: (info) => (
                 <div>
-                    <div className='font-bold text-grey capitalize'>{info.getValue()}</div>
-                    <div className='text-xs text-grey/40'>{info.row.original.category.name}</div>
+                    <div className='font-bold text-grey-dark text-sm capitalize tracking-tight'>{info.getValue()}</div>
+                    <div className='text-xs font-medium text-grey-muted mt-0.5'>{info.row.original.category.name}</div>
                 </div>
             ),
         }),
         columnHelper.accessor('price', {
             header: 'Daily Price',
             cell: (info) => (
-                <span className='font-semibold text-primary'>
+                <span className='font-bold text-grey-dark text-sm'>
                     AED {info.getValue().toFixed(2)}
                 </span>
             ),
@@ -168,7 +168,7 @@ export default function FoodItemsPage() {
                 const dailyPrice = info.row.original.price
                 const displayPrice = value || (dailyPrice * 25)
                 return (
-                    <span className='font-semibold text-green-600'>
+                    <span className='font-bold text-green-600 text-sm'>
                         AED {displayPrice.toFixed(2)}
                     </span>
                 )
@@ -178,12 +178,13 @@ export default function FoodItemsPage() {
             id: 'actions',
             header: 'Actions',
             cell: (info) => (
-                <div className='flex items-center gap-2'>
+                <div className='flex items-center gap-1'>
                     <button
                         onClick={() => openModal(info.row.original)}
-                        className='p-2 text-grey/40 hover:text-primary hover:bg-primary/5 rounded-lg transition-all'
+                        className='p-2 text-grey-muted hover:text-primary hover:bg-primary/10 rounded-xl transition-all'
+                        title='Edit Item'
                     >
-                        <Icon icon='ion:create-outline' className='text-xl' />
+                        <Icon icon='solar:pen-bold-duotone' className='text-lg' />
                     </button>
                     <button
                         onClick={() => {
@@ -191,9 +192,10 @@ export default function FoodItemsPage() {
                                 deleteMutation.mutate(info.row.original.id)
                             }
                         }}
-                        className='p-2 text-grey/40 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all'
+                        className='p-2 text-grey-muted hover:text-red-500 hover:bg-red-50 rounded-xl transition-all'
+                        title='Delete Item'
                     >
-                        <Icon icon='ion:trash-outline' className='text-xl' />
+                        <Icon icon='solar:trash-bin-trash-bold-duotone' className='text-lg' />
                     </button>
                 </div>
             ),
@@ -213,17 +215,17 @@ export default function FoodItemsPage() {
     })
 
     return (
-        <div className='space-y-6'>
-            <div className='flex items-center justify-between'>
+        <div className='space-y-8'>
+            <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-4'>
                 <div>
-                    <h3 className='text-2xl font-bold text-grey'>Food Menu Items</h3>
-                    <p className='text-grey/40 text-sm'>Manage your signature dishes</p>
+                    <h1 className='admin-page-title'>Food Menu Items</h1>
+                    <p className='admin-page-subtitle'>Manage your signature dishes and pricing</p>
                 </div>
-                <div className='flex items-center gap-4'>
-                    <div className='flex items-center gap-3 bg-white px-4 py-2.5 rounded-2xl border border-grey/10 shadow-sm hover:border-primary/30 transition-all group'>
+                <div className='flex flex-wrap items-center gap-3'>
+                    <div className='flex items-center gap-3 bg-white px-4 py-2.5 rounded-2xl border border-grey/10 shadow-sm hover:border-primary/40 transition-all'>
                         <div className='flex items-center gap-2 pr-3 border-r border-grey/10'>
-                            <Icon icon='ion:filter-outline' className='text-lg text-primary' />
-                            <span className='text-[10px] font-black text-grey/30 uppercase tracking-widest'>Filter</span>
+                            <Icon icon='solar:filter-bold-duotone' className='text-lg text-primary' />
+                            <span className='text-[10px] font-bold text-grey-muted uppercase tracking-widest'>Filter</span>
                         </div>
                         <select
                             value={selectedCategory}
@@ -231,21 +233,20 @@ export default function FoodItemsPage() {
                                 setSelectedCategory(e.target.value)
                                 table.setPageIndex(0)
                             }}
-                            className='bg-transparent text-sm font-bold text-grey focus:outline-none min-w-[140px] cursor-pointer appearance-none'
+                            className='bg-transparent text-xs font-bold text-grey-dark focus:outline-none min-w-[140px] cursor-pointer'
                         >
-                            <option value=''>All Categories</option>
+                            <option value=''>All Food Categories</option>
                             {categories.map((c: any) => (
                                 <option key={c.id} value={c.id}>{c.name}</option>
                             ))}
                         </select>
-                        <Icon icon='ion:chevron-down-outline' className='text-grey/30 group-hover:text-primary transition-colors text-xs' />
                     </div>
                     <button
                         onClick={() => openModal()}
-                        className='px-6 py-3 bg-primary text-white rounded-xl font-semibold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all flex items-center gap-2'
+                        className='admin-btn-primary'
                     >
-                        <Icon icon='ion:add-circle-outline' className='text-xl' />
-                        Add Item
+                        <Icon icon='solar:add-circle-bold-duotone' className='text-xl' />
+                        <span>Add Item</span>
                     </button>
                 </div>
             </div>
@@ -257,7 +258,7 @@ export default function FoodItemsPage() {
                             {table.getHeaderGroups().map((headerGroup) => (
                                 <tr key={headerGroup.id}>
                                     {headerGroup.headers.map((header) => (
-                                        <th key={header.id} className='px-6 py-4 text-xs font-bold text-grey/40 uppercase tracking-wider'>
+                                        <th key={header.id} className='px-6 py-4 text-xs font-bold text-grey/60 uppercase tracking-wider'>
                                             {flexRender(header.column.columnDef.header, header.getContext())}
                                         </th>
                                     ))}
@@ -267,13 +268,13 @@ export default function FoodItemsPage() {
                         <tbody className='divide-y divide-grey/10'>
                             {isLoading ? (
                                 <tr>
-                                    <td colSpan={columns.length} className='px-6 py-10 text-center'>
+                                    <td colSpan={columns.length} className='px-6 py-12 text-center'>
                                         <Icon icon='line-md:loading-loop' className='text-3xl text-primary mx-auto' />
                                     </td>
                                 </tr>
                             ) : foodItems.length === 0 ? (
                                 <tr>
-                                    <td colSpan={columns.length} className='px-6 py-10 text-center text-grey/40'>
+                                    <td colSpan={columns.length} className='px-6 py-12 text-center text-grey-muted text-sm font-medium'>
                                         No food items found.
                                     </td>
                                 </tr>
@@ -281,7 +282,7 @@ export default function FoodItemsPage() {
                                 table.getRowModel().rows.map((row) => (
                                     <tr key={row.id} className='hover:bg-grey/5 transition-colors'>
                                         {row.getVisibleCells().map((cell) => (
-                                            <td key={cell.id} className='px-6 py-4'>
+                                            <td key={cell.id} className='px-6 py-4 align-middle'>
                                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                             </td>
                                         ))}
@@ -294,9 +295,9 @@ export default function FoodItemsPage() {
             </div>
 
             {/* Pagination Controls */}
-            <div className='flex items-center justify-between mt-6 px-2'>
-                <div className='text-sm text-grey/40'>
-                    Page <span className='font-bold text-grey'>{pageIndex + 1}</span> of <span className='font-bold text-grey'>{totalPages}</span>
+            <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-2'>
+                <div className='text-xs font-semibold text-grey-muted'>
+                    Page <span className='font-bold text-grey-dark'>{pageIndex + 1}</span> of <span className='font-bold text-grey-dark'>{totalPages || 1}</span>
                 </div>
                 <div className='flex items-center gap-2'>
                     <button
@@ -304,17 +305,17 @@ export default function FoodItemsPage() {
                         disabled={!table.getCanPreviousPage()}
                         className='p-2 rounded-xl border border-grey/10 hover:bg-grey/5 disabled:opacity-30 disabled:hover:bg-transparent transition-all'
                     >
-                        <Icon icon='ion:chevron-back-outline' className='text-xl text-grey' />
+                        <Icon icon='solar:alt-arrow-left-bold' className='text-lg text-grey-dark' />
                     </button>
 
                     <div className='flex items-center gap-1'>
-                        {[...Array(totalPages)].map((_, i) => (
+                        {[...Array(totalPages || 1)].map((_, i) => (
                             <button
                                 key={i}
                                 onClick={() => table.setPageIndex(i)}
-                                className={`w-10 h-10 rounded-xl font-bold transition-all ${pageIndex === i
-                                    ? 'bg-primary text-white shadow-lg shadow-primary/20'
-                                    : 'text-grey hover:bg-grey/5 border border-transparent hover:border-grey/10'
+                                className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${pageIndex === i
+                                    ? 'bg-primary text-white shadow-md shadow-primary/20'
+                                    : 'text-grey-dark hover:bg-grey/5 border border-transparent hover:border-grey/10'
                                     }`}
                             >
                                 {i + 1}
@@ -327,20 +328,21 @@ export default function FoodItemsPage() {
                         disabled={!table.getCanNextPage()}
                         className='p-2 rounded-xl border border-grey/10 hover:bg-grey/5 disabled:opacity-30 disabled:hover:bg-transparent transition-all'
                     >
-                        <Icon icon='ion:chevron-forward-outline' className='text-xl text-grey' />
+                        <Icon icon='solar:alt-arrow-right-bold' className='text-lg text-grey-dark' />
                     </button>
                 </div>
             </div>
 
             {isModalOpen && (
                 <div className='fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm overflow-y-auto'>
-                    <div className='bg-white rounded-3xl max-w-2xl w-full p-8 shadow-2xl relative my-8'>
-                        <div className='flex items-center justify-between mb-6'>
-                            <h4 className='text-xl font-bold text-grey'>
-                                {editingItem ? 'Edit Item' : 'New Dish'}
+                    <div className='bg-white rounded-3xl max-w-2xl w-full p-8 shadow-2xl relative my-8 border border-grey/10 space-y-6'>
+                        <div className='flex items-center justify-between border-b border-grey/10 pb-4'>
+                            <h4 className='text-xl font-bold text-grey-dark flex items-center gap-2.5'>
+                                <Icon icon='solar:hamburger-menu-bold-duotone' className='text-primary text-2xl' />
+                                {editingItem ? 'Edit Food Item' : 'New Dish'}
                             </h4>
-                            <button onClick={closeModal} className='text-grey/40 hover:text-grey p-1'>
-                                <Icon icon='ion:close-outline' className='text-2xl' />
+                            <button onClick={closeModal} className='text-grey-muted hover:text-grey p-1.5 rounded-xl hover:bg-grey/5 transition-colors'>
+                                <Icon icon='solar:close-circle-bold' className='text-2xl' />
                             </button>
                         </div>
 
@@ -354,22 +356,22 @@ export default function FoodItemsPage() {
                             <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                                 <div className='space-y-4'>
                                     <div>
-                                        <label className='block text-sm font-medium text-grey mb-2'>Item Name</label>
+                                        <label className='admin-label'>Dish Name *</label>
                                         <input
                                             type='text' required value={formData.name}
                                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                            className='block w-full px-4 py-3 border border-grey/10 rounded-xl bg-grey/5 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all'
-                                            placeholder='e.g. Classic Burger'
+                                            className='admin-input'
+                                            placeholder='e.g. Chicken Biryani'
                                         />
                                     </div>
                                     <div>
-                                        <label className='block text-sm font-medium text-grey mb-2'>Category</label>
+                                        <label className='admin-label'>Food Category *</label>
                                         <select
                                             required value={formData.categoryId}
                                             onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
-                                            className='block w-full px-4 py-3 border border-grey/10 rounded-xl bg-grey/5 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all'
+                                            className='admin-input'
                                         >
-                                            <option value=''>Select Category</option>
+                                            <option value=''>Select Food Category</option>
                                             {categories.map((c: any) => (
                                                 <option key={c.id} value={c.id}>{c.name}</option>
                                             ))}
@@ -377,20 +379,20 @@ export default function FoodItemsPage() {
                                     </div>
                                     <div className='grid grid-cols-2 gap-4'>
                                         <div>
-                                            <label className='block text-sm font-medium text-grey mb-2'>Daily Price (AED)</label>
+                                            <label className='admin-label'>Daily Price (AED) *</label>
                                             <input
                                                 type='number' step='0.01' required value={formData.price}
                                                 onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                                                className='block w-full px-4 py-3 border border-grey/10 rounded-xl bg-grey/5 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all'
-                                                placeholder='15.99'
+                                                className='admin-input'
+                                                placeholder='15.00'
                                             />
                                         </div>
                                         <div>
-                                            <label className='block text-sm font-medium text-grey mb-2'>Monthly Price (AED)</label>
+                                            <label className='admin-label'>Monthly Price (AED)</label>
                                             <input
                                                 type='number' step='0.01' value={formData.monthlyPrice}
                                                 onChange={(e) => setFormData({ ...formData, monthlyPrice: e.target.value })}
-                                                className='block w-full px-4 py-3 border border-grey/10 rounded-xl bg-grey/5 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all'
+                                                className='admin-input'
                                                 placeholder='350.00'
                                             />
                                         </div>
@@ -399,32 +401,45 @@ export default function FoodItemsPage() {
 
                                 <div className='space-y-4'>
                                     <div>
-                                        <label className='block text-sm font-medium text-grey mb-2'>Dish Image</label>
+                                        <label className='admin-label'>Dish Image</label>
                                         <ImageUpload
                                             value={formData.image}
                                             onChange={(path) => setFormData({ ...formData, image: path })}
                                         />
                                     </div>
                                     <div>
-                                        <label className='block text-sm font-medium text-grey mb-2'>Description</label>
+                                        <label className='admin-label'>Description</label>
                                         <textarea
-                                            rows={5} value={formData.description}
+                                            rows={4} value={formData.description}
                                             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                            className='block w-full px-4 py-3 border border-grey/10 rounded-xl bg-grey/5 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none'
-                                            placeholder='Tell something about this dish...'
+                                            className='admin-input resize-none'
+                                            placeholder='Describe ingredients and special taste...'
                                         />
                                     </div>
                                 </div>
                             </div>
 
-
-                            <div className='flex flex-col gap-3 pt-4'>
+                            <div className='flex flex-col gap-3 pt-2'>
                                 <button
                                     type='submit'
                                     disabled={mutation.isPending}
-                                    className='w-full py-4 bg-primary text-white rounded-xl font-semibold shadow-lg shadow-primary/20 hover:bg-primary/90 disabled:opacity-50 transition-all'
+                                    className='admin-btn-primary w-full py-3.5'
                                 >
-                                    {mutation.isPending ? 'Saving Dish...' : 'Save Food Item'}
+                                    {mutation.isPending ? (
+                                        <>
+                                            <Icon icon='line-md:loading-loop' className='text-xl' />
+                                            <span>Saving Dish...</span>
+                                        </>
+                                    ) : (
+                                        <span>Save Food Item</span>
+                                    )}
+                                </button>
+                                <button
+                                    type='button'
+                                    onClick={closeModal}
+                                    className='w-full py-3 bg-grey/5 text-grey-dark rounded-xl text-sm font-bold hover:bg-grey/10 transition-all'
+                                >
+                                    Cancel
                                 </button>
                             </div>
                         </form>

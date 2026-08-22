@@ -23,7 +23,10 @@ export async function GET(req: Request) {
                 where,
                 skip,
                 take: limit,
-                include: { category: true },
+                include: {
+                    category: true,
+                    options: true,
+                },
                 orderBy: { createdAt: 'desc' },
             }),
             prisma.foodItem.count({ where })

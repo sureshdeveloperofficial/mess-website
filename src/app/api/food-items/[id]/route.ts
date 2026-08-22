@@ -9,7 +9,10 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         const { id } = await params
         const foodItem = await prisma.foodItem.findUnique({
             where: { id },
-            include: { category: true }
+            include: {
+                category: true,
+                options: true,
+            }
         })
 
         if (!foodItem) {

@@ -7,20 +7,37 @@ import { Icon } from '@iconify/react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 
+import { useQuery } from '@tanstack/react-query'
+import axios from 'axios'
+
 const navItems = [
-    { label: 'Dashboard', icon: 'ion:grid-outline', href: '/admin' },
-    { label: 'Categories', icon: 'ion:list-outline', href: '/admin/categories' },
-    { label: 'Food Items', icon: 'ion:fast-food-outline', href: '/admin/food-items' },
-    { label: 'Food Menu', icon: 'ion:calendar-outline', href: '/admin/food-menu' },
-    { label: 'Orders', icon: 'ion:cart-outline', href: '/admin/orders' },
-    { label: 'Customers', icon: 'ion:people-outline', href: '/admin/customers' },
-    { label: 'Settings', icon: 'ion:settings-outline', href: '/admin/settings' },
+    { label: 'Dashboard', icon: 'solar:widget-bold-duotone', href: '/admin' },
+    { label: 'Food Categories', icon: 'solar:list-bold-duotone', href: '/admin/categories' },
+    { label: 'Food Items', icon: 'solar:hamburger-menu-bold-duotone', href: '/admin/food-items' },
+    { label: 'Food Menu', icon: 'solar:calendar-bold-duotone', href: '/admin/food-menu' },
+    { label: 'Orders', icon: 'solar:cart-large-bold', href: '/admin/orders' },
+    { label: 'Customers', icon: 'solar:users-group-two-rounded-bold-duotone', href: '/admin/customers' },
+    { label: 'Website Settings', icon: 'solar:settings-bold-duotone', href: '/admin/website-settings' },
+    { label: 'Email Settings', icon: 'solar:letter-bold-duotone', href: '/admin/email-settings' },
+    { label: 'Bank Settings', icon: 'solar:card-2-bold-duotone', href: '/admin/settings' },
 ]
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const { data: session, status } = useSession()
     const router = useRouter()
     const pathname = usePathname()
+
+    const { data: settings } = useQuery({
+        queryKey: ['settings'],
+        queryFn: async () => {
+            const res = await axios.get('/api/settings')
+            return res.data
+        },
+        staleTime: 60000,
+    })
+
+    const restaurantName = settings?.restaurant_name || settings?.site_name || 'AL SHAMIL MESS'
+    const logoUrl = settings?.site_logo || ''
 
     useEffect(() => {
         if (status === 'unauthenticated') {
@@ -30,13 +47,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
     if (status === 'loading') {
         return (
-            <div className='min-h-screen flex items-center justify-center bg-[#fdf2f0]'>
+            <div className='min-h-screen flex items-center justify-center bg-[#f8f9fb]'>
                 <motion.div
-                    animate={{ scale: [1, 1.1, 1], rotate: [0, 10, -10, 0] }}
-                    transition={{ duration: 1, repeat: Infinity }}
-                    className='w-16 h-16 bg-primary rounded-2xl flex items-center justify-center text-white text-3xl'
+                    animate={{ scale: [1, 1.08, 1] }}
+                    transition={{ duration: 1.2, repeat: Infinity }}
+                    className='w-16 h-16 bg-primary rounded-2xl flex items-center justify-center text-white text-3xl shadow-lg shadow-primary/30'
                 >
-                    <Icon icon='ion:cafe' />
+                    <Icon icon='solar:chef-hat-bold-duotone' />
                 </motion.div>
             </div>
         )
@@ -48,25 +65,33 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className='flex min-h-screen bg-[#f8f9fb]'>
             {/* Sidebar */}
             <aside className='w-64 bg-white border-r border-grey/10 p-6 flex flex-col'>
-                <div className='mb-10 flex items-center gap-3'>
-                    <div className='w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white'>
-                        <Icon icon='ion:cafe' className='text-xl' />
-                    </div>
-                    <span className='font-bold text-xl text-grey tracking-tight'>AL SHAMIL MESS</span>
+                <div className='mb-8 flex items-center gap-3'>
+                    {logoUrl ? (
+                        <div className='w-10 h-10 rounded-xl overflow-hidden bg-grey/5 border border-grey/10 flex items-center justify-center shrink-0'>
+                            <img src={logoUrl} alt='Logo' className='w-full h-full object-contain p-1' />
+                        </div>
+                    ) : (
+                        <div className='w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white shrink-0 shadow-md shadow-primary/20'>
+                            <Icon icon='solar:chef-hat-bold-duotone' className='text-2xl' />
+                        </div>
+                    )}
+                    <span className='font-extrabold text-base text-grey-dark tracking-tight line-clamp-1' title={restaurantName}>
+                        {restaurantName}
+                    </span>
                 </div>
 
-                <nav className='flex-1 space-y-2'>
+                <nav className='flex-1 space-y-1.5'>
                     {navItems.map((item) => (
                         <Link
                             key={item.href}
                             href={item.href}
                             className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${pathname === item.href
-                                ? 'bg-primary text-white shadow-lg shadow-primary/20'
-                                : 'text-grey/60 hover:bg-grey/5 hover:text-grey'
+                                ? 'bg-primary text-white font-bold shadow-md shadow-primary/25'
+                                : 'text-grey-muted hover:bg-grey/5 hover:text-grey-dark font-semibold'
                                 }`}
                         >
                             <Icon icon={item.icon} className='text-xl' />
-                            <span className='font-medium'>{item.label}</span>
+                            <span className='text-sm'>{item.label}</span>
                         </Link>
                     ))}
                 </nav>
@@ -74,27 +99,24 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <div className='mt-auto pt-6 border-t border-grey/10'>
                     <button
                         onClick={() => router.push('/api/auth/signout')}
-                        className='flex items-center gap-3 px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 transition-all w-full'
+                        className='flex items-center gap-3 px-4 py-3 rounded-xl text-red-600 hover:bg-red-50 font-bold transition-all w-full text-sm cursor-pointer'
                     >
-                        <Icon icon='ion:log-out-outline' className='text-xl' />
-                        <span className='font-medium'>Logout</span>
+                        <Icon icon='solar:logout-2-bold-duotone' className='text-xl' />
+                        <span>Logout</span>
                     </button>
                 </div>
             </aside>
 
             {/* Main Content */}
             <main className='flex-1 overflow-y-auto'>
-                <header className='h-16 bg-white border-b border-grey/10 px-8 flex items-center justify-between sticky top-0 z-10'>
-                    <h2 className='text-xl font-semibold text-grey capitalize'>
-                        {navItems.find((i) => i.href === pathname)?.label || 'Admin Panel'}
-                    </h2>
-                    <div className='flex items-center gap-4'>
+                <header className='h-16 bg-white border-b border-grey/10 px-8 flex items-center justify-end sticky top-0 z-10'>
+                    <div className='flex items-center gap-3.5'>
                         <div className='text-right hidden sm:block'>
-                            <div className='text-sm font-semibold text-grey'>{session.user?.email}</div>
-                            <div className='text-xs text-grey/40'>Super Admin</div>
+                            <div className='text-xs font-bold text-grey-dark'>{session.user?.email}</div>
+                            <div className='text-[10px] font-bold text-grey-muted uppercase tracking-wider'>Super Admin</div>
                         </div>
-                        <div className='w-10 h-10 bg-grey/5 rounded-full border border-grey/10 flex items-center justify-center'>
-                            <Icon icon='ion:person-outline' className='text-xl text-grey/40' />
+                        <div className='w-10 h-10 bg-primary/10 rounded-xl border border-primary/20 flex items-center justify-center text-primary'>
+                            <Icon icon='solar:user-bold-duotone' className='text-xl' />
                         </div>
                     </div>
                 </header>

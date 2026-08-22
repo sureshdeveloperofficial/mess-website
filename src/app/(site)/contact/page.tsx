@@ -12,12 +12,30 @@ export default function ContactPage() {
         e.preventDefault()
         setIsSubmitting(true)
         
-        // Simulate a network request
-        await new Promise(resolve => setTimeout(resolve, 1500))
-        
-        toast.success("Message sent successfully! We'll get back to you soon.")
-        setIsSubmitting(false)
-        e.currentTarget.reset()
+        const form = e.currentTarget
+        const formData = new FormData(form)
+        const name = (formData.get('name') as string) || ''
+        const email = (formData.get('email') as string) || ''
+        const subject = (formData.get('subject') as string) || ''
+        const message = (formData.get('message') as string) || ''
+
+        try {
+            const res = await fetch('/api/contact', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, subject, message }),
+            })
+
+            const data = await res.json()
+            if (!res.ok) throw new Error(data.error || 'Failed to send message')
+
+            toast.success("Message sent successfully! We'll get back to you soon.")
+            form.reset()
+        } catch (err: any) {
+            toast.error(err.message || 'Failed to send message. Please try again.')
+        } finally {
+            setIsSubmitting(false)
+        }
     }
 
     return (
@@ -55,8 +73,8 @@ export default function ContactPage() {
                                 <Icon icon="solar:phone-calling-bold-duotone" className="text-3xl" />
                             </div>
                             <h3 className="text-xl font-black text-grey uppercase italic tracking-tight mb-2">Call Us</h3>
-                            <p className="text-sm font-bold text-grey/50 mb-4">Monday to Friday, 9AM to 6PM</p>
-                            <a href="tel:+19092359814" className="text-2xl font-black text-primary hover:text-grey transition-colors inline-block">+1 (909) 235-9814</a>
+                            <p className="text-sm font-bold text-grey/50 mb-4">Daily Support, 9AM to 10PM</p>
+                            <a href="tel:+97142642613" className="text-2xl font-black text-primary hover:text-grey transition-colors inline-block">+971 4 264 2613</a>
                         </motion.div>
 
                         <motion.div 
@@ -69,8 +87,8 @@ export default function ContactPage() {
                                 <Icon icon="solar:letter-bold-duotone" className="text-3xl" />
                             </div>
                             <h3 className="text-xl font-black text-grey uppercase italic tracking-tight mb-2">Email Us</h3>
-                            <p className="text-sm font-bold text-grey/50 mb-4">We usually reply within 24 hours</p>
-                            <a href="mailto:support@alshamilmess.com" className="text-lg font-black text-primary hover:text-grey transition-colors break-all">support@alshamilmess.com</a>
+                            <p className="text-sm font-bold text-grey/50 mb-4">We usually reply within a few hours</p>
+                            <a href="mailto:contact@chefs-kitchen.com" className="text-lg font-black text-primary hover:text-grey transition-colors break-all">contact@chefs-kitchen.com</a>
                         </motion.div>
 
                         <motion.div 
@@ -113,6 +131,7 @@ export default function ContactPage() {
                                             <input
                                                 type="text"
                                                 id="name"
+                                                name="name"
                                                 required
                                                 className="w-full bg-grey/5 border border-transparent focus:bg-white focus:border-primary/20 px-6 py-4 pl-14 rounded-2xl text-grey font-bold focus:outline-none focus:ring-4 focus:ring-primary/10 transition-all placeholder:text-grey/30"
                                                 placeholder="John Doe"
@@ -128,6 +147,7 @@ export default function ContactPage() {
                                             <input
                                                 type="email"
                                                 id="email"
+                                                name="email"
                                                 required
                                                 className="w-full bg-grey/5 border border-transparent focus:bg-white focus:border-primary/20 px-6 py-4 pl-14 rounded-2xl text-grey font-bold focus:outline-none focus:ring-4 focus:ring-primary/10 transition-all placeholder:text-grey/30"
                                                 placeholder="john@example.com"
@@ -145,6 +165,7 @@ export default function ContactPage() {
                                         <input
                                             type="text"
                                             id="subject"
+                                            name="subject"
                                             required
                                             className="w-full bg-grey/5 border border-transparent focus:bg-white focus:border-primary/20 px-6 py-4 pl-14 rounded-2xl text-grey font-bold focus:outline-none focus:ring-4 focus:ring-primary/10 transition-all placeholder:text-grey/30"
                                             placeholder="How can we help?"
@@ -160,6 +181,7 @@ export default function ContactPage() {
                                         </div>
                                         <textarea
                                             id="message"
+                                            name="message"
                                             rows={5}
                                             required
                                             style={{ resize: 'none' }}
@@ -195,3 +217,4 @@ export default function ContactPage() {
         </main>
     )
 }
+

@@ -5,7 +5,7 @@ import SmoothScrollProvider from '@/app/components/Common/SmoothScrollProvider'
 
 const font = Poppins({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
+  weight: ['300', '400', '500', '600', '700', '800', '900'],
 })
 
 export default function RootLayout({
