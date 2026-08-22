@@ -169,8 +169,8 @@ export async function sendNewsletterWelcomeEmail(subscriberEmail: string) {
                 </div>
 
                 <div style="text-align: center; margin-bottom: 30px;">
-                    <a href="${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/menu" style="display: inline-block; background: #df6853; color: #ffffff; text-decoration: none; font-weight: bold; font-size: 14px; padding: 14px 32px; border-radius: 50px; box-shadow: 0 4px 15px rgba(223, 104, 83, 0.3);">
-                        Explore Today's Menu
+                    <a href="${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/plans" style="display: inline-block; background: #df6853; color: #ffffff; text-decoration: none; font-weight: bold; font-size: 14px; padding: 14px 32px; border-radius: 50px; box-shadow: 0 4px 15px rgba(223, 104, 83, 0.3);">
+                        Explore Meal Plans
                     </a>
                 </div>
 

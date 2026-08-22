@@ -80,13 +80,13 @@ const MenuPreview = () => {
                         </motion.h2>
                     </div>
 
-                    <Link href='/menu'>
+                    <Link href='/plans'>
                         <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             className='flex items-center gap-2 text-primary font-black uppercase tracking-widest text-sm bg-white px-8 py-4 rounded-full border border-primary/10 hover:bg-primary hover:text-white transition-all duration-300'
                         >
-                            Full Menu <Icon icon='ion:arrow-forward' />
+                            All Meal Plans <Icon icon='ion:arrow-forward' />
                         </motion.button>
                     </Link>
                 </div>

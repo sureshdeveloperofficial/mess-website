@@ -55,11 +55,11 @@ export default function OrderSuccessPage() {
                             Return Home
                         </Link>
                         <Link
-                            href="/menu"
+                            href="/plans"
                             className='px-10 py-5 bg-primary text-grey rounded-2xl font-black text-lg shadow-xl hover:scale-105 transition-all flex items-center justify-center gap-3'
                         >
                             <Icon icon="ion:restaurant-outline" className="text-xl" />
-                            Explore Menu
+                            Explore Meal Plans
                         </Link>
                     </div>
                 </motion.div>
