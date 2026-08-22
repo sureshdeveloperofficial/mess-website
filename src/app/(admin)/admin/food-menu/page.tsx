@@ -41,6 +41,7 @@ type FoodMenu = {
     name: string
     description?: string
     price: number
+    days?: number
     foodItems: FoodItem[]
     availableDays: string[]
     scheduleJson?: any | null
@@ -58,7 +59,7 @@ export default function FoodPlansPage() {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [isViewOnly, setIsViewOnly] = useState(false)
     const [editingPlan, setEditingPlan] = useState<FoodMenu | null>(null)
-    const [activeMealTypeFilter, setActiveMealTypeFilter] = useState<string>('all')
+    const [activeStatusFilter, setActiveStatusFilter] = useState<string>('all')
     
     // Modal internal schedule navigation states
     const [currentDayTab, setCurrentDayTab] = useState<string>('Monday')
@@ -71,8 +72,9 @@ export default function FoodPlansPage() {
         name: '',
         description: '',
         price: '',
+        days: '30',
         selectedMealTypeIds: [] as string[],
-        availableDays: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] as string[],
+        availableDays: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] as string[],
         // Structure: Record<DayName, Record<MealTypeId, string[]>>
         schedule: {} as Record<string, Record<string, string[]>>,
         isActive: true,
@@ -87,6 +89,8 @@ export default function FoodPlansPage() {
             const response = await axios.get('/api/meal-types')
             return response.data
         },
+        staleTime: 1000 * 60 * 5,
+        refetchOnWindowFocus: false,
     })
     const mealTypes = useMemo(() => Array.isArray(rawMealTypes) ? rawMealTypes : [], [rawMealTypes])
     const activeMealTypes = useMemo(() => mealTypes.filter((m) => m.isActive !== false), [mealTypes])
@@ -99,6 +103,8 @@ export default function FoodPlansPage() {
             const response = await axios.get('/api/categories')
             return response.data
         },
+        staleTime: 1000 * 60 * 5,
+        refetchOnWindowFocus: false,
     })
     const categories = useMemo(() => Array.isArray(rawCategories) ? rawCategories : [], [rawCategories])
     const activeCategories = useMemo(() => categories.filter((c) => c.isActive !== false), [categories])
@@ -110,6 +116,8 @@ export default function FoodPlansPage() {
             const response = await axios.get('/api/food-items?limit=1000')
             return response.data
         },
+        staleTime: 1000 * 60 * 5,
+        refetchOnWindowFocus: false,
     })
     const rawFoodItems = foodItemsQuery.data?.data || []
     const allFoodItems: FoodItem[] = useMemo(() => Array.isArray(rawFoodItems) ? rawFoodItems : [], [rawFoodItems])
@@ -127,6 +135,8 @@ export default function FoodPlansPage() {
             const response = await axios.get('/api/food-menu')
             return response.data
         },
+        staleTime: 1000 * 60 * 3,
+        refetchOnWindowFocus: false,
     })
 
     const foodPlans: FoodMenu[] = useMemo(() => {
@@ -146,10 +156,12 @@ export default function FoodPlansPage() {
 
     const mutation = useMutation({
         mutationFn: async (data: any) => {
+            const parsedDays = parseInt(data.days?.toString() || '30', 10) || 30
             const payload = {
                 name: data.name,
                 description: data.description,
-                price: data.price,
+                price: parseFloat(data.price),
+                days: parsedDays,
                 mealTypeId: data.selectedMealTypeIds[0] || null,
                 availableDays: data.availableDays,
                 scheduleJson: data.schedule,
@@ -160,14 +172,62 @@ export default function FoodPlansPage() {
             }
             return axios.post('/api/food-menu', payload)
         },
+        onMutate: async (data: any) => {
+            await queryClient.cancelQueries({ queryKey: ['food-menu'] })
+            const previousMenus = queryClient.getQueryData<FoodMenu[]>(['food-menu'])
+
+            // Extract all food items from schedule
+            const selectedDishIds = new Set<string>()
+            if (data.schedule && typeof data.schedule === 'object') {
+                Object.values(data.schedule).forEach((dayObj: any) => {
+                    if (dayObj && typeof dayObj === 'object') {
+                        Object.values(dayObj).forEach((dishArr: any) => {
+                            if (Array.isArray(dishArr)) {
+                                dishArr.forEach((id: string) => selectedDishIds.add(id))
+                            }
+                        })
+                    }
+                })
+            }
+            const attachedFoodItems = Array.from(selectedDishIds)
+                .map((id) => foodItemsMap.get(id))
+                .filter(Boolean) as FoodItem[]
+
+            const optimisticPlan: FoodMenu = {
+                id: editingPlan ? editingPlan.id : `temp-${Date.now()}`,
+                name: data.name,
+                description: data.description,
+                price: parseFloat(data.price) || 0,
+                days: parseInt(data.days?.toString() || '30', 10) || 30,
+                mealTypeId: data.selectedMealTypeIds[0] || null,
+                mealType: activeMealTypes.find((m) => m.id === data.selectedMealTypeIds[0]) || null,
+                availableDays: data.availableDays,
+                scheduleJson: data.schedule,
+                isActive: data.isActive,
+                foodItems: attachedFoodItems,
+            }
+
+            queryClient.setQueryData<FoodMenu[]>(['food-menu'], (old = []) => {
+                if (!Array.isArray(old)) return [optimisticPlan]
+                if (editingPlan) {
+                    return old.map((p) => (p.id === editingPlan.id ? { ...p, ...optimisticPlan } : p))
+                }
+                return [optimisticPlan, ...old]
+            })
+
+            closeModal()
+            return { previousMenus }
+        },
+        onError: (err, _, context) => {
+            if (context?.previousMenus) {
+                queryClient.setQueryData(['food-menu'], context.previousMenus)
+            }
+            console.error(err)
+            toast.error('Failed to save food plan')
+        },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['food-menu'] })
             toast.success(editingPlan ? 'Food plan updated successfully' : 'Food plan created successfully')
-            closeModal()
-        },
-        onError: (err) => {
-            console.error(err)
-            toast.error('Something went wrong')
         },
     })
 
@@ -201,12 +261,24 @@ export default function FoodPlansPage() {
         mutationFn: async (id: string) => {
             return axios.delete(`/api/food-menu/${id}`)
         },
+        onMutate: async (id: string) => {
+            await queryClient.cancelQueries({ queryKey: ['food-menu'] })
+            const previousMenus = queryClient.getQueryData<FoodMenu[]>(['food-menu'])
+            queryClient.setQueryData<FoodMenu[]>(['food-menu'], (old = []) => {
+                if (!Array.isArray(old)) return []
+                return old.filter((menu) => menu.id !== id)
+            })
+            return { previousMenus }
+        },
+        onError: (err: any, _, context) => {
+            if (context?.previousMenus) {
+                queryClient.setQueryData(['food-menu'], context.previousMenus)
+            }
+            toast.error(err.response?.data?.error || 'Failed to delete food plan')
+        },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['food-menu'] })
             toast.success('Food plan deleted successfully')
-        },
-        onError: (err: any) => {
-            toast.error(err.response?.data?.error || 'Failed to delete food plan')
         },
     })
 
@@ -222,8 +294,9 @@ export default function FoodPlansPage() {
             name: '',
             description: '',
             price: '',
-            selectedMealTypeIds: activeMealTypes.length > 0 ? [activeMealTypes[0].id] : [],
-            availableDays: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+            days: '30',
+            selectedMealTypeIds: activeMealTypes.map((m) => m.id),
+            availableDays: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
             schedule: {},
             isActive: true,
         })
@@ -251,7 +324,7 @@ export default function FoodPlansPage() {
                 parsedSchedule[d] = {}
             })
 
-            const primaryMealId = plan.mealTypeId || activeMealTypes[0]?.id || 'meal_001'
+            const primaryMealId = plan.mealTypeId || (activeMealTypes.length > 0 ? activeMealTypes[0].id : '')
             const detectedMealTypeIds = new Set<string>()
             if (plan.mealTypeId) detectedMealTypeIds.add(plan.mealTypeId)
 
@@ -294,6 +367,7 @@ export default function FoodPlansPage() {
                 name: plan.name,
                 description: plan.description || '',
                 price: plan.price.toString(),
+                days: (plan.days || 30).toString(),
                 selectedMealTypeIds: initialMealTypeIds,
                 availableDays: days,
                 schedule: parsedSchedule,
@@ -301,7 +375,7 @@ export default function FoodPlansPage() {
             })
         } else {
             setEditingPlan(null)
-            const initialMealTypeIds = activeMealTypes.length > 0 ? [activeMealTypes[0].id] : []
+            const initialMealTypeIds = activeMealTypes.map((m) => m.id)
             setCurrentDayTab('Monday')
             setCurrentMealTab(initialMealTypeIds[0] || '')
 
@@ -314,8 +388,9 @@ export default function FoodPlansPage() {
                 name: '',
                 description: '',
                 price: '',
+                days: '30',
                 selectedMealTypeIds: initialMealTypeIds,
-                availableDays: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+                availableDays: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
                 schedule: blankSchedule,
                 isActive: true,
             })
@@ -369,8 +444,20 @@ export default function FoodPlansPage() {
 
             daySchedule[currentMealTab] = nextSlotDishes
 
+            // Auto-include currentDayTab in availableDays if not already present
+            const nextAvailableDays = prev.availableDays.includes(currentDayTab)
+                ? prev.availableDays
+                : [...prev.availableDays, currentDayTab]
+
+            // Auto-include currentMealTab in selectedMealTypeIds if not already present
+            const nextMealTypeIds = prev.selectedMealTypeIds.includes(currentMealTab)
+                ? prev.selectedMealTypeIds
+                : [...prev.selectedMealTypeIds, currentMealTab]
+
             return {
                 ...prev,
+                availableDays: nextAvailableDays,
+                selectedMealTypeIds: nextMealTypeIds,
                 schedule: {
                     ...prev.schedule,
                     [currentDayTab]: daySchedule,
@@ -492,39 +579,28 @@ export default function FoodPlansPage() {
         })
     }, [activeFoodItems, searchTerm, modalCategoryFilter])
 
-    // Filter computation for table based on Meal Type
+    // Filter computation for table based on Status (All, Active, Inactive)
     const filteredPlans = useMemo(() => {
-        if (activeMealTypeFilter === 'all') return foodPlans
-        return foodPlans.filter((m) => {
-            if (m.mealTypeId === activeMealTypeFilter) return true
-            const matchedType = activeMealTypes.find((mt) => mt.id === activeMealTypeFilter)
-            if (matchedType && m.name.toLowerCase().includes(matchedType.name.toLowerCase())) return true
-            return false
-        })
-    }, [foodPlans, activeMealTypeFilter, activeMealTypes])
+        if (activeStatusFilter === 'active') {
+            return foodPlans.filter((p) => p.isActive !== false)
+        }
+        if (activeStatusFilter === 'inactive') {
+            return foodPlans.filter((p) => p.isActive === false)
+        }
+        return foodPlans
+    }, [foodPlans, activeStatusFilter])
 
-    // Filter options with live counts for Meal Types
+    // Filter options with live counts for Status (All Plans, Active, Inactive)
     const filterOptions: FilterOption[] = useMemo(() => {
-        const list: FilterOption[] = [
+        const activeCount = foodPlans.filter((p) => p.isActive !== false).length
+        const inactiveCount = foodPlans.filter((p) => p.isActive === false).length
+
+        return [
             { id: 'all', label: 'All Plans', count: foodPlans.length },
+            { id: 'active', label: 'Active', count: activeCount },
+            { id: 'inactive', label: 'Inactive', count: inactiveCount },
         ]
-
-        activeMealTypes.forEach((mt) => {
-            const count = foodPlans.filter((p) => {
-                if (p.mealTypeId === mt.id) return true
-                if (p.name.toLowerCase().includes(mt.name.toLowerCase())) return true
-                return false
-            }).length
-
-            list.push({
-                id: mt.id,
-                label: mt.name,
-                count,
-            })
-        })
-
-        return list
-    }, [foodPlans, activeMealTypes])
+    }, [foodPlans])
 
     const columns = useMemo(
         () => [
@@ -533,14 +609,8 @@ export default function FoodPlansPage() {
                 cell: (info) => {
                     const row = info.row.original
                     const isActive = row.isActive !== false
-                    const days = row.availableDays || []
                     const items = row.foodItems || []
                     const mealType = row.mealType || activeMealTypes.find(mt => row.name.toLowerCase().includes(mt.name.toLowerCase()))
-
-                    let scheduleText = `${days.length} Days/Wk`
-                    if (days.length === 6 && !days.includes('Sunday')) scheduleText = '6 Days (Mon–Sat)'
-                    else if (days.length === 7) scheduleText = '7 Days (All Week)'
-                    else if (days.length === 5 && !days.includes('Saturday') && !days.includes('Sunday')) scheduleText = '5 Days (Mon–Fri)'
 
                     return (
                         <div className='space-y-1'>
@@ -558,8 +628,8 @@ export default function FoodPlansPage() {
                                         <span>{mealType.name}</span>
                                     </span>
                                 )}
-                                <span className='px-2 py-0.5 rounded-md bg-primary/10 text-primary text-[10px] font-extrabold'>
-                                    {scheduleText}
+                                <span className='px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-700 text-[10px] font-extrabold border border-blue-500/20'>
+                                    {row.days || 30} Days
                                 </span>
                             </div>
                             <div className='text-xs font-medium text-grey-muted truncate max-w-[280px]'>
@@ -584,13 +654,19 @@ export default function FoodPlansPage() {
                 },
             }),
             columnHelper.accessor('price', {
-                header: 'Monthly Price',
+                header: 'Plan Price',
                 cell: (info) => {
                     const price = info.getValue() || 0
+                    const row = info.row.original
                     return (
-                        <span className='font-extrabold text-grey-dark text-sm block'>
-                            AED {price.toFixed(2)}
-                        </span>
+                        <div>
+                            <span className='font-extrabold text-grey-dark text-sm block'>
+                                AED {price.toFixed(2)}
+                            </span>
+                            <span className='text-[10px] text-grey-muted font-bold block'>
+                                per {row.days || 30} days
+                            </span>
+                        </div>
                     )
                 },
             }),
@@ -681,14 +757,14 @@ export default function FoodPlansPage() {
                 </button>
             </div>
 
-            {/* Centralized DataTable Component with Meal Type Tabs, Search, and Pagination */}
+            {/* Centralized DataTable Component with Status Tabs (All, Active, Inactive), Search, and Pagination */}
             <DataTable
                 data={filteredPlans}
                 columns={columns}
                 searchPlaceholder='Search food plans by name or included dishes...'
                 filterOptions={filterOptions}
-                activeFilter={activeMealTypeFilter}
-                onFilterChange={setActiveMealTypeFilter}
+                activeFilter={activeStatusFilter}
+                onFilterChange={setActiveStatusFilter}
                 filterVariant='tabs'
                 emptyMessage='No food plans found'
                 emptySubtext='Click "New Food Plan" above to create your first subscription plan.'
@@ -759,9 +835,10 @@ export default function FoodPlansPage() {
                                             />
                                         </div>
 
-                                        <div>
-                                            <label className='admin-label'>Monthly Price (AED) *</label>
-                                            <div className='relative'>
+                                        {/* Pricing & Plan Days (No. of Days) */}
+                                        <div className='grid grid-cols-1 sm:grid-cols-2 gap-3'>
+                                            <div>
+                                                <label className='admin-label'>Plan Price (AED) *</label>
                                                 <input
                                                     type='number'
                                                     step='0.01'
@@ -771,6 +848,21 @@ export default function FoodPlansPage() {
                                                     onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                                                     className={`admin-input ${isViewOnly ? 'cursor-default' : ''}`}
                                                     placeholder='250.00'
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label className='admin-label'>No. of Days (Validity) *</label>
+                                                <input
+                                                    type='number'
+                                                    min='1'
+                                                    max='365'
+                                                    required
+                                                    value={formData.days}
+                                                    readOnly={isViewOnly}
+                                                    onChange={(e) => setFormData({ ...formData, days: e.target.value })}
+                                                    className={`admin-input ${isViewOnly ? 'cursor-default' : ''}`}
+                                                    placeholder='30'
                                                 />
                                             </div>
                                         </div>
@@ -796,53 +888,13 @@ export default function FoodPlansPage() {
                                         <div>
                                             <label className='admin-label'>Plan Description</label>
                                             <textarea
-                                                rows={3}
+                                                rows={4}
                                                 value={formData.description}
                                                 readOnly={isViewOnly}
                                                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                                 className={`admin-input resize-none ${isViewOnly ? 'cursor-default' : ''}`}
                                                 placeholder='Describe the package, meal timings, or special diet highlights...'
                                             />
-                                        </div>
-
-                                        {/* Weekly Schedule Summary Card */}
-                                        <div className='p-4 bg-primary/5 rounded-2xl border border-primary/20 space-y-2'>
-                                            <div className='flex items-center justify-between text-xs font-bold text-grey-dark'>
-                                                <span className='flex items-center gap-1.5'>
-                                                    <Icon icon='solar:clipboard-list-bold-duotone' className='text-primary text-base' />
-                                                    Weekly Schedule Matrix
-                                                </span>
-                                                <span className='text-primary font-extrabold'>
-                                                    {totalUniqueDishes} Unique Dishes
-                                                </span>
-                                            </div>
-                                            <div className='space-y-1.5 text-[11px] pt-1 border-t border-primary/10 text-grey-muted font-medium max-h-40 overflow-y-auto'>
-                                                {formData.availableDays.length === 0 ? (
-                                                    <p className='text-[11px] text-grey-muted italic py-1'>No active serving days selected.</p>
-                                                ) : (
-                                                    formData.availableDays.map((day) => {
-                                                        const dayObj = formData.schedule[day] || {}
-                                                        const mealSummaries = formData.selectedMealTypeIds.map((mtId) => {
-                                                            const mtName = mealTypeMap.get(mtId)?.name || 'Meal'
-                                                            const count = (dayObj[mtId] || []).length
-                                                            return `${count} ${mtName}`
-                                                        })
-
-                                                        return (
-                                                            <div
-                                                                key={day}
-                                                                onClick={() => setCurrentDayTab(day)}
-                                                                className={`flex items-center justify-between p-1.5 rounded-lg cursor-pointer transition-colors ${
-                                                                    currentDayTab === day ? 'bg-primary/15 font-bold text-primary' : 'hover:bg-primary/10'
-                                                                }`}
-                                                            >
-                                                                <span className='font-bold'>{day.slice(0, 3)}:</span>
-                                                                <span className='truncate text-[10px]'>{mealSummaries.join(' • ')}</span>
-                                                            </div>
-                                                        )
-                                                    })
-                                                )}
-                                            </div>
                                         </div>
                                     </div>
 
@@ -855,59 +907,25 @@ export default function FoodPlansPage() {
                                                     <label className='admin-label mb-0 text-sm font-extrabold flex items-center gap-2'>
                                                         <span>1. Serving Days ({formData.availableDays.length}/7 Active)</span>
                                                     </label>
-                                                    {!isViewOnly && (
-                                                        <button
-                                                            type='button'
-                                                            onClick={() => toggleActiveDay(currentDayTab)}
-                                                            className={`px-2 py-0.5 rounded-lg text-[10px] font-black border transition-all cursor-pointer ${
-                                                                formData.availableDays.includes(currentDayTab)
-                                                                    ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-700'
-                                                                    : 'bg-grey/10 border-grey/20 text-grey-muted hover:border-primary/40'
-                                                            }`}
-                                                            title='Toggle whether this day is included in the plan'
-                                                        >
-                                                            {formData.availableDays.includes(currentDayTab) ? '✓ Serving Active' : '+ Include Day'}
-                                                        </button>
-                                                    )}
                                                 </div>
 
                                                 {/* Action Buttons */}
-                                                {!isViewOnly && (
+                                                {!isViewOnly && currentSlotSelectedIds.length > 0 && (
                                                     <div className='flex items-center gap-1.5'>
                                                         <button
                                                             type='button'
-                                                            onClick={copyCurrentDayToAllDays}
-                                                            className='px-2.5 py-1 text-[11px] font-extrabold rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-all flex items-center gap-1 cursor-pointer'
-                                                            title={`Copy all meals of ${currentDayTab} to other active days`}
+                                                            onClick={clearCurrentSlot}
+                                                            className='px-2 py-1 text-[11px] font-bold rounded-lg text-grey-muted hover:text-red-500 hover:bg-red-50 transition-all cursor-pointer'
+                                                            title='Clear current meal dishes'
                                                         >
-                                                            <Icon icon='solar:copy-bold-duotone' className='text-xs' />
-                                                            <span>Copy Day</span>
+                                                            Clear
                                                         </button>
-                                                        <button
-                                                            type='button'
-                                                            onClick={copyCurrentMealToAllDays}
-                                                            className='px-2.5 py-1 text-[11px] font-extrabold rounded-lg bg-amber-500/10 text-amber-800 hover:bg-amber-500/20 transition-all flex items-center gap-1 cursor-pointer'
-                                                            title={`Copy only ${mealTypeMap.get(currentMealTab)?.name || 'current meal'} to all active days`}
-                                                        >
-                                                            <Icon icon='solar:calendar-date-bold-duotone' className='text-xs' />
-                                                            <span>Copy {mealTypeMap.get(currentMealTab)?.name || 'Meal'}</span>
-                                                        </button>
-                                                        {currentSlotSelectedIds.length > 0 && (
-                                                            <button
-                                                                type='button'
-                                                                onClick={clearCurrentSlot}
-                                                                className='px-2 py-1 text-[11px] font-bold rounded-lg text-grey-muted hover:text-red-500 hover:bg-red-50 transition-all cursor-pointer'
-                                                                title='Clear current meal dishes'
-                                                            >
-                                                                Clear
-                                                            </button>
-                                                        )}
                                                     </div>
                                                 )}
                                             </div>
 
-                                            {/* Day Tabs */}
-                                            <div className='flex items-center gap-1.5 overflow-x-auto pb-0.5'>
+                                            {/* Day Tabs - 7 Col Grid for Instant Visibility on all Screen Sizes */}
+                                            <div className='grid grid-cols-7 gap-1 sm:gap-1.5'>
                                                 {ALL_DAYS.map((day) => {
                                                     const isDayActive = formData.availableDays.includes(day)
                                                     const isSelectedTab = currentDayTab === day
@@ -923,30 +941,30 @@ export default function FoodPlansPage() {
                                                             key={day}
                                                             type='button'
                                                             onClick={() => setCurrentDayTab(day)}
-                                                            className={`flex-1 py-2 px-1 rounded-xl text-xs font-extrabold flex flex-col items-center justify-center gap-0.5 border transition-all cursor-pointer select-none min-w-[54px] ${
+                                                            className={`w-full py-2 px-0.5 sm:px-1 rounded-xl text-xs font-extrabold flex flex-col items-center justify-center gap-0.5 border transition-all cursor-pointer select-none ${
                                                                 isSelectedTab
-                                                                    ? 'bg-primary border-primary text-white shadow-sm shadow-primary/20 scale-[1.03]'
+                                                                    ? 'bg-primary border-primary text-white shadow-sm shadow-primary/20 scale-[1.02]'
                                                                     : isDayActive
                                                                     ? 'bg-primary/5 border-primary/20 text-primary hover:border-primary/40'
                                                                     : 'bg-grey/5 border-grey/15 text-grey-muted/60 opacity-60 hover:opacity-100'
                                                             }`}
                                                         >
-                                                            <div className='flex items-center gap-1'>
-                                                                <span>{day.slice(0, 3)}</span>
+                                                            <div className='flex items-center gap-1 max-w-full px-0.5'>
+                                                                <span className='truncate text-[11px] sm:text-xs tracking-tight font-extrabold'>{day}</span>
                                                                 {isDayActive && (
-                                                                    <span className='w-1.5 h-1.5 rounded-full bg-emerald-400' title='Active Day' />
+                                                                    <span className='w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0' title='Active Day' />
                                                                 )}
                                                             </div>
                                                             <span
-                                                                className={`text-[9px] px-1.5 py-0.2 rounded-full font-black ${
+                                                                className={`text-[10px] min-w-[20px] h-[18px] px-1.5 rounded-full font-black flex items-center justify-center ${
                                                                     isSelectedTab
-                                                                        ? 'bg-white/20 text-white'
+                                                                        ? 'bg-white/25 text-white'
                                                                         : dayDishCount > 0
                                                                         ? 'bg-primary/20 text-primary'
                                                                         : 'bg-grey/20 text-grey-muted'
                                                                 }`}
                                                             >
-                                                                {isDayActive ? `${dayDishCount} dishes` : 'Off'}
+                                                                {isDayActive ? dayDishCount : 'Off'}
                                                             </span>
                                                         </button>
                                                     )
@@ -978,7 +996,8 @@ export default function FoodPlansPage() {
                                                 )}
                                             </div>
 
-                                            <div className='flex items-center gap-1.5 overflow-x-auto'>
+                                            {/* Meal Type Tabs - Responsive Grid */}
+                                            <div className='grid grid-cols-1 sm:grid-cols-3 gap-2'>
                                                 {activeMealTypes.map((mt) => {
                                                     const isSelectedMeal = currentMealTab === mt.id
                                                     const isIncluded = formData.selectedMealTypeIds.includes(mt.id)
@@ -994,7 +1013,7 @@ export default function FoodPlansPage() {
                                                                     toggleMealTypeInclusion(mt.id)
                                                                 }
                                                             }}
-                                                            className={`flex-1 py-2 px-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 border transition-all cursor-pointer select-none ${
+                                                            className={`w-full py-2 px-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 border transition-all cursor-pointer select-none ${
                                                                 isSelectedMeal
                                                                     ? 'bg-amber-500 border-amber-500 text-white shadow-xs font-extrabold'
                                                                     : isIncluded
@@ -1002,10 +1021,10 @@ export default function FoodPlansPage() {
                                                                     : 'bg-grey/5 border-grey/15 text-grey-muted/60 opacity-60 hover:opacity-100'
                                                             }`}
                                                         >
-                                                            <Icon icon={mt.icon || 'solar:clock-circle-bold'} className='text-sm' />
-                                                            <span>{mt.name}</span>
+                                                            <Icon icon={mt.icon || 'solar:clock-circle-bold'} className='text-sm shrink-0' />
+                                                            <span className='truncate'>{mt.name}</span>
                                                             <span
-                                                                className={`text-[10px] px-1.5 py-0.2 rounded-full font-black ${
+                                                                className={`text-[10px] min-w-[20px] h-[18px] px-1.5 rounded-full font-black flex items-center justify-center shrink-0 ${
                                                                     isSelectedMeal
                                                                         ? 'bg-white/25 text-white'
                                                                         : isIncluded
@@ -1108,9 +1127,6 @@ export default function FoodPlansPage() {
                                                                         <div className='flex items-center gap-2 mt-0.5'>
                                                                             <span className='text-[10px] font-bold text-primary px-1.5 py-0.2 rounded bg-primary/10'>
                                                                                 {item.category?.name || 'Dish'}
-                                                                            </span>
-                                                                            <span className='text-[11px] font-extrabold text-grey-muted'>
-                                                                                AED {item.price.toFixed(2)}/day
                                                                             </span>
                                                                         </div>
                                                                     </div>

@@ -51,10 +51,31 @@ export async function GET(req: Request) {
         })
 
         // Map mealTypeId, scheduleJson, and MealType safely
-        const rawPlans = await prisma.$queryRawUnsafe<any[]>(`SELECT id, "mealTypeId", "scheduleJson" FROM "FoodMenu";`)
-        const planMetaMap = new Map(rawPlans.map((rp) => [rp.id, { mealTypeId: rp.mealTypeId, scheduleJson: rp.scheduleJson }]))
+        let rawPlans: any[] = []
+        try {
+            rawPlans = await prisma.$queryRawUnsafe<any[]>(`SELECT id, "mealTypeId", "scheduleJson", "days" FROM "FoodMenu";`)
+        } catch {
+            try {
+                await prisma.$executeRawUnsafe(`ALTER TABLE "FoodMenu" ADD COLUMN IF NOT EXISTS "mealTypeId" TEXT;`)
+                await prisma.$executeRawUnsafe(`ALTER TABLE "FoodMenu" ADD COLUMN IF NOT EXISTS "scheduleJson" JSONB;`)
+                await prisma.$executeRawUnsafe(`ALTER TABLE "FoodMenu" ADD COLUMN IF NOT EXISTS "days" INTEGER DEFAULT 30;`)
+                rawPlans = await prisma.$queryRawUnsafe<any[]>(`SELECT id, "mealTypeId", "scheduleJson", "days" FROM "FoodMenu";`)
+            } catch {
+                try {
+                    rawPlans = await prisma.$queryRawUnsafe<any[]>(`SELECT id, "mealTypeId", "scheduleJson" FROM "FoodMenu";`)
+                } catch {
+                    rawPlans = []
+                }
+            }
+        }
+        const planMetaMap = new Map(rawPlans.map((rp) => [rp.id, { mealTypeId: rp.mealTypeId, scheduleJson: rp.scheduleJson, days: rp.days }]))
 
-        const allMealTypes = await prisma.$queryRawUnsafe<any[]>(`SELECT * FROM "MealType";`)
+        let allMealTypes: any[] = []
+        try {
+            allMealTypes = await prisma.$queryRawUnsafe<any[]>(`SELECT * FROM "MealType";`)
+        } catch {
+            allMealTypes = []
+        }
         const mealTypeMap = new Map(allMealTypes.map((mt) => [mt.id, mt]))
 
         let enriched = foodMenus.map((m: any) => {
@@ -62,6 +83,7 @@ export async function GET(req: Request) {
             const mId = meta?.mealTypeId || null
             return {
                 ...m,
+                days: m.days ?? meta?.days ?? 30,
                 mealTypeId: mId,
                 scheduleJson: meta?.scheduleJson || null,
                 mealType: mId ? mealTypeMap.get(mId) || null : null,
@@ -101,13 +123,14 @@ export async function POST(req: Request) {
     if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     try {
-        const { name, description, price, foodItemIds, scheduleJson, availableDays, mealTypeId, isActive = true } = await req.json()
+        const { name, description, price, days, foodItemIds, scheduleJson, availableDays, mealTypeId, isActive = true } = await req.json()
 
         if (!name || !price) {
             return NextResponse.json({ error: 'Name and price are required' }, { status: 400 })
         }
 
         const allDishIds = extractAllDishIds(scheduleJson, foodItemIds)
+        const parsedDays = days ? parseInt(days.toString(), 10) : 30
 
         const foodMenu = await prisma.foodMenu.create({
             data: {
@@ -123,14 +146,32 @@ export async function POST(req: Request) {
             include: { foodItems: true },
         })
 
-        await prisma.$executeRawUnsafe(
-            `UPDATE "FoodMenu" SET "mealTypeId" = $1, "scheduleJson" = $2::jsonb WHERE "id" = $3;`,
-            mealTypeId || null,
-            scheduleJson ? JSON.stringify(scheduleJson) : null,
-            foodMenu.id
-        )
+        try {
+            await prisma.$executeRawUnsafe(
+                `UPDATE "FoodMenu" SET "mealTypeId" = $1, "scheduleJson" = $2::jsonb, "days" = $3 WHERE "id" = $4;`,
+                mealTypeId || null,
+                scheduleJson ? JSON.stringify(scheduleJson) : null,
+                parsedDays,
+                foodMenu.id
+            )
+        } catch {
+            try {
+                await prisma.$executeRawUnsafe(`ALTER TABLE "FoodMenu" ADD COLUMN IF NOT EXISTS "mealTypeId" TEXT;`)
+                await prisma.$executeRawUnsafe(`ALTER TABLE "FoodMenu" ADD COLUMN IF NOT EXISTS "scheduleJson" JSONB;`)
+                await prisma.$executeRawUnsafe(`ALTER TABLE "FoodMenu" ADD COLUMN IF NOT EXISTS "days" INTEGER DEFAULT 30;`)
+                await prisma.$executeRawUnsafe(
+                    `UPDATE "FoodMenu" SET "mealTypeId" = $1, "scheduleJson" = $2::jsonb, "days" = $3 WHERE "id" = $4;`,
+                    mealTypeId || null,
+                    scheduleJson ? JSON.stringify(scheduleJson) : null,
+                    parsedDays,
+                    foodMenu.id
+                )
+            } catch (err) {
+                console.error('Post creation raw update error:', err)
+            }
+        }
 
-        return NextResponse.json({ ...foodMenu, mealTypeId, scheduleJson })
+        return NextResponse.json({ ...foodMenu, days: parsedDays, mealTypeId, scheduleJson })
     } catch (error: any) {
         console.error('Create food menu error:', error)
         return NextResponse.json({ error: error.message || 'Failed to create food menu' }, { status: 500 })

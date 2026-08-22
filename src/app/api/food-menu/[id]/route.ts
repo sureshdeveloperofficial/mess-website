@@ -50,22 +50,38 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
         let mealType = null
         let scheduleJson = null
-        const metaRows = await prisma.$queryRawUnsafe<any[]>(
-            `SELECT "mealTypeId", "scheduleJson" FROM "FoodMenu" WHERE id = $1 LIMIT 1;`,
-            id
-        )
-        if (metaRows.length > 0) {
-            scheduleJson = metaRows[0].scheduleJson
-            if (metaRows[0].mealTypeId) {
-                const mtRows = await prisma.$queryRawUnsafe<any[]>(
-                    `SELECT * FROM "MealType" WHERE id = $1 LIMIT 1;`,
-                    metaRows[0].mealTypeId
-                )
-                if (mtRows.length > 0) mealType = mtRows[0]
+        let metaDays = null
+        try {
+            const metaRows = await prisma.$queryRawUnsafe<any[]>(
+                `SELECT "mealTypeId", "scheduleJson", "days" FROM "FoodMenu" WHERE id = $1 LIMIT 1;`,
+                id
+            )
+            if (metaRows.length > 0) {
+                scheduleJson = metaRows[0].scheduleJson
+                metaDays = metaRows[0].days
+                if (metaRows[0].mealTypeId) {
+                    try {
+                        const mtRows = await prisma.$queryRawUnsafe<any[]>(
+                            `SELECT * FROM "MealType" WHERE id = $1 LIMIT 1;`,
+                            metaRows[0].mealTypeId
+                        )
+                        if (mtRows.length > 0) mealType = mtRows[0]
+                    } catch {}
+                }
             }
+        } catch {
+            try {
+                const metaRows = await prisma.$queryRawUnsafe<any[]>(
+                    `SELECT "mealTypeId", "scheduleJson" FROM "FoodMenu" WHERE id = $1 LIMIT 1;`,
+                    id
+                )
+                if (metaRows.length > 0) {
+                    scheduleJson = metaRows[0].scheduleJson
+                }
+            } catch {}
         }
 
-        return NextResponse.json({ ...foodMenu, mealType, scheduleJson })
+        return NextResponse.json({ ...foodMenu, days: (foodMenu as any).days ?? metaDays ?? 30, mealType, scheduleJson })
     } catch (error) {
         console.error('GET Food Menu Error:', error)
         return NextResponse.json({ error: 'Failed to fetch food menu' }, { status: 500 })
@@ -79,7 +95,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     try {
         const { id } = await params
         const body = await req.json()
-        const { name, description, price, foodItemIds, scheduleJson, availableDays, mealTypeId, isActive } = body
+        const { name, description, price, days, foodItemIds, scheduleJson, availableDays, mealTypeId, isActive } = body
 
         const allDishIds = extractAllDishIds(scheduleJson, foodItemIds)
 
@@ -101,19 +117,24 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
             include: { foodItems: true },
         })
 
-        if (mealTypeId !== undefined || scheduleJson !== undefined) {
-            await prisma.$executeRawUnsafe(
-                `UPDATE "FoodMenu" 
-                 SET "mealTypeId" = COALESCE($1, "mealTypeId"), 
-                     "scheduleJson" = COALESCE($2::jsonb, "scheduleJson") 
-                 WHERE "id" = $3;`,
-                mealTypeId || null,
-                scheduleJson ? JSON.stringify(scheduleJson) : null,
-                id
-            )
+        const parsedDays = days !== undefined ? parseInt(days.toString(), 10) || 30 : null
+        if (mealTypeId !== undefined || scheduleJson !== undefined || parsedDays !== null) {
+            try {
+                await prisma.$executeRawUnsafe(
+                    `UPDATE "FoodMenu" 
+                     SET "mealTypeId" = COALESCE($1, "mealTypeId"), 
+                         "scheduleJson" = COALESCE($2::jsonb, "scheduleJson"),
+                         "days" = COALESCE($3, "days")
+                     WHERE "id" = $4;`,
+                    mealTypeId || null,
+                    scheduleJson ? JSON.stringify(scheduleJson) : null,
+                    parsedDays,
+                    id
+                )
+            } catch {}
         }
 
-        return NextResponse.json(foodMenu)
+        return NextResponse.json({ ...foodMenu, days: parsedDays ?? (foodMenu as any).days ?? 30, mealTypeId, scheduleJson })
     } catch (error) {
         console.error(error)
         return NextResponse.json({ error: 'Failed to update food menu' }, { status: 500 })
@@ -150,15 +171,17 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         })
 
         if (mealTypeId !== undefined || scheduleJson !== undefined) {
-            await prisma.$executeRawUnsafe(
-                `UPDATE "FoodMenu" 
-                 SET "mealTypeId" = COALESCE($1, "mealTypeId"), 
-                     "scheduleJson" = COALESCE($2::jsonb, "scheduleJson") 
-                 WHERE "id" = $3;`,
-                mealTypeId || null,
-                scheduleJson ? JSON.stringify(scheduleJson) : null,
-                id
-            )
+            try {
+                await prisma.$executeRawUnsafe(
+                    `UPDATE "FoodMenu" 
+                     SET "mealTypeId" = COALESCE($1, "mealTypeId"), 
+                         "scheduleJson" = COALESCE($2::jsonb, "scheduleJson") 
+                     WHERE "id" = $3;`,
+                    mealTypeId || null,
+                    scheduleJson ? JSON.stringify(scheduleJson) : null,
+                    id
+                )
+            } catch {}
         }
 
         return NextResponse.json(foodMenu)
@@ -178,8 +201,11 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
             where: { id },
         })
         return NextResponse.json({ message: 'Food menu deleted successfully' })
-    } catch (error) {
-        console.error(error)
-        return NextResponse.json({ error: 'Failed to delete food menu' }, { status: 500 })
+    } catch (error: any) {
+        if (error?.code === 'P2025') {
+            return NextResponse.json({ message: 'Food menu deleted successfully' })
+        }
+        console.error('Delete food menu error:', error)
+        return NextResponse.json({ error: error?.message || 'Failed to delete food menu' }, { status: 500 })
     }
 }

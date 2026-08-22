@@ -15,6 +15,7 @@ export async function GET() {
         `)
         await prisma.$executeRawUnsafe(`ALTER TABLE "FoodMenu" ADD COLUMN IF NOT EXISTS "mealTypeId" TEXT;`)
         await prisma.$executeRawUnsafe(`ALTER TABLE "FoodMenu" ADD COLUMN IF NOT EXISTS "scheduleJson" JSONB;`)
+        await prisma.$executeRawUnsafe(`ALTER TABLE "FoodMenu" ADD COLUMN IF NOT EXISTS "days" INTEGER DEFAULT 30;`)
         await prisma.$executeRawUnsafe(`
             INSERT INTO "MealType" ("id", "name", "icon", "isActive", "createdAt", "updatedAt")
             VALUES 
