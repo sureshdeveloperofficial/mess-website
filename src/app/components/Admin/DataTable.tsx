@@ -223,37 +223,35 @@ export function DataTable<TData>({
                             ))}
                         </thead>
                         <tbody className='divide-y divide-grey/10'>
-                            <AnimatePresence mode='wait'>
-                                {table.getRowModel().rows.length === 0 ? (
-                                    <tr>
-                                        <td
-                                            colSpan={columns.length}
-                                            className='py-16 text-center text-grey-muted bg-white'
-                                        >
-                                            <div className='flex flex-col items-center justify-center gap-2'>
-                                                <div className='w-14 h-14 rounded-3xl bg-grey/5 flex items-center justify-center text-grey-muted text-2xl border border-grey/10'>
-                                                    <Icon icon='solar:magnifer-broken' />
-                                                </div>
-                                                <p className='text-sm font-bold text-grey-dark mt-2'>{emptyMessage}</p>
-                                                <p className='text-xs text-grey-muted max-w-sm'>{emptySubtext}</p>
+                            {table.getRowModel().rows.length === 0 ? (
+                                <tr>
+                                    <td
+                                        colSpan={columns.length}
+                                        className='py-16 text-center text-grey-muted bg-white'
+                                    >
+                                        <div className='flex flex-col items-center justify-center gap-2'>
+                                            <div className='w-14 h-14 rounded-3xl bg-grey/5 flex items-center justify-center text-grey-muted text-2xl border border-grey/10'>
+                                                <Icon icon='solar:magnifer-broken' />
                                             </div>
-                                        </td>
+                                            <p className='text-sm font-bold text-grey-dark mt-2'>{emptyMessage}</p>
+                                            <p className='text-xs text-grey-muted max-w-sm'>{emptySubtext}</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ) : (
+                                table.getRowModel().rows.map((row) => (
+                                    <tr
+                                        key={row.id}
+                                        className='hover:bg-primary/[0.03] transition-colors group'
+                                    >
+                                        {row.getVisibleCells().map((cell) => (
+                                            <td key={cell.id} className='py-4 px-6 text-sm'>
+                                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                            </td>
+                                        ))}
                                     </tr>
-                                ) : (
-                                    table.getRowModel().rows.map((row) => (
-                                        <tr
-                                            key={row.id}
-                                            className='hover:bg-primary/[0.03] transition-colors group'
-                                        >
-                                            {row.getVisibleCells().map((cell) => (
-                                                <td key={cell.id} className='py-4 px-6 text-sm'>
-                                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                                </td>
-                                            ))}
-                                        </tr>
-                                    ))
-                                )}
-                            </AnimatePresence>
+                                ))
+                            )}
                         </tbody>
                     </table>
                 </div>

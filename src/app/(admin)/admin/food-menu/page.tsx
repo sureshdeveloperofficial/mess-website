@@ -135,8 +135,9 @@ export default function FoodPlansPage() {
             const response = await axios.get('/api/food-menu')
             return response.data
         },
-        staleTime: 1000 * 60 * 3,
+        staleTime: 1000 * 60 * 10,
         refetchOnWindowFocus: false,
+        placeholderData: (previousData) => previousData,
     })
 
     const foodPlans: FoodMenu[] = useMemo(() => {
@@ -167,8 +168,8 @@ export default function FoodPlansPage() {
                 scheduleJson: data.schedule,
                 isActive: data.isActive,
             }
-            if (editingPlan) {
-                return axios.put(`/api/food-menu/${editingPlan.id}`, payload)
+            if (data.planId) {
+                return axios.put(`/api/food-menu/${data.planId}`, payload)
             }
             return axios.post('/api/food-menu', payload)
         },
@@ -194,7 +195,7 @@ export default function FoodPlansPage() {
                 .filter(Boolean) as FoodItem[]
 
             const optimisticPlan: FoodMenu = {
-                id: editingPlan ? editingPlan.id : `temp-${Date.now()}`,
+                id: data.planId ? data.planId : `temp-${Date.now()}`,
                 name: data.name,
                 description: data.description,
                 price: parseFloat(data.price) || 0,
@@ -209,8 +210,8 @@ export default function FoodPlansPage() {
 
             queryClient.setQueryData<FoodMenu[]>(['food-menu'], (old = []) => {
                 if (!Array.isArray(old)) return [optimisticPlan]
-                if (editingPlan) {
-                    return old.map((p) => (p.id === editingPlan.id ? { ...p, ...optimisticPlan } : p))
+                if (data.planId) {
+                    return old.map((p) => (p.id === data.planId ? { ...p, ...optimisticPlan } : p))
                 }
                 return [optimisticPlan, ...old]
             })
@@ -225,9 +226,18 @@ export default function FoodPlansPage() {
             console.error(err)
             toast.error('Failed to save food plan')
         },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['food-menu'] })
-            toast.success(editingPlan ? 'Food plan updated successfully' : 'Food plan created successfully')
+        onSuccess: (response, variables) => {
+            const serverData = response?.data
+            if (serverData && serverData.id) {
+                queryClient.setQueryData<FoodMenu[]>(['food-menu'], (old = []) => {
+                    if (!Array.isArray(old)) return [serverData]
+                    if (variables?.planId) {
+                        return old.map((p) => (p.id === variables.planId ? { ...p, ...serverData } : p))
+                    }
+                    return old.map((p) => (p.id.startsWith('temp-') ? serverData : p))
+                })
+            }
+            toast.success(variables?.planId ? 'Food plan updated successfully' : 'Food plan created successfully')
         },
     })
 
@@ -253,7 +263,6 @@ export default function FoodPlansPage() {
         },
         onSuccess: (_, variables) => {
             toast.success(variables.isActive ? 'Food plan activated' : 'Food plan deactivated')
-            queryClient.invalidateQueries({ queryKey: ['food-menu'] })
         },
     })
 
@@ -277,7 +286,6 @@ export default function FoodPlansPage() {
             toast.error(err.response?.data?.error || 'Failed to delete food plan')
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['food-menu'] })
             toast.success('Food plan deleted successfully')
         },
     })
@@ -730,7 +738,7 @@ export default function FoodPlansPage() {
         [toggleStatusMutation, activeMealTypes]
     )
 
-    if (isLoading) {
+    if (isLoading && foodPlans.length === 0) {
         return (
             <div className='min-h-[50vh] flex flex-col items-center justify-center gap-3'>
                 <Icon icon='line-md:loading-loop' className='text-4xl text-primary' />
@@ -815,7 +823,7 @@ export default function FoodPlansPage() {
                                 id='food-plan-form'
                                 onSubmit={(e) => {
                                     e.preventDefault()
-                                    mutation.mutate(formData)
+                                    mutation.mutate({ ...formData, planId: editingPlan?.id || null })
                                 }}
                                 className='p-6 sm:p-8 overflow-y-auto flex-1 space-y-6'
                             >
