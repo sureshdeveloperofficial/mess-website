@@ -695,16 +695,16 @@ export default function FoodPlansPage() {
                 initialPageSize={5}
             />
 
-            {/* Expansive Landscape Day & Meal-Type Schedule Builder Modal (max-w-5xl) */}
+            {/* Expansive Landscape Day & Meal-Type Schedule Builder Modal (max-w-7xl) */}
             <AnimatePresence>
                 {isModalOpen && (
-                    <div className='fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/40 backdrop-blur-xs overflow-y-auto'>
+                    <div className='fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/40 backdrop-blur-xs overflow-y-auto'>
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95, y: 15 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: 15 }}
                             transition={{ duration: 0.2 }}
-                            className='bg-white rounded-3xl max-w-5xl w-full shadow-2xl border border-grey/10 overflow-hidden my-8 flex flex-col max-h-[94vh]'
+                            className='bg-white rounded-3xl max-w-7xl w-full shadow-2xl border border-grey/10 overflow-hidden my-4 sm:my-6 flex flex-col max-h-[94vh]'
                         >
                             {/* Sticky Modal Header */}
                             <div className='p-6 sm:px-8 border-b border-grey/10 flex items-center justify-between bg-white sticky top-0 z-10'>
@@ -744,8 +744,8 @@ export default function FoodPlansPage() {
                                 className='p-6 sm:p-8 overflow-y-auto flex-1 space-y-6'
                             >
                                 <div className='grid grid-cols-1 lg:grid-cols-12 gap-8 items-start'>
-                                    {/* Left Column (5 cols): Plan Settings & Summary */}
-                                    <div className='lg:col-span-5 space-y-4'>
+                                    {/* Left Column: Plan Settings & Summary */}
+                                    <div className='lg:col-span-5 xl:col-span-4 space-y-4'>
                                         <div>
                                             <label className='admin-label'>Food Plan Name *</label>
                                             <input
@@ -757,39 +757,6 @@ export default function FoodPlansPage() {
                                                 className={`admin-input ${isViewOnly ? 'cursor-default' : ''}`}
                                                 placeholder='e.g. Executive Full Day (Lunch + Dinner)'
                                             />
-                                        </div>
-
-                                        {/* Included Meal Types (Multi-Select Chips) */}
-                                        <div>
-                                            <div className='flex items-center justify-between mb-1.5'>
-                                                <label className='admin-label mb-0'>
-                                                    Included Meal Types * ({formData.selectedMealTypeIds.length})
-                                                </label>
-                                                <span className='text-[10px] text-grey-muted font-bold'>
-                                                    Select slots
-                                                </span>
-                                            </div>
-                                            <div className='grid grid-cols-3 gap-1.5'>
-                                                {activeMealTypes.map((mt) => {
-                                                    const isIncluded = formData.selectedMealTypeIds.includes(mt.id)
-                                                    return (
-                                                        <button
-                                                            key={mt.id}
-                                                            type='button'
-                                                            disabled={isViewOnly}
-                                                            onClick={() => toggleMealTypeInclusion(mt.id)}
-                                                            className={`p-2 rounded-xl text-xs font-extrabold border transition-all flex items-center justify-center gap-1.5 text-center ${
-                                                                isIncluded
-                                                                    ? 'bg-amber-500/15 border-amber-500/40 text-amber-800 shadow-xs scale-[1.02]'
-                                                                    : 'bg-grey/5 border-grey/15 text-grey-muted hover:border-amber-500/30'
-                                                            } ${isViewOnly ? 'cursor-default' : 'cursor-pointer'}`}
-                                                        >
-                                                            <Icon icon={mt.icon || 'solar:clock-circle-bold'} className='text-sm shrink-0' />
-                                                            <span className='truncate'>{mt.name}</span>
-                                                        </button>
-                                                    )
-                                                })}
-                                            </div>
                                         </div>
 
                                         <div>
@@ -805,41 +772,6 @@ export default function FoodPlansPage() {
                                                     className={`admin-input ${isViewOnly ? 'cursor-default' : ''}`}
                                                     placeholder='250.00'
                                                 />
-                                            </div>
-                                        </div>
-
-                                        {/* Plan Available Days Toggle Pills */}
-                                        <div>
-                                            <div className='flex items-center justify-between mb-1.5'>
-                                                <label className='admin-label mb-0'>
-                                                    Active Serving Days ({formData.availableDays.length}/7 Days)
-                                                </label>
-                                                <span className='text-[10px] text-grey-muted font-bold'>
-                                                    Click to toggle
-                                                </span>
-                                            </div>
-                                            <div className='grid grid-cols-4 sm:grid-cols-7 gap-1.5'>
-                                                {ALL_DAYS.map((day) => {
-                                                    const isSelected = formData.availableDays.includes(day)
-                                                    return (
-                                                        <button
-                                                            key={day}
-                                                            type='button'
-                                                            disabled={isViewOnly}
-                                                            onClick={() => {
-                                                                toggleActiveDay(day)
-                                                                setCurrentDayTab(day)
-                                                            }}
-                                                            className={`py-2.5 px-1 rounded-xl text-[11px] font-extrabold border transition-all text-center ${
-                                                                isSelected
-                                                                    ? 'bg-primary border-primary text-white shadow-xs shadow-primary/20 scale-[1.02]'
-                                                                    : 'bg-white border-grey/15 text-grey-muted hover:border-primary/30'
-                                                            } ${isViewOnly ? 'cursor-default' : 'cursor-pointer'}`}
-                                                        >
-                                                            {day.slice(0, 3)}
-                                                        </button>
-                                                    )
-                                                })}
                                             </div>
                                         </div>
 
@@ -864,7 +796,7 @@ export default function FoodPlansPage() {
                                         <div>
                                             <label className='admin-label'>Plan Description</label>
                                             <textarea
-                                                rows={2}
+                                                rows={3}
                                                 value={formData.description}
                                                 readOnly={isViewOnly}
                                                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -884,43 +816,60 @@ export default function FoodPlansPage() {
                                                     {totalUniqueDishes} Unique Dishes
                                                 </span>
                                             </div>
-                                            <div className='space-y-1.5 text-[11px] pt-1 border-t border-primary/10 text-grey-muted font-medium max-h-32 overflow-y-auto'>
-                                                {formData.availableDays.map((day) => {
-                                                    const dayObj = formData.schedule[day] || {}
-                                                    const mealSummaries = formData.selectedMealTypeIds.map((mtId) => {
-                                                        const mtName = mealTypeMap.get(mtId)?.name || 'Meal'
-                                                        const count = (dayObj[mtId] || []).length
-                                                        return `${count} ${mtName}`
-                                                    })
+                                            <div className='space-y-1.5 text-[11px] pt-1 border-t border-primary/10 text-grey-muted font-medium max-h-40 overflow-y-auto'>
+                                                {formData.availableDays.length === 0 ? (
+                                                    <p className='text-[11px] text-grey-muted italic py-1'>No active serving days selected.</p>
+                                                ) : (
+                                                    formData.availableDays.map((day) => {
+                                                        const dayObj = formData.schedule[day] || {}
+                                                        const mealSummaries = formData.selectedMealTypeIds.map((mtId) => {
+                                                            const mtName = mealTypeMap.get(mtId)?.name || 'Meal'
+                                                            const count = (dayObj[mtId] || []).length
+                                                            return `${count} ${mtName}`
+                                                        })
 
-                                                    return (
-                                                        <div
-                                                            key={day}
-                                                            onClick={() => setCurrentDayTab(day)}
-                                                            className={`flex items-center justify-between p-1.5 rounded-lg cursor-pointer transition-colors ${
-                                                                currentDayTab === day ? 'bg-primary/15 font-bold text-primary' : 'hover:bg-primary/10'
-                                                            }`}
-                                                        >
-                                                            <span className='font-bold'>{day.slice(0, 3)}:</span>
-                                                            <span className='truncate text-[10px]'>{mealSummaries.join(' • ')}</span>
-                                                        </div>
-                                                    )
-                                                })}
+                                                        return (
+                                                            <div
+                                                                key={day}
+                                                                onClick={() => setCurrentDayTab(day)}
+                                                                className={`flex items-center justify-between p-1.5 rounded-lg cursor-pointer transition-colors ${
+                                                                    currentDayTab === day ? 'bg-primary/15 font-bold text-primary' : 'hover:bg-primary/10'
+                                                                }`}
+                                                            >
+                                                                <span className='font-bold'>{day.slice(0, 3)}:</span>
+                                                                <span className='truncate text-[10px]'>{mealSummaries.join(' • ')}</span>
+                                                            </div>
+                                                        )
+                                                    })
+                                                )}
                                             </div>
                                         </div>
                                     </div>
 
-                                    {/* Right Column (7 cols): 2-Level Day & Meal Type Schedule Workstation */}
-                                    <div className='lg:col-span-7 space-y-3 flex flex-col'>
+                                    {/* Right Column: 2-Level Day & Meal Type Schedule Workstation */}
+                                    <div className='lg:col-span-7 xl:col-span-8 space-y-3 flex flex-col'>
                                         {/* Level 1: Day Tabs Bar */}
                                         <div className='space-y-2'>
                                             <div className='flex items-center justify-between'>
-                                                <label className='admin-label mb-0 text-sm flex items-center gap-2'>
-                                                    <span>1. Select Day</span>
-                                                    <span className='text-xs font-bold text-primary'>
-                                                        ({currentDayTab}: {currentDayTotalCount} Total Dishes)
-                                                    </span>
-                                                </label>
+                                                <div className='flex items-center gap-2'>
+                                                    <label className='admin-label mb-0 text-sm font-extrabold flex items-center gap-2'>
+                                                        <span>1. Serving Days ({formData.availableDays.length}/7 Active)</span>
+                                                    </label>
+                                                    {!isViewOnly && (
+                                                        <button
+                                                            type='button'
+                                                            onClick={() => toggleActiveDay(currentDayTab)}
+                                                            className={`px-2 py-0.5 rounded-lg text-[10px] font-black border transition-all cursor-pointer ${
+                                                                formData.availableDays.includes(currentDayTab)
+                                                                    ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-700'
+                                                                    : 'bg-grey/10 border-grey/20 text-grey-muted hover:border-primary/40'
+                                                            }`}
+                                                            title='Toggle whether this day is included in the plan'
+                                                        >
+                                                            {formData.availableDays.includes(currentDayTab) ? '✓ Serving Active' : '+ Include Day'}
+                                                        </button>
+                                                    )}
+                                                </div>
 
                                                 {/* Action Buttons */}
                                                 {!isViewOnly && (
@@ -973,21 +922,21 @@ export default function FoodPlansPage() {
                                                         <button
                                                             key={day}
                                                             type='button'
-                                                            onClick={() => {
-                                                                setCurrentDayTab(day)
-                                                                if (!isDayActive && !isViewOnly) {
-                                                                    toggleActiveDay(day)
-                                                                }
-                                                            }}
-                                                            className={`flex-1 py-1.5 px-1 rounded-xl text-xs font-extrabold flex flex-col items-center justify-center gap-0.5 border transition-all cursor-pointer select-none min-w-[54px] ${
+                                                            onClick={() => setCurrentDayTab(day)}
+                                                            className={`flex-1 py-2 px-1 rounded-xl text-xs font-extrabold flex flex-col items-center justify-center gap-0.5 border transition-all cursor-pointer select-none min-w-[54px] ${
                                                                 isSelectedTab
                                                                     ? 'bg-primary border-primary text-white shadow-sm shadow-primary/20 scale-[1.03]'
                                                                     : isDayActive
-                                                                    ? 'bg-grey/5 border-grey/15 text-grey-dark hover:border-primary/40 hover:bg-primary/5'
-                                                                    : 'bg-white border-grey/10 text-grey-muted/50 opacity-60'
+                                                                    ? 'bg-primary/5 border-primary/20 text-primary hover:border-primary/40'
+                                                                    : 'bg-grey/5 border-grey/15 text-grey-muted/60 opacity-60 hover:opacity-100'
                                                             }`}
                                                         >
-                                                            <span>{day.slice(0, 3)}</span>
+                                                            <div className='flex items-center gap-1'>
+                                                                <span>{day.slice(0, 3)}</span>
+                                                                {isDayActive && (
+                                                                    <span className='w-1.5 h-1.5 rounded-full bg-emerald-400' title='Active Day' />
+                                                                )}
+                                                            </div>
                                                             <span
                                                                 className={`text-[9px] px-1.5 py-0.2 rounded-full font-black ${
                                                                     isSelectedTab
@@ -997,7 +946,7 @@ export default function FoodPlansPage() {
                                                                         : 'bg-grey/20 text-grey-muted'
                                                                 }`}
                                                             >
-                                                                {dayDishCount}
+                                                                {isDayActive ? `${dayDishCount} dishes` : 'Off'}
                                                             </span>
                                                         </button>
                                                     )
@@ -1007,35 +956,64 @@ export default function FoodPlansPage() {
 
                                         {/* Level 2: Meal Type Sub-Tabs for Current Day */}
                                         <div className='space-y-1.5 pt-0.5'>
-                                            <label className='admin-label mb-0 text-xs flex items-center gap-1.5'>
-                                                <span>2. Select Meal Slot for {currentDayTab}</span>
-                                            </label>
+                                            <div className='flex items-center justify-between'>
+                                                <label className='admin-label mb-0 text-xs flex items-center gap-1.5 font-bold'>
+                                                    <span>2. Select Meal Slot ({formData.selectedMealTypeIds.length} in plan)</span>
+                                                </label>
+                                                {!isViewOnly && currentMealTab && (
+                                                    <button
+                                                        type='button'
+                                                        onClick={() => toggleMealTypeInclusion(currentMealTab)}
+                                                        className={`px-2 py-0.5 rounded-lg text-[10px] font-black border transition-all cursor-pointer ${
+                                                            formData.selectedMealTypeIds.includes(currentMealTab)
+                                                                ? 'bg-amber-500/10 border-amber-500/30 text-amber-800'
+                                                                : 'bg-grey/10 border-grey/20 text-grey-muted hover:border-amber-500/40'
+                                                        }`}
+                                                        title='Include or exclude this meal slot from the plan'
+                                                    >
+                                                        {formData.selectedMealTypeIds.includes(currentMealTab)
+                                                            ? '✓ Included in Plan'
+                                                            : '+ Include in Plan'}
+                                                    </button>
+                                                )}
+                                            </div>
+
                                             <div className='flex items-center gap-1.5 overflow-x-auto'>
-                                                {formData.selectedMealTypeIds.map((mtId) => {
-                                                    const mt = mealTypeMap.get(mtId)
-                                                    if (!mt) return null
-                                                    const isSelectedMeal = currentMealTab === mtId
-                                                    const count = (formData.schedule[currentDayTab]?.[mtId] || []).length
+                                                {activeMealTypes.map((mt) => {
+                                                    const isSelectedMeal = currentMealTab === mt.id
+                                                    const isIncluded = formData.selectedMealTypeIds.includes(mt.id)
+                                                    const count = (formData.schedule[currentDayTab]?.[mt.id] || []).length
 
                                                     return (
                                                         <button
-                                                            key={mtId}
+                                                            key={mt.id}
                                                             type='button'
-                                                            onClick={() => setCurrentMealTab(mtId)}
+                                                            onClick={() => {
+                                                                setCurrentMealTab(mt.id)
+                                                                if (!isIncluded && !isViewOnly) {
+                                                                    toggleMealTypeInclusion(mt.id)
+                                                                }
+                                                            }}
                                                             className={`flex-1 py-2 px-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 border transition-all cursor-pointer select-none ${
                                                                 isSelectedMeal
                                                                     ? 'bg-amber-500 border-amber-500 text-white shadow-xs font-extrabold'
-                                                                    : 'bg-amber-500/10 border-amber-500/20 text-amber-900 hover:bg-amber-500/20'
+                                                                    : isIncluded
+                                                                    ? 'bg-amber-500/10 border-amber-500/20 text-amber-900 hover:bg-amber-500/20'
+                                                                    : 'bg-grey/5 border-grey/15 text-grey-muted/60 opacity-60 hover:opacity-100'
                                                             }`}
                                                         >
                                                             <Icon icon={mt.icon || 'solar:clock-circle-bold'} className='text-sm' />
                                                             <span>{mt.name}</span>
                                                             <span
                                                                 className={`text-[10px] px-1.5 py-0.2 rounded-full font-black ${
-                                                                    isSelectedMeal ? 'bg-white/25 text-white' : 'bg-amber-500/20 text-amber-950'
+                                                                    isSelectedMeal
+                                                                        ? 'bg-white/25 text-white'
+                                                                        : isIncluded
+                                                                        ? 'bg-amber-500/20 text-amber-950'
+                                                                        : 'bg-grey/20 text-grey-muted'
                                                                 }`}
                                                             >
-                                                                {count}
+                                                                {isIncluded ? count : 'Off'}
                                                             </span>
                                                         </button>
                                                     )
@@ -1084,8 +1062,8 @@ export default function FoodPlansPage() {
                                             </div>
                                         </div>
 
-                                        {/* Scrollable Dish Selection List for Current Slot (h-[320px]) */}
-                                        <div className='border border-grey/10 rounded-2xl bg-grey/5 p-3 h-[320px] overflow-y-auto space-y-2'>
+                                        {/* Scrollable Dish Selection List for Current Slot */}
+                                        <div className='border border-grey/10 rounded-2xl bg-grey/5 p-3 h-[360px] xl:h-[400px] overflow-y-auto'>
                                             {filteredPickableDishes.length === 0 ? (
                                                 <div className='h-full flex flex-col items-center justify-center text-center p-4 text-grey-muted'>
                                                     <Icon icon='solar:box-minimalistic-bold-duotone' className='text-3xl mb-1 text-grey/30' />
@@ -1093,65 +1071,67 @@ export default function FoodPlansPage() {
                                                     <p className='text-[11px] text-grey-muted mt-0.5'>Try changing the search keyword or category.</p>
                                                 </div>
                                             ) : (
-                                                filteredPickableDishes.map((item) => {
-                                                    const isChecked = currentSlotSelectedIds.includes(item.id)
-                                                    return (
-                                                        <div
-                                                            key={item.id}
-                                                            onClick={() => toggleDishForCurrentSlot(item.id)}
-                                                            className={`flex items-center justify-between p-3 rounded-2xl transition-all border select-none ${
-                                                                isChecked
-                                                                    ? 'bg-primary/10 border-primary shadow-xs'
-                                                                    : 'bg-white border-grey/10 hover:border-primary/40 hover:bg-white/80'
-                                                            } ${isViewOnly ? 'cursor-default' : 'cursor-pointer'}`}
-                                                        >
-                                                            <div className='flex items-center gap-3 min-w-0'>
-                                                                {/* Dish Image Thumbnail */}
-                                                                <div className='w-10 h-10 rounded-xl bg-grey/10 overflow-hidden relative shrink-0 border border-grey/10'>
-                                                                    {item.image ? (
-                                                                        <Image
-                                                                            src={getFullImageUrl(item.image)}
-                                                                            alt=''
-                                                                            fill
-                                                                            className='object-cover'
-                                                                        />
-                                                                    ) : (
-                                                                        <div className='flex items-center justify-center h-full text-grey-muted/50'>
-                                                                            <Icon icon='solar:gallery-bold' className='text-sm' />
-                                                                        </div>
-                                                                    )}
-                                                                </div>
+                                                <div className='grid grid-cols-1 md:grid-cols-2 gap-2.5'>
+                                                    {filteredPickableDishes.map((item) => {
+                                                        const isChecked = currentSlotSelectedIds.includes(item.id)
+                                                        return (
+                                                            <div
+                                                                key={item.id}
+                                                                onClick={() => toggleDishForCurrentSlot(item.id)}
+                                                                className={`flex items-center justify-between p-3 rounded-2xl transition-all border select-none ${
+                                                                    isChecked
+                                                                        ? 'bg-primary/10 border-primary shadow-xs'
+                                                                        : 'bg-white border-grey/10 hover:border-primary/40 hover:bg-white/80'
+                                                                } ${isViewOnly ? 'cursor-default' : 'cursor-pointer'}`}
+                                                            >
+                                                                <div className='flex items-center gap-3 min-w-0'>
+                                                                    {/* Dish Image Thumbnail */}
+                                                                    <div className='w-10 h-10 rounded-xl bg-grey/10 overflow-hidden relative shrink-0 border border-grey/10'>
+                                                                        {item.image ? (
+                                                                            <Image
+                                                                                src={getFullImageUrl(item.image)}
+                                                                                alt=''
+                                                                                fill
+                                                                                className='object-cover'
+                                                                            />
+                                                                        ) : (
+                                                                            <div className='flex items-center justify-center h-full text-grey-muted/50'>
+                                                                                <Icon icon='solar:gallery-bold' className='text-sm' />
+                                                                            </div>
+                                                                        )}
+                                                                    </div>
 
-                                                                <div className='min-w-0'>
-                                                                    <span className='text-xs font-extrabold text-grey-dark block truncate'>
-                                                                        {item.name}
-                                                                    </span>
-                                                                    <div className='flex items-center gap-2 mt-0.5'>
-                                                                        <span className='text-[10px] font-bold text-primary px-1.5 py-0.2 rounded bg-primary/10'>
-                                                                            {item.category?.name || 'Dish'}
+                                                                    <div className='min-w-0'>
+                                                                        <span className='text-xs font-extrabold text-grey-dark block truncate'>
+                                                                            {item.name}
                                                                         </span>
-                                                                        <span className='text-[11px] font-extrabold text-grey-muted'>
-                                                                            AED {item.price.toFixed(2)}/day
-                                                                        </span>
+                                                                        <div className='flex items-center gap-2 mt-0.5'>
+                                                                            <span className='text-[10px] font-bold text-primary px-1.5 py-0.2 rounded bg-primary/10'>
+                                                                                {item.category?.name || 'Dish'}
+                                                                            </span>
+                                                                            <span className='text-[11px] font-extrabold text-grey-muted'>
+                                                                                AED {item.price.toFixed(2)}/day
+                                                                            </span>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                            </div>
 
-                                                            {/* Checkbox Icon */}
-                                                            <div
-                                                                className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${
-                                                                    isChecked
-                                                                        ? 'border-primary bg-primary text-white scale-105'
-                                                                        : 'border-grey/30 bg-white'
-                                                                }`}
-                                                            >
-                                                                {isChecked && (
-                                                                    <Icon icon='solar:check-read-bold' className='text-xs' />
-                                                                )}
+                                                                {/* Checkbox Icon */}
+                                                                <div
+                                                                    className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${
+                                                                        isChecked
+                                                                            ? 'border-primary bg-primary text-white scale-105'
+                                                                            : 'border-grey/30 bg-white'
+                                                                    }`}
+                                                                >
+                                                                    {isChecked && (
+                                                                        <Icon icon='solar:check-read-bold' className='text-xs' />
+                                                                    )}
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    )
-                                                })
+                                                        )
+                                                    })}
+                                                </div>
                                             )}
                                         </div>
 
