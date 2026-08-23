@@ -215,7 +215,7 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
                     <div>
                         <div className='flex items-center gap-2.5 flex-wrap'>
                             <h2 className='text-xl sm:text-2xl font-bold text-grey-dark tracking-tight'>
-                                Order #{order.id.slice(-6).toUpperCase()}
+                                {order.id.startsWith('ORD-') ? order.id : `Order #${order.id.slice(-6).toUpperCase()}`}
                             </h2>
                             <span
                                 className={`px-3 py-0.5 rounded-full text-[11px] font-semibold tracking-wide flex items-center gap-1.5 ${

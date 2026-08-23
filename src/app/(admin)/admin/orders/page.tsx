@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useMemo } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Icon } from '@iconify/react'
 import axios from 'axios'
 import { format } from 'date-fns'
@@ -9,6 +9,7 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { useSearchParams } from 'next/navigation'
 import { createColumnHelper } from '@tanstack/react-table'
+import toast from 'react-hot-toast'
 import { DataTable, FilterOption } from '@/app/components/Admin/DataTable'
 import { useInvoiceDownload } from '@/app/hooks/useInvoiceDownload'
 import { OrderViewDialog, Order } from '@/app/components/Admin/OrderViewDialog'
@@ -18,10 +19,12 @@ const columnHelper = createColumnHelper<Order>()
 export default function OrdersPage() {
     const searchParams = useSearchParams()
     const searchParamQuery = searchParams?.get('search') || ''
+    const queryClient = useQueryClient()
 
     const [activeFilter, setActiveFilter] = useState<string>('all')
     const [selectedOrderForView, setSelectedOrderForView] = useState<Order | null>(null)
     const [isViewDialogOpen, setIsViewDialogOpen] = useState<boolean>(false)
+    const [deletingOrderId, setDeletingOrderId] = useState<string | null>(null)
 
     const { downloadInvoice, isGenerating } = useInvoiceDownload()
 
@@ -32,6 +35,34 @@ export default function OrdersPage() {
             return response.data
         },
     })
+
+    const deleteOrderMutation = useMutation({
+        mutationFn: async (id: string) => {
+            setDeletingOrderId(id)
+            const res = await axios.delete(`/api/orders/${id}`)
+            return res.data
+        },
+        onSuccess: (data, variables) => {
+            toast.success('Order deleted successfully!')
+            queryClient.invalidateQueries({ queryKey: ['orders'] })
+            if (selectedOrderForView?.id === variables) {
+                closeOrderDetails()
+            }
+        },
+        onError: (err: any) => {
+            toast.error(err?.response?.data?.error || 'Failed to delete order')
+        },
+        onSettled: () => {
+            setDeletingOrderId(null)
+        },
+    })
+
+    const handleDeleteOrder = (order: Order) => {
+        const displayId = order.id.startsWith('ORD-') ? order.id : `#${order.id.slice(-6).toUpperCase()}`
+        if (confirm(`Are you sure you want to permanently delete order ${displayId}? This action cannot be undone.`)) {
+            deleteOrderMutation.mutate(order.id)
+        }
+    }
 
     const openOrderDetails = (order: Order) => {
         setSelectedOrderForView(order)
@@ -93,20 +124,20 @@ export default function OrdersPage() {
                 header: 'Order Details',
                 cell: (info) => {
                     const row = info.row.original
-                    const shortId = row.id.slice(-6).toUpperCase()
+                    const displayId = row.id.startsWith('ORD-') ? row.id : `#${row.id.slice(-6).toUpperCase()}`
 
                     return (
-                        <div className='space-y-1'>
+                        <div className='space-y-1 min-w-[140px] whitespace-nowrap'>
                             <button
                                 type='button'
                                 onClick={() => openOrderDetails(row)}
-                                className='font-extrabold text-xs text-grey-dark hover:text-primary transition-colors font-mono block cursor-pointer text-left'
+                                className='font-bold text-xs text-grey-dark hover:text-primary transition-colors font-mono block cursor-pointer text-left whitespace-nowrap'
                                 title='Click to View Order Details'
                             >
-                                #{shortId}
+                                {displayId}
                             </button>
-                            <span className='text-[10px] text-grey-muted flex items-center gap-1'>
-                                <Icon icon='solar:calendar-bold' className='text-xs' />
+                            <span className='text-[10px] text-grey-muted flex items-center gap-1 whitespace-nowrap'>
+                                <Icon icon='solar:calendar-bold' className='text-xs shrink-0' />
                                 <span>{format(new Date(row.createdAt), 'dd MMM yyyy')}</span>
                             </span>
                         </div>
@@ -302,12 +333,27 @@ export default function OrdersPage() {
                             >
                                 <Icon icon='solar:eye-bold-duotone' className='text-lg' />
                             </button>
+
+                            {/* Delete Order Button */}
+                            <button
+                                type='button'
+                                onClick={() => handleDeleteOrder(row)}
+                                disabled={deletingOrderId === row.id}
+                                title='Permanently Delete Order'
+                                className='p-2 text-grey-muted hover:text-red-600 hover:bg-red-50 rounded-xl transition-all cursor-pointer disabled:opacity-40'
+                            >
+                                {deletingOrderId === row.id ? (
+                                    <Icon icon='line-md:loading-loop' className='text-base text-red-500' />
+                                ) : (
+                                    <Icon icon='solar:trash-bin-trash-bold-duotone' className='text-lg text-red-500/80 hover:text-red-600' />
+                                )}
+                            </button>
                         </div>
                     )
                 },
             }),
         ],
-        [downloadInvoice, isGenerating]
+        [downloadInvoice, isGenerating, deletingOrderId]
     )
 
     if (isLoading) {
@@ -356,6 +402,7 @@ export default function OrdersPage() {
                 order={selectedOrderForView}
                 isOpen={isViewDialogOpen}
                 onClose={closeOrderDetails}
+                onDeleteOrder={handleDeleteOrder}
             />
         </div>
     )

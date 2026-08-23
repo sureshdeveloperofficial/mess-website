@@ -182,7 +182,7 @@ export function DataTable<TData>({
                     <table className='w-full text-left border-collapse'>
                         <thead>
                             {table.getHeaderGroups().map((headerGroup) => (
-                                <tr key={headerGroup.id} className='border-b border-grey/10 bg-grey/5'>
+                                <tr key={headerGroup.id} className='border-b border-grey/15 bg-[#F8F6F2]'>
                                     {headerGroup.headers.map((header) => {
                                         const isSortable = header.column.getCanSort()
                                         const sortDirection = header.column.getIsSorted()
@@ -191,12 +191,12 @@ export function DataTable<TData>({
                                             <th
                                                 key={header.id}
                                                 onClick={header.column.getToggleSortingHandler()}
-                                                className={`py-4 px-6 text-[11px] font-bold uppercase tracking-wider text-grey-muted select-none whitespace-nowrap align-middle ${
-                                                    isSortable ? 'cursor-pointer hover:bg-grey/10 hover:text-grey-dark transition-colors' : ''
+                                                className={`py-4 px-6 text-xs font-extrabold uppercase tracking-wider text-grey-dark select-none whitespace-nowrap align-middle ${
+                                                    isSortable ? 'cursor-pointer hover:bg-black/5 hover:text-black transition-colors' : ''
                                                 }`}
                                             >
                                                 <div className='flex items-center gap-1.5'>
-                                                    <span>
+                                                    <span className='font-extrabold text-grey-dark'>
                                                         {header.isPlaceholder
                                                             ? null
                                                             : flexRender(
@@ -205,13 +205,13 @@ export function DataTable<TData>({
                                                               )}
                                                     </span>
                                                     {isSortable && (
-                                                        <span className='text-grey-muted text-sm'>
+                                                        <span className='text-grey-dark/70 text-sm'>
                                                             {sortDirection === 'asc' ? (
                                                                 <Icon icon='solar:arrow-up-linear' className='text-primary font-bold' />
                                                             ) : sortDirection === 'desc' ? (
                                                                 <Icon icon='solar:arrow-down-linear' className='text-primary font-bold' />
                                                             ) : (
-                                                                <Icon icon='solar:sort-vertical-linear' className='opacity-40' />
+                                                                <Icon icon='solar:sort-vertical-linear' className='text-grey-dark/40 hover:text-grey-dark' />
                                                             )}
                                                         </span>
                                                     )}

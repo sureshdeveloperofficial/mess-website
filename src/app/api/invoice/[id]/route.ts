@@ -5,10 +5,10 @@ import prisma from '@/utils/prisma'
 // Function to get chromium on Vercel
 async function getChromium() {
     try {
-        const moduleName = '@sparticuz/chromium'
         // Dynamically import only in production environments
         if (process.env.NODE_ENV === 'production') {
-            const chromium = await import(/* webpackIgnore: true */ moduleName)
+            const req = eval('require')
+            const chromium = req('@sparticuz/chromium')
             return {
                 args: chromium.args,
                 defaultViewport: chromium.defaultViewport,

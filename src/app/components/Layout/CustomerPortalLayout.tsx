@@ -92,15 +92,15 @@ export default function CustomerPortalLayout({ children }: { children: React.Rea
                 </div>
 
                 {/* Customer Profile Card */}
-                <div className='p-3.5 bg-grey/5 rounded-2xl border border-grey/10 mb-6 flex items-center gap-3'>
-                    <div className='w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 text-primary font-bold text-xs flex items-center justify-center shrink-0'>
+                <div className='p-3.5 bg-grey/5 rounded-2xl border border-grey/15 mb-6 flex items-center gap-3'>
+                    <div className='w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 text-primary font-extrabold text-xs flex items-center justify-center shrink-0 shadow-2xs'>
                         {initials}
                     </div>
                     <div className='min-w-0 flex-1'>
-                        <span className='font-bold text-xs text-grey-dark block truncate'>
+                        <span className='font-extrabold text-xs text-grey-dark block truncate'>
                             {userName}
                         </span>
-                        <span className='text-[11px] text-grey-muted block truncate'>
+                        <span className='text-[11px] font-medium text-grey-dark/75 block truncate'>
                             {userEmail}
                         </span>
                     </div>
@@ -108,7 +108,7 @@ export default function CustomerPortalLayout({ children }: { children: React.Rea
 
                 {/* Navigation Links */}
                 <nav className='flex-1 space-y-1.5'>
-                    <div className='px-3 py-1.5 text-[10px] font-bold text-grey-muted uppercase tracking-wider'>
+                    <div className='px-3 py-1.5 text-[11px] font-extrabold text-grey-dark uppercase tracking-wider'>
                         Menu &amp; Account
                     </div>
 
@@ -119,27 +119,27 @@ export default function CustomerPortalLayout({ children }: { children: React.Rea
                             <Link
                                 key={item.href}
                                 href={item.href}
-                                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all text-xs font-semibold ${
+                                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all text-xs font-bold ${
                                     isActive
-                                        ? 'bg-primary text-white font-bold shadow-md shadow-primary/25'
-                                        : 'text-grey-muted hover:bg-grey/5 hover:text-grey-dark'
+                                        ? 'bg-primary text-white font-extrabold shadow-md shadow-primary/25'
+                                        : 'text-grey-dark hover:bg-stone-100 hover:text-black'
                                 }`}
                             >
-                                <Icon icon={item.icon} className='text-lg shrink-0' />
+                                <Icon icon={item.icon} className={`text-lg shrink-0 ${isActive ? 'text-white' : 'text-grey-dark/80'}`} />
                                 <span className='truncate'>{item.label}</span>
                             </Link>
                         )
                     })}
 
-                    <div className='pt-4 px-3 py-1.5 text-[10px] font-bold text-grey-muted uppercase tracking-wider'>
+                    <div className='pt-4 px-3 py-1.5 text-[11px] font-extrabold text-grey-dark uppercase tracking-wider'>
                         Explore Website
                     </div>
 
                     <Link
                         href='/'
-                        className='flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all text-xs font-semibold text-grey-muted hover:bg-grey/5 hover:text-grey-dark'
+                        className='flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all text-xs font-bold text-grey-dark hover:bg-stone-100 hover:text-black'
                     >
-                        <Icon icon='solar:home-2-bold-duotone' className='text-lg shrink-0' />
+                        <Icon icon='solar:home-2-bold-duotone' className='text-lg shrink-0 text-grey-dark/80' />
                         <span>Back to Website</span>
                     </Link>
                 </nav>
@@ -148,13 +148,13 @@ export default function CustomerPortalLayout({ children }: { children: React.Rea
                 <div className='mt-auto pt-4 border-t border-grey/10 space-y-2'>
                     <a
                         href={`tel:${contactPhone}`}
-                        className='flex items-center justify-between p-2.5 rounded-xl bg-primary/5 border border-primary/15 text-[11px] font-semibold text-grey-dark hover:bg-primary/10 transition-colors'
+                        className='flex items-center justify-between p-2.5 rounded-xl bg-primary/5 border border-primary/20 text-[11px] font-bold text-grey-dark hover:bg-primary/10 transition-colors'
                     >
                         <div className='flex items-center gap-2'>
                             <Icon icon='solar:phone-calling-bold' className='text-primary text-sm' />
                             <span>Helpline</span>
                         </div>
-                        <span className='font-bold text-primary'>{contactPhone}</span>
+                        <span className='font-extrabold text-primary'>{contactPhone}</span>
                     </a>
 
                     <button
@@ -180,11 +180,11 @@ export default function CustomerPortalLayout({ children }: { children: React.Rea
                             </Link>
                         </div>
                         <div className='hidden sm:block'>
-                            <h1 className='text-sm font-bold text-grey-dark'>
+                            <h1 className='text-sm font-extrabold text-grey-dark'>
                                 Customer Dashboard
                             </h1>
-                            <p className='text-[11px] text-grey-muted'>
-                                Welcome back, <strong className='text-grey-dark'>{userName}</strong>
+                            <p className='text-[11px] font-medium text-grey-dark/80'>
+                                Welcome back, <strong className='text-grey-dark font-extrabold'>{userName}</strong>
                             </p>
                         </div>
                     </div>
@@ -195,13 +195,13 @@ export default function CustomerPortalLayout({ children }: { children: React.Rea
                         <div className='flex md:hidden items-center gap-1 bg-grey/5 p-1 rounded-xl border border-grey/10 text-xs font-semibold'>
                             <Link
                                 href='/my-orders'
-                                className={`px-2.5 py-1 rounded-lg ${pathname.startsWith('/my-orders') ? 'bg-primary text-white font-bold' : 'text-grey-muted'}`}
+                                className={`px-2.5 py-1 rounded-lg ${pathname.startsWith('/my-orders') ? 'bg-primary text-white font-bold' : 'text-grey-dark font-bold'}`}
                             >
                                 Orders
                             </Link>
                             <Link
                                 href='/profile'
-                                className={`px-2.5 py-1 rounded-lg ${pathname === '/profile' ? 'bg-primary text-white font-bold' : 'text-grey-muted'}`}
+                                className={`px-2.5 py-1 rounded-lg ${pathname === '/profile' ? 'bg-primary text-white font-bold' : 'text-grey-dark font-bold'}`}
                             >
                                 Profile
                             </Link>
@@ -215,7 +215,7 @@ export default function CustomerPortalLayout({ children }: { children: React.Rea
 
                         <Link
                             href='/get-started'
-                            className='hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-primary hover:bg-primary/90 text-white text-xs font-bold shadow-xs transition-all'
+                            className='hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-primary hover:bg-primary/90 text-white text-xs font-extrabold shadow-xs transition-all'
                         >
                             <Icon icon='solar:add-circle-bold' className='text-sm' />
                             <span>New Subscription</span>
@@ -223,12 +223,12 @@ export default function CustomerPortalLayout({ children }: { children: React.Rea
 
                         <div className='flex items-center gap-2 pl-2 border-l border-grey/10'>
                             <div className='text-right hidden lg:block'>
-                                <div className='text-xs font-bold text-grey-dark leading-tight'>{userName}</div>
-                                <div className='text-[10px] text-grey-muted'>{userEmail}</div>
+                                <div className='text-xs font-extrabold text-grey-dark leading-tight'>{userName}</div>
+                                <div className='text-[10px] font-medium text-grey-dark/75'>{userEmail}</div>
                             </div>
                             <Link
                                 href='/profile'
-                                className='w-9 h-9 bg-primary/10 border border-primary/20 rounded-xl flex items-center justify-center text-primary font-bold text-xs hover:bg-primary/20 transition-colors'
+                                className='w-9 h-9 bg-primary/10 border border-primary/20 rounded-xl flex items-center justify-center text-primary font-extrabold text-xs hover:bg-primary/20 transition-colors shadow-2xs'
                                 title='Go to Profile'
                             >
                                 {initials}

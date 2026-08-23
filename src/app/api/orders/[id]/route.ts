@@ -129,3 +129,33 @@ export async function PATCH(
     )
   }
 }
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const session = await getServerSession(authOptions)
+    if (!session?.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const { id } = await params
+    if (!id) {
+      return NextResponse.json({ error: 'Order ID is required' }, { status: 400 })
+    }
+
+    await prisma.order.delete({
+      where: { id },
+    })
+
+    return NextResponse.json({ message: 'Order deleted successfully', id })
+  } catch (error: any) {
+    console.error('Error deleting order:', error)
+    return NextResponse.json(
+      { error: error.message || 'Failed to delete order' },
+      { status: 500 }
+    )
+  }
+}
+

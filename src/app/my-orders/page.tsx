@@ -206,21 +206,21 @@ export default function CustomerOrdersPage() {
                 header: 'Order Details',
                 cell: (info) => {
                     const order = info.row.original
-                    const shortId = order.id.slice(-6).toUpperCase()
+                    const displayId = order.id.startsWith('ORD-') ? order.id : `Order #${order.id.slice(-6).toUpperCase()}`
 
                     return (
-                        <div className='flex items-center gap-3 py-1 min-w-[200px] whitespace-nowrap'>
+                        <div className='flex items-center gap-3 py-1 min-w-[220px] whitespace-nowrap'>
                             <div className='w-10 h-10 rounded-2xl bg-amber-50 border border-amber-200/80 text-primary flex items-center justify-center shrink-0 shadow-2xs'>
                                 <Icon icon='solar:bag-check-bold-duotone' className='text-xl' />
                             </div>
                             <div className='min-w-0'>
                                 <div className='flex items-center gap-1.5'>
-                                    <span className='font-bold text-xs text-grey-dark tracking-tight whitespace-nowrap'>
-                                        Order #{shortId}
+                                    <span className='font-extrabold text-xs text-grey-dark tracking-tight whitespace-nowrap'>
+                                        {displayId}
                                     </span>
                                 </div>
-                                <span className='text-[11px] text-grey-muted flex items-center gap-1 mt-0.5 whitespace-nowrap'>
-                                    <Icon icon='solar:calendar-bold' className='text-[10px] text-grey-muted shrink-0' />
+                                <span className='text-[11px] font-medium text-grey-dark/75 flex items-center gap-1 mt-0.5 whitespace-nowrap'>
+                                    <Icon icon='solar:calendar-bold' className='text-[10px] text-grey-dark/60 shrink-0' />
                                     <span>{new Date(order.createdAt).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
                                 </span>
                             </div>
@@ -241,20 +241,20 @@ export default function CustomerOrdersPage() {
                             {/* Plan Name Pill */}
                             <div className='flex items-center gap-1.5 flex-nowrap'>
                                 {weekdayPlan ? (
-                                    <span className='px-3 py-1 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-900 text-xs font-bold inline-flex items-center gap-1.5 shadow-2xs whitespace-nowrap'>
-                                        <Icon icon='solar:chef-hat-bold' className='text-amber-700 text-xs shrink-0' />
+                                    <span className='px-3 py-1 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-950 text-xs font-extrabold inline-flex items-center gap-1.5 shadow-2xs whitespace-nowrap'>
+                                        <Icon icon='solar:chef-hat-bold' className='text-amber-800 text-xs shrink-0' />
                                         <span>{weekdayPlan.name} ({weekdayPlan.days || 26} Days)</span>
                                     </span>
                                 ) : (
                                     <span className='px-3 py-1 rounded-xl bg-grey/5 border border-grey/15 text-grey-dark text-xs font-bold inline-flex items-center gap-1.5 whitespace-nowrap'>
-                                        <Icon icon='solar:chef-hat-bold' className='text-grey-muted text-xs shrink-0' />
+                                        <Icon icon='solar:chef-hat-bold' className='text-grey-dark/60 text-xs shrink-0' />
                                         <span>Standard Plan</span>
                                     </span>
                                 )}
 
                                 {sundayPlan && (
-                                    <span className='px-2.5 py-1 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-900 text-[11px] font-bold inline-flex items-center gap-1 shadow-2xs whitespace-nowrap'>
-                                        <Icon icon='solar:star-fall-bold' className='text-purple-700 text-xs shrink-0' />
+                                    <span className='px-2.5 py-1 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-950 text-[11px] font-extrabold inline-flex items-center gap-1 shadow-2xs whitespace-nowrap'>
+                                        <Icon icon='solar:star-fall-bold' className='text-purple-800 text-xs shrink-0' />
                                         <span>+ Feast</span>
                                     </span>
                                 )}
@@ -270,12 +270,12 @@ export default function CustomerOrdersPage() {
                                         return (
                                             <span
                                                 key={slot}
-                                                className={`px-2.5 py-0.5 rounded-lg text-[11px] font-semibold inline-flex items-center gap-1 border whitespace-nowrap ${
+                                                className={`px-2.5 py-0.5 rounded-lg text-[11px] font-bold inline-flex items-center gap-1 border whitespace-nowrap ${
                                                     isBreakfast
-                                                        ? 'bg-amber-50 text-amber-800 border-amber-200/80'
+                                                        ? 'bg-amber-50 text-amber-900 border-amber-200/80'
                                                         : isLunch
-                                                        ? 'bg-orange-50 text-orange-800 border-orange-200/80'
-                                                        : 'bg-indigo-50 text-indigo-800 border-indigo-200/80'
+                                                        ? 'bg-orange-50 text-orange-900 border-orange-200/80'
+                                                        : 'bg-indigo-50 text-indigo-900 border-indigo-200/80'
                                                 }`}
                                             >
                                                 <Icon
@@ -307,11 +307,11 @@ export default function CustomerOrdersPage() {
                     return (
                         <div className='space-y-1.5 min-w-[160px] py-1 whitespace-nowrap'>
                             <div className='flex items-center justify-between text-xs font-bold gap-2'>
-                                <span className='text-grey-dark flex items-center gap-1 whitespace-nowrap'>
+                                <span className='text-grey-dark font-extrabold flex items-center gap-1 whitespace-nowrap'>
                                     <Icon icon='solar:scooter-bold' className='text-primary text-xs shrink-0' />
                                     <span>{servedCount}/{totalDays} Days</span>
                                 </span>
-                                <span className='text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded font-bold text-[10px] border border-emerald-200 whitespace-nowrap'>
+                                <span className='text-emerald-800 bg-emerald-50 px-1.5 py-0.2 rounded font-extrabold text-[10px] border border-emerald-200 whitespace-nowrap'>
                                     {servedPercent}%
                                 </span>
                             </div>
@@ -333,12 +333,12 @@ export default function CustomerOrdersPage() {
                     const isValid = !isNaN(date.getTime())
 
                     return (
-                        <div className='text-xs font-semibold text-grey-dark py-1 min-w-[140px] whitespace-nowrap'>
-                            <div className='flex items-center gap-1.5 whitespace-nowrap'>
+                        <div className='text-xs font-bold text-grey-dark py-1 min-w-[140px] whitespace-nowrap'>
+                            <div className='flex items-center gap-1.5 whitespace-nowrap font-extrabold text-grey-dark'>
                                 <Icon icon='solar:calendar-mark-bold-duotone' className='text-primary text-sm shrink-0' />
                                 <span>{isValid ? date.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }) : dateStr}</span>
                             </div>
-                            <span className='text-[10px] text-grey-muted block mt-0.5 whitespace-nowrap'>
+                            <span className='text-[11px] font-medium text-grey-dark/75 block mt-0.5 whitespace-nowrap'>
                                 {isValid ? date.toLocaleDateString('en-US', { weekday: 'long' }) : ''}
                             </span>
                         </div>
@@ -353,11 +353,11 @@ export default function CustomerOrdersPage() {
 
                     return (
                         <div className='space-y-1 py-1 min-w-[130px] whitespace-nowrap'>
-                            <div className='font-bold text-xs text-grey-dark whitespace-nowrap'>
+                            <div className='font-extrabold text-sm text-grey-dark whitespace-nowrap'>
                                 AED {info.getValue().toFixed(2)}
                             </div>
                             <span
-                                className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold border whitespace-nowrap ${
+                                className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold border whitespace-nowrap ${
                                     isPaid
                                         ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
                                         : 'bg-amber-50 text-amber-800 border-amber-200'
@@ -423,25 +423,26 @@ export default function CustomerOrdersPage() {
                     const order = info.row.original
 
                     return (
-                        <div className='flex items-center gap-2 justify-end py-1 min-w-[140px] whitespace-nowrap'>
+                        <div className='flex items-center gap-2 justify-end py-1 min-w-[150px] whitespace-nowrap'>
                             <button
                                 type='button'
                                 onClick={() => downloadInvoice(order.id)}
                                 disabled={isGenerating}
-                                className='p-2 rounded-xl bg-grey/5 hover:bg-grey/10 border border-grey/15 text-grey-dark transition-all cursor-pointer disabled:opacity-40 shadow-2xs shrink-0'
+                                className='p-2 rounded-xl bg-stone-100 hover:bg-stone-200 border border-stone-300 text-stone-800 transition-all cursor-pointer disabled:opacity-40 shadow-2xs shrink-0 font-bold'
                                 title='Download PDF Invoice'
                             >
                                 {isGenerating ? (
                                     <Icon icon='line-md:loading-loop' className='text-sm' />
                                 ) : (
-                                    <Icon icon='solar:printer-bold-duotone' className='text-sm text-primary' />
+                                    <Icon icon='solar:printer-bold-duotone' className='text-base text-stone-800' />
                                 )}
                             </button>
 
                             <Link
                                 href={`/my-orders/${order.id}`}
-                                className='px-3.5 py-1.5 rounded-xl bg-primary hover:bg-primary/90 text-white font-bold text-xs flex items-center gap-1 shadow-xs transition-all shrink-0 whitespace-nowrap'
+                                className='px-3.5 py-1.5 rounded-xl bg-primary hover:bg-primary/90 text-white font-extrabold text-xs flex items-center gap-1.5 shadow-xs transition-all shrink-0 whitespace-nowrap'
                             >
+                                <Icon icon='solar:calendar-bold' className='text-sm' />
                                 <span>Calendar</span>
                                 <Icon icon='solar:arrow-right-up-bold' className='text-[10px]' />
                             </Link>
@@ -488,24 +489,24 @@ export default function CustomerOrdersPage() {
             {/* Header with Title and View Switcher */}
             <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-grey/10 shadow-xs'>
                 <div>
-                    <h2 className='text-xl sm:text-2xl font-bold text-grey-dark tracking-tight'>
+                    <h2 className='text-xl sm:text-2xl font-extrabold text-grey-dark tracking-tight'>
                         My Subscriptions &amp; Orders
                     </h2>
-                    <p className='text-xs text-grey-muted mt-1'>
+                    <p className='text-xs font-medium text-grey-dark/75 mt-1'>
                         Manage your active meal plans, calendar deliveries, and invoices
                     </p>
                 </div>
 
                 <div className='flex items-center gap-3'>
                     {/* View Mode Toggle */}
-                    <div className='flex items-center bg-grey/5 p-1 rounded-2xl border border-grey/10 text-xs font-semibold'>
+                    <div className='flex items-center bg-stone-100 p-1 rounded-2xl border border-stone-200 text-xs font-bold'>
                         <button
                             type='button'
                             onClick={() => setViewMode('TABLE')}
-                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all cursor-pointer ${
+                            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl transition-all cursor-pointer ${
                                 viewMode === 'TABLE'
-                                    ? 'bg-white text-primary shadow-xs font-bold'
-                                    : 'text-grey-muted hover:text-grey-dark'
+                                    ? 'bg-white text-primary shadow-xs font-extrabold'
+                                    : 'text-grey-dark hover:text-black font-bold'
                             }`}
                         >
                             <Icon icon='solar:list-bold' className='text-sm' />
@@ -514,10 +515,10 @@ export default function CustomerOrdersPage() {
                         <button
                             type='button'
                             onClick={() => setViewMode('CARDS')}
-                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all cursor-pointer ${
+                            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl transition-all cursor-pointer ${
                                 viewMode === 'CARDS'
-                                    ? 'bg-white text-primary shadow-xs font-bold'
-                                    : 'text-grey-muted hover:text-grey-dark'
+                                    ? 'bg-white text-primary shadow-xs font-extrabold'
+                                    : 'text-grey-dark hover:text-black font-bold'
                             }`}
                         >
                             <Icon icon='solar:widget-2-bold' className='text-sm' />
@@ -527,7 +528,7 @@ export default function CustomerOrdersPage() {
 
                     <Link
                         href='/get-started'
-                        className='inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl bg-primary text-white font-bold text-xs hover:bg-primary/90 shadow-md shadow-primary/20 transition-all'
+                        className='inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl bg-primary text-white font-extrabold text-xs hover:bg-primary/90 shadow-md shadow-primary/20 transition-all'
                     >
                         <Icon icon='solar:cart-large-bold' className='text-base' />
                         <span className='hidden sm:inline'>Order New Plan</span>
@@ -611,7 +612,7 @@ export default function CustomerOrdersPage() {
                                     <div className='p-5 sm:px-7 border-b border-grey/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#FAF8F5]/50'>
                                         <div className='flex items-center gap-3 flex-wrap'>
                                             <span className='font-bold text-sm text-grey-dark'>
-                                                Order #{order.id.slice(-6).toUpperCase()}
+                                                {order.id.startsWith('ORD-') ? order.id : `Order #${order.id.slice(-6).toUpperCase()}`}
                                             </span>
                                             <span className='text-grey/30 hidden sm:inline'>•</span>
                                             <span className='text-xs text-grey-muted'>

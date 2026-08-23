@@ -156,8 +156,24 @@ export async function POST(req: Request) {
                 })
             }
 
+            // Generate Creation-Based Sequential Unique Order ID: ORD-YYYY-MM-DD-1, ORD-YYYY-MM-DD-2
+            const now = new Date()
+            const yyyy = now.getFullYear()
+            const mm = String(now.getMonth() + 1).padStart(2, '0')
+            const dd = String(now.getDate()).padStart(2, '0')
+            const totalOrders = await tx.order.count()
+            let nextSeq = totalOrders + 1
+            let customOrderId = `ORD-${yyyy}-${mm}-${dd}-${nextSeq}`
+
+            // Safe unique check loop
+            while (await tx.order.findUnique({ where: { id: customOrderId } })) {
+                nextSeq++
+                customOrderId = `ORD-${yyyy}-${mm}-${dd}-${nextSeq}`
+            }
+
             return (tx.order as any).create({
                 data: {
+                    id: customOrderId,
                     customerId: customer.id,
                     address: address || `${buildingName || ''} ${flatRoomNumber || ''}`.trim() || 'Dubai, UAE',
                     buildingName: buildingName || null,

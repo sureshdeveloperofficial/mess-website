@@ -64,9 +64,10 @@ interface OrderViewDialogProps {
     isOpen: boolean
     onClose: () => void
     onOrderUpdated?: () => void
+    onDeleteOrder?: (order: Order) => void
 }
 
-export function OrderViewDialog({ order, isOpen, onClose, onOrderUpdated }: OrderViewDialogProps) {
+export function OrderViewDialog({ order, isOpen, onClose, onOrderUpdated, onDeleteOrder }: OrderViewDialogProps) {
     const queryClient = useQueryClient()
     const { downloadInvoice, isGenerating } = useInvoiceDownload()
 
@@ -92,14 +93,17 @@ export function OrderViewDialog({ order, isOpen, onClose, onOrderUpdated }: Orde
             const res = await axios.patch(`/api/orders/${order.id}`, updatedFields)
             return res.data
         },
-        onSuccess: () => {
+        onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: ['orders'] })
             queryClient.invalidateQueries({ queryKey: ['order', order?.id] })
-            toast.success('Order updated successfully!')
+            if (data?.status) setStatusValue(data.status)
+            if (data?.paymentStatus) setPaymentStatusValue(data.paymentStatus)
+            if (data?.servedDates) setServedDatesList(data.servedDates)
+            toast.success('Order status updated successfully!')
             if (onOrderUpdated) onOrderUpdated()
         },
         onError: (err: any) => {
-            toast.error(err.response?.data?.error || 'Failed to update order')
+            toast.error(err?.response?.data?.error || err?.message || 'Failed to update order')
         },
     })
 
@@ -258,7 +262,7 @@ export function OrderViewDialog({ order, isOpen, onClose, onOrderUpdated }: Orde
                             <div>
                                 <div className='flex items-center gap-2.5 flex-wrap'>
                                     <h2 className='text-lg sm:text-xl font-bold text-grey-dark tracking-tight'>
-                                        Order #{shortId}
+                                        {order.id.startsWith('ORD-') ? order.id : `Order #${shortId}`}
                                     </h2>
                                     <span
                                         className={`px-3 py-0.5 rounded-full text-[11px] font-semibold tracking-wide flex items-center gap-1.5 ${
@@ -299,6 +303,18 @@ export function OrderViewDialog({ order, isOpen, onClose, onOrderUpdated }: Orde
                         </div>
 
                         <div className='flex items-center gap-2'>
+                            {onDeleteOrder && (
+                                <button
+                                    type='button'
+                                    onClick={() => onDeleteOrder(order)}
+                                    className='px-3 py-1.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 border border-red-200/80 font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer'
+                                    title='Permanently Delete Order'
+                                >
+                                    <Icon icon='solar:trash-bin-trash-bold-duotone' className='text-sm' />
+                                    <span>Delete Order</span>
+                                </button>
+                            )}
+
                             <button
                                 type='button'
                                 onClick={onClose}
@@ -324,13 +340,13 @@ export function OrderViewDialog({ order, isOpen, onClose, onOrderUpdated }: Orde
                                         Quick Action &amp; Order Status Control
                                     </span>
                                     <span className='text-[11px] text-grey-muted'>
-                                        Status: <strong className='text-grey-dark uppercase font-semibold'>{order.status}</strong> • Payment: <strong className='text-emerald-700 font-semibold'>{order.paymentStatus || 'PENDING'}</strong>
+                                        Status: <strong className='text-grey-dark uppercase font-bold'>{statusValue}</strong> • Payment: <strong className='text-emerald-700 font-bold'>{paymentStatusValue}</strong>
                                     </span>
                                 </div>
                             </div>
 
                             <div className='flex items-center gap-2 flex-wrap'>
-                                {order.status === 'PENDING' && (
+                                {statusValue === 'PENDING' && (
                                     <button
                                         type='button'
                                         onClick={() => {
@@ -338,14 +354,18 @@ export function OrderViewDialog({ order, isOpen, onClose, onOrderUpdated }: Orde
                                             updateMutation.mutate({ status: 'CONFIRMED' })
                                         }}
                                         disabled={updateMutation.isPending}
-                                        className='px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs flex items-center gap-1.5 shadow-xs transition-all cursor-pointer'
+                                        className='px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-xs transition-all cursor-pointer disabled:opacity-50'
                                     >
-                                        <Icon icon='solar:check-read-bold' className='text-sm' />
+                                        {updateMutation.isPending ? (
+                                            <Icon icon='line-md:loading-loop' className='text-sm' />
+                                        ) : (
+                                            <Icon icon='solar:check-read-bold' className='text-sm' />
+                                        )}
                                         <span>Accept Order</span>
                                     </button>
                                 )}
 
-                                {order.status === 'CONFIRMED' && (
+                                {statusValue === 'CONFIRMED' && (
                                     <button
                                         type='button'
                                         onClick={() => {
@@ -353,14 +373,18 @@ export function OrderViewDialog({ order, isOpen, onClose, onOrderUpdated }: Orde
                                             updateMutation.mutate({ status: 'ACTIVE' })
                                         }}
                                         disabled={updateMutation.isPending}
-                                        className='px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs flex items-center gap-1.5 shadow-xs transition-all cursor-pointer'
+                                        className='px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-xs transition-all cursor-pointer disabled:opacity-50'
                                     >
-                                        <Icon icon='solar:scooter-bold' className='text-sm' />
+                                        {updateMutation.isPending ? (
+                                            <Icon icon='line-md:loading-loop' className='text-sm' />
+                                        ) : (
+                                            <Icon icon='solar:scooter-bold' className='text-sm' />
+                                        )}
                                         <span>Start Deliveries</span>
                                     </button>
                                 )}
 
-                                {order.status === 'ACTIVE' && (
+                                {statusValue === 'ACTIVE' && (
                                     <button
                                         type='button'
                                         onClick={() => {
@@ -368,10 +392,30 @@ export function OrderViewDialog({ order, isOpen, onClose, onOrderUpdated }: Orde
                                             updateMutation.mutate({ status: 'COMPLETED' })
                                         }}
                                         disabled={updateMutation.isPending}
-                                        className='px-3.5 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs flex items-center gap-1.5 shadow-xs transition-all cursor-pointer'
+                                        className='px-3.5 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-xs transition-all cursor-pointer disabled:opacity-50'
                                     >
-                                        <Icon icon='solar:cup-star-bold' className='text-sm' />
+                                        {updateMutation.isPending ? (
+                                            <Icon icon='line-md:loading-loop' className='text-sm' />
+                                        ) : (
+                                            <Icon icon='solar:cup-star-bold' className='text-sm' />
+                                        )}
                                         <span>Mark Completed</span>
+                                    </button>
+                                )}
+
+                                {paymentStatusValue !== 'PAID' && (
+                                    <button
+                                        type='button'
+                                        onClick={() => {
+                                            setPaymentStatusValue('PAID')
+                                            updateMutation.mutate({ paymentStatus: 'PAID' })
+                                        }}
+                                        disabled={updateMutation.isPending}
+                                        className='px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer disabled:opacity-50'
+                                        title='Mark Payment as Paid'
+                                    >
+                                        <Icon icon='solar:card-check-bold' className='text-sm text-emerald-600' />
+                                        <span>Mark Paid</span>
                                     </button>
                                 )}
 
