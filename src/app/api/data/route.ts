@@ -10,6 +10,7 @@ import { FullMenuType } from '@/app/types/fullmenu'
 const HeaderData: HeaderItem[] = [
   { label: 'About', href: '/#aboutus' },
   { label: 'Meal Plans', href: '/plans' },
+  { label: 'Delivery Areas', href: '/delivery-areas' },
   { label: 'Contact', href: '/contact' },
   { label: 'Get Started', href: '/get-started' },
 ]
