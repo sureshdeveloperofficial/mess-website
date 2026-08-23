@@ -9,6 +9,7 @@ import axios from 'axios'
 import toast from 'react-hot-toast'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useInvoiceDownload } from '@/app/hooks/useInvoiceDownload'
+import CustomSelect, { SelectOption } from '@/app/components/Common/CustomSelect'
 
 export type Customer = {
     id: string
@@ -368,37 +369,37 @@ export function OrderViewDialog({ order, isOpen, onClose, onOrderUpdated }: Orde
                                     </button>
                                 )}
 
-                                <select
+                                <CustomSelect
                                     value={statusValue}
-                                    onChange={(e) => {
-                                        const newStatus = e.target.value
+                                    onChange={(newStatus) => {
                                         setStatusValue(newStatus)
                                         updateMutation.mutate({ status: newStatus })
                                     }}
+                                    options={[
+                                        { value: 'PENDING', label: 'PENDING', dotColor: 'bg-amber-500', description: 'Awaiting admin review' },
+                                        { value: 'CONFIRMED', label: 'CONFIRMED', dotColor: 'bg-blue-600', description: 'Order accepted' },
+                                        { value: 'ACTIVE', label: 'ACTIVE', dotColor: 'bg-emerald-600', description: 'Meal deliveries in progress' },
+                                        { value: 'COMPLETED', label: 'COMPLETED', dotColor: 'bg-purple-600', description: 'Subscription finished' },
+                                        { value: 'CANCELLED', label: 'CANCELLED', dotColor: 'bg-red-600', description: 'Order cancelled' },
+                                    ]}
+                                    labelPrefix='Status: '
                                     disabled={updateMutation.isPending}
-                                    className='px-3 py-1.5 bg-grey/5 hover:bg-grey/10 border border-grey/20 rounded-xl text-xs font-semibold text-grey-dark focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer'
-                                >
-                                    <option value='PENDING'>Status: PENDING</option>
-                                    <option value='CONFIRMED'>Status: CONFIRMED</option>
-                                    <option value='ACTIVE'>Status: ACTIVE</option>
-                                    <option value='COMPLETED'>Status: COMPLETED</option>
-                                    <option value='CANCELLED'>Status: CANCELLED</option>
-                                </select>
+                                />
 
-                                <select
+                                <CustomSelect
                                     value={paymentStatusValue}
-                                    onChange={(e) => {
-                                        const newPaymentStatus = e.target.value
+                                    onChange={(newPaymentStatus) => {
                                         setPaymentStatusValue(newPaymentStatus)
                                         updateMutation.mutate({ paymentStatus: newPaymentStatus })
                                     }}
+                                    options={[
+                                        { value: 'PENDING', label: 'PENDING', dotColor: 'bg-amber-500', description: 'Awaiting receipt or COD' },
+                                        { value: 'PAID', label: 'PAID', dotColor: 'bg-emerald-600', description: 'Full payment verified' },
+                                        { value: 'FAILED', label: 'FAILED', dotColor: 'bg-red-600', description: 'Payment rejected or failed' },
+                                    ]}
+                                    labelPrefix='Payment: '
                                     disabled={updateMutation.isPending}
-                                    className='px-3 py-1.5 bg-grey/5 hover:bg-grey/10 border border-grey/20 rounded-xl text-xs font-semibold text-grey-dark focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer'
-                                >
-                                    <option value='PENDING'>Payment: PENDING</option>
-                                    <option value='PAID'>Payment: PAID</option>
-                                    <option value='FAILED'>Payment: FAILED</option>
-                                </select>
+                                />
 
                                 {updateMutation.isPending && (
                                     <Icon icon='line-md:loading-loop' className='text-primary text-lg animate-spin' />
