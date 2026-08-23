@@ -51,40 +51,44 @@ export async function POST(req: Request) {
             paymentMethod
         } = body
 
+        if (!customerName || !customerPhone) {
+            return NextResponse.json({ error: 'Customer name and phone number are required' }, { status: 400 })
+        }
+
+        const orderRemarks = body.orderRemarks || body.specialNotes || null
+        const cleanEmail = customerEmail && customerEmail.trim() !== '' ? customerEmail.trim() : null
+
         const order = await prisma.$transaction(async (tx) => {
             let customer;
 
-            // Senior Software Engineer best practice: 
-            // If user is authenticated, use session identifying info (email) as primary key.
             if (session?.user?.email) {
                 customer = await tx.customer.upsert({
                     where: { email: session.user.email },
                     update: {
                         name: customerName,
                         phone: customerPhone,
-                        whatsappNo: whatsappNo,
+                        whatsappNo: whatsappNo || null,
                     },
                     create: {
                         name: customerName,
                         email: session.user.email,
                         phone: customerPhone,
-                        whatsappNo: whatsappNo,
+                        whatsappNo: whatsappNo || null,
                     }
                 })
             } else {
-                // Fallback to phone-based identification for guests or unauthenticated users
                 customer = await tx.customer.upsert({
                     where: { phone: customerPhone },
                     update: {
                         name: customerName,
-                        email: customerEmail,
-                        whatsappNo: whatsappNo,
+                        email: cleanEmail,
+                        whatsappNo: whatsappNo || null,
                     },
                     create: {
                         name: customerName,
                         phone: customerPhone,
-                        email: customerEmail,
-                        whatsappNo: whatsappNo,
+                        email: cleanEmail,
+                        whatsappNo: whatsappNo || null,
                     }
                 })
             }
@@ -92,25 +96,27 @@ export async function POST(req: Request) {
             return tx.order.create({
                 data: {
                     customerId: customer.id,
-                    address,
-                    buildingName,
-                    flatRoomNumber,
-                    startDate: new Date(startDate),
-                    deliveryLocation,
-                    brunchLunchLocation,
-                    dinnerLocation,
-                    totalAmount,
+                    address: address || `${buildingName || ''} ${flatRoomNumber || ''}`.trim() || 'Dubai, UAE',
+                    buildingName: buildingName || null,
+                    flatRoomNumber: flatRoomNumber || null,
+                    startDate: new Date(startDate || new Date()),
+                    deliveryLocation: deliveryLocation || 'Inside my room',
+                    brunchLunchLocation: brunchLunchLocation || null,
+                    dinnerLocation: dinnerLocation || null,
+                    totalAmount: parseFloat(totalAmount) || 0,
                     paymentMethod: paymentMethod || "COD",
-                    selectionsJson,
-                    includeSundays,
-                    sundaysCount,
-                    activeDates,
+                    orderRemarks,
+                    selectionsJson: selectionsJson || {},
+                    includeSundays: includeSundays ?? true,
+                    sundaysCount: sundaysCount || 0,
+                    activeDates: activeDates || [],
                     selectedMenus: {
-                        connect: menuIds.map((id: string) => ({ id }))
+                        connect: (menuIds || []).map((id: string) => ({ id }))
                     }
                 },
                 include: {
-                    customer: true
+                    customer: true,
+                    selectedMenus: true
                 }
             })
         })

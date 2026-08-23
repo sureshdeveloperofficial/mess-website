@@ -42,12 +42,16 @@ type FoodMenu = {
     description?: string
     price: number
     days?: number
-    foodItems: FoodItem[]
-    availableDays: string[]
-    scheduleJson?: any | null
+    servingCount?: number
+    isActive?: boolean
+    availableDays?: string[]
+    scheduleJson?: any
+    features?: string[]
+    isPopular?: boolean
+    badgeText?: string
     mealTypeId?: string | null
     mealType?: MealType | null
-    isActive?: boolean
+    foodItems?: FoodItem[]
     createdAt?: string
 }
 
@@ -66,6 +70,7 @@ export default function FoodPlansPage() {
     const [currentMealTab, setCurrentMealTab] = useState<string>('')
     const [modalCategoryFilter, setModalCategoryFilter] = useState<string>('all')
     const [searchTerm, setSearchTerm] = useState('')
+    const [newFeatureText, setNewFeatureText] = useState('')
 
     // Form data with day-wise & meal-type-wise schedule
     const [formData, setFormData] = useState({
@@ -73,10 +78,14 @@ export default function FoodPlansPage() {
         description: '',
         price: '',
         days: '30',
+        servingCount: 1 as 1 | 2 | 3,
         selectedMealTypeIds: [] as string[],
         availableDays: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] as string[],
         // Structure: Record<DayName, Record<MealTypeId, string[]>>
         schedule: {} as Record<string, Record<string, string[]>>,
+        features: [] as string[],
+        isPopular: false,
+        badgeText: 'Most Popular',
         isActive: true,
     })
 
@@ -158,14 +167,19 @@ export default function FoodPlansPage() {
     const mutation = useMutation({
         mutationFn: async (data: any) => {
             const parsedDays = parseInt(data.days?.toString() || '30', 10) || 30
+            const parsedServingCount = parseInt(data.servingCount?.toString() || '1', 10) || 1
             const payload = {
                 name: data.name,
                 description: data.description,
                 price: parseFloat(data.price),
                 days: parsedDays,
+                servingCount: parsedServingCount,
                 mealTypeId: data.selectedMealTypeIds[0] || null,
                 availableDays: data.availableDays,
                 scheduleJson: data.schedule,
+                features: data.features,
+                isPopular: data.isPopular,
+                badgeText: data.badgeText,
                 isActive: data.isActive,
             }
             if (data.planId) {
@@ -200,10 +214,14 @@ export default function FoodPlansPage() {
                 description: data.description,
                 price: parseFloat(data.price) || 0,
                 days: parseInt(data.days?.toString() || '30', 10) || 30,
+                servingCount: parseInt(data.servingCount?.toString() || '1', 10) || 1,
                 mealTypeId: data.selectedMealTypeIds[0] || null,
                 mealType: activeMealTypes.find((m) => m.id === data.selectedMealTypeIds[0]) || null,
                 availableDays: data.availableDays,
                 scheduleJson: data.schedule,
+                features: data.features,
+                isPopular: data.isPopular,
+                badgeText: data.badgeText,
                 isActive: data.isActive,
                 foodItems: attachedFoodItems,
             }
@@ -295,6 +313,7 @@ export default function FoodPlansPage() {
         setIsViewOnly(false)
         setEditingPlan(null)
         setSearchTerm('')
+        setNewFeatureText('')
         setModalCategoryFilter('all')
         setCurrentDayTab('Monday')
         setCurrentMealTab(activeMealTypes[0]?.id || '')
@@ -303,16 +322,73 @@ export default function FoodPlansPage() {
             description: '',
             price: '',
             days: '30',
+            servingCount: 1,
             selectedMealTypeIds: activeMealTypes.map((m) => m.id),
             availableDays: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
             schedule: {},
+            features: [],
+            isPopular: false,
+            badgeText: 'Most Popular',
             isActive: true,
         })
+    }
+
+    const handleAddFeature = () => {
+        if (!newFeatureText.trim() || isViewOnly) return
+        setFormData((prev) => ({
+            ...prev,
+            features: [...prev.features, newFeatureText.trim()],
+        }))
+        setNewFeatureText('')
+    }
+
+    const handleRemoveFeature = (index: number) => {
+        if (isViewOnly) return
+        setFormData((prev) => ({
+            ...prev,
+            features: prev.features.filter((_, idx) => idx !== index),
+        }))
+    }
+
+    const handleLoadDefaultFeatures = () => {
+        if (isViewOnly) return
+        const sc = formData.servingCount
+        const defaults = [
+            sc === 1
+                ? 'Choose Any 1 Meal/Day (Breakfast / Lunch / Dinner)'
+                : sc === 2
+                ? 'Choose Any 2 Meals/Day (Breakfast / Lunch / Dinner)'
+                : 'Includes All 3 Meals/Day (Breakfast / Lunch / Dinner)',
+            'Daily rotating South Indian & Kerala menu',
+            'Free doorstep delivery to your room/flat',
+            'Non-Veg, Veg & Fish rotation options',
+            'Flexible pause & resume when travelling',
+        ]
+        setFormData((prev) => ({ ...prev, features: defaults }))
+        toast.success('Loaded suggested feature checklist!')
+    }
+
+    const resolveMealTypeId = (rawKey: string, availableMealTypes: MealType[]): string | null => {
+        if (!rawKey) return null
+        // 1. Direct ID match
+        const direct = availableMealTypes.find((m) => m.id === rawKey)
+        if (direct) return direct.id
+        // 2. Case-insensitive name match
+        const byName = availableMealTypes.find((m) => m.name.trim().toLowerCase() === rawKey.trim().toLowerCase())
+        if (byName) return byName.id
+        // 3. Partial name match
+        const partial = availableMealTypes.find((m) =>
+            rawKey.toLowerCase().includes(m.name.toLowerCase()) ||
+            m.name.toLowerCase().includes(rawKey.toLowerCase())
+        )
+        if (partial) return partial.id
+        return null
     }
 
     const openModal = (plan?: FoodMenu, view: boolean = false) => {
         setIsViewOnly(view)
         setSearchTerm('')
+        setNewFeatureText('')
         setModalCategoryFilter('all')
         if (plan) {
             setEditingPlan(plan)
@@ -323,6 +399,7 @@ export default function FoodPlansPage() {
                 'Thursday',
                 'Friday',
                 'Saturday',
+                'Sunday',
             ]
             setCurrentDayTab(days[0] || 'Monday')
 
@@ -332,23 +409,30 @@ export default function FoodPlansPage() {
                 parsedSchedule[d] = {}
             })
 
-            const primaryMealId = plan.mealTypeId || (activeMealTypes.length > 0 ? activeMealTypes[0].id : '')
+            const primaryMealId = resolveMealTypeId(plan.mealTypeId || '', activeMealTypes) || (activeMealTypes.length > 0 ? activeMealTypes[0].id : '')
             const detectedMealTypeIds = new Set<string>()
-            if (plan.mealTypeId) detectedMealTypeIds.add(plan.mealTypeId)
+            if (primaryMealId) detectedMealTypeIds.add(primaryMealId)
 
             if (plan.scheduleJson && typeof plan.scheduleJson === 'object') {
                 ALL_DAYS.forEach((d) => {
                     const dayVal = plan.scheduleJson[d]
                     if (Array.isArray(dayVal)) {
                         // Legacy flat day array: map to primary meal type
-                        parsedSchedule[d][primaryMealId] = [...dayVal]
-                        detectedMealTypeIds.add(primaryMealId)
+                        if (primaryMealId) {
+                            parsedSchedule[d][primaryMealId] = [...dayVal]
+                            detectedMealTypeIds.add(primaryMealId)
+                        }
                     } else if (dayVal && typeof dayVal === 'object') {
-                        // Nested day -> mealTypeId -> items
-                        Object.keys(dayVal).forEach((mtId) => {
-                            if (Array.isArray(dayVal[mtId])) {
-                                parsedSchedule[d][mtId] = [...dayVal[mtId]]
-                                if (dayVal[mtId].length > 0) detectedMealTypeIds.add(mtId)
+                        // Nested day -> mealTypeId / mealName -> items
+                        Object.keys(dayVal).forEach((rawKey) => {
+                            if (rawKey === 'features' || rawKey === 'isPopular' || rawKey === 'badgeText') return // skip meta keys
+                            const resolvedId = resolveMealTypeId(rawKey, activeMealTypes) || rawKey
+                            if (Array.isArray(dayVal[rawKey])) {
+                                parsedSchedule[d][resolvedId] = [
+                                    ...(parsedSchedule[d][resolvedId] || []),
+                                    ...dayVal[rawKey],
+                                ]
+                                if (dayVal[rawKey].length > 0) detectedMealTypeIds.add(resolvedId)
                             }
                         })
                     }
@@ -357,28 +441,57 @@ export default function FoodPlansPage() {
                 // Fallback: legacy attached dishes
                 const fallbackIds = (plan.foodItems || []).map((item) => item.id)
                 days.forEach((d) => {
-                    parsedSchedule[d][primaryMealId] = [...fallbackIds]
+                    if (primaryMealId) {
+                        parsedSchedule[d][primaryMealId] = [...fallbackIds]
+                    }
                 })
-                detectedMealTypeIds.add(primaryMealId)
+                if (primaryMealId) detectedMealTypeIds.add(primaryMealId)
             }
 
-            const initialMealTypeIds =
-                detectedMealTypeIds.size > 0
-                    ? Array.from(detectedMealTypeIds)
-                    : activeMealTypes.length > 0
-                    ? [activeMealTypes[0].id]
-                    : []
+            // Normalize detected meal types to active meal types IDs
+            let initialMealTypeIds = Array.from(detectedMealTypeIds)
+                .map((raw) => resolveMealTypeId(raw, activeMealTypes) || raw)
+                .filter((id) => activeMealTypes.some((m) => m.id === id))
 
-            setCurrentMealTab(initialMealTypeIds[0] || '')
+            const planServingCount = ((plan.servingCount as any) || 1) as 1 | 2 | 3
+            if (planServingCount === 3 || initialMealTypeIds.length === 0) {
+                initialMealTypeIds = activeMealTypes.map((m) => m.id)
+            }
+
+            const selectedFirstMeal = initialMealTypeIds.find((id) => activeMealTypes.some((m) => m.id === id)) || activeMealTypes[0]?.id || ''
+            setCurrentMealTab(selectedFirstMeal)
+
+            const initialFeatures = Array.isArray(plan.features) && plan.features.length > 0
+                ? plan.features
+                : (Array.isArray(plan.scheduleJson?.features) && plan.scheduleJson.features.length > 0
+                    ? plan.scheduleJson.features
+                    : [
+                        plan.servingCount === 1
+                            ? 'Choose Any 1 Meal/Day (Breakfast / Lunch / Dinner)'
+                            : plan.servingCount === 2
+                            ? 'Choose Any 2 Meals/Day (Breakfast / Lunch / Dinner)'
+                            : 'Includes All 3 Meals/Day (Breakfast / Lunch / Dinner)',
+                        'Daily rotating South Indian & Kerala menu',
+                        'Free doorstep delivery to your room/flat',
+                        'Non-Veg, Veg & Fish rotation options',
+                        'Flexible pause & resume when travelling',
+                    ])
+
+            const isPop = Boolean(plan.isPopular ?? plan.scheduleJson?.isPopular)
+            const badge = plan.badgeText || plan.scheduleJson?.badgeText || (isPop ? 'Most Popular' : 'Most Popular')
 
             setFormData({
                 name: plan.name,
                 description: plan.description || '',
                 price: plan.price.toString(),
                 days: (plan.days || 30).toString(),
+                servingCount: planServingCount,
                 selectedMealTypeIds: initialMealTypeIds,
                 availableDays: days,
                 schedule: parsedSchedule,
+                features: initialFeatures,
+                isPopular: isPop,
+                badgeText: badge,
                 isActive: plan.isActive !== false,
             })
         } else {
@@ -392,14 +505,26 @@ export default function FoodPlansPage() {
                 blankSchedule[d] = {}
             })
 
+            const blankFeatures = [
+                'Choose Any 1 Meal/Day (Breakfast / Lunch / Dinner)',
+                'Daily rotating South Indian & Kerala menu',
+                'Free doorstep delivery to your room/flat',
+                'Non-Veg, Veg & Fish rotation options',
+                'Flexible pause & resume when travelling',
+            ]
+
             setFormData({
                 name: '',
                 description: '',
                 price: '',
                 days: '30',
+                servingCount: 1,
                 selectedMealTypeIds: initialMealTypeIds,
                 availableDays: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
                 schedule: blankSchedule,
+                features: blankFeatures,
+                isPopular: false,
+                badgeText: 'Most Popular',
                 isActive: true,
             })
         }
@@ -636,14 +761,21 @@ export default function FoodPlansPage() {
                                         <span>{mealType.name}</span>
                                     </span>
                                 )}
+                                <span className='px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-700 text-[10px] font-extrabold border border-emerald-500/20'>
+                                    {row.servingCount || 1} Time Plan
+                                </span>
                                 <span className='px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-700 text-[10px] font-extrabold border border-blue-500/20'>
                                     {row.days || 30} Days
                                 </span>
+                                {(row.isPopular || row.scheduleJson?.isPopular) && (
+                                    <span className='px-2 py-0.5 rounded-md bg-amber-400 text-grey-dark text-[10px] font-extrabold flex items-center gap-1 shadow-xs'>
+                                        <Icon icon='solar:star-bold' className='text-xs text-grey-dark' />
+                                        <span>{row.badgeText || row.scheduleJson?.badgeText || 'Most Popular'}</span>
+                                    </span>
+                                )}
                             </div>
-                            <div className='text-xs font-medium text-grey-muted truncate max-w-[280px]'>
-                                {items.length > 0
-                                    ? items.map((i) => i.name).join(', ')
-                                    : 'No items attached'}
+                            <div className='text-xs font-medium text-grey-muted truncate max-w-[320px]'>
+                                {row.description || (items.length > 0 ? items.map((i) => i.name).join(', ') : 'No description set')}
                             </div>
                         </div>
                     )
@@ -892,17 +1024,200 @@ export default function FoodPlansPage() {
                                             />
                                         </div>
 
+                                        {/* Featured / Most Popular Ribbon Badge Toggle */}
+                                        <div className='p-3.5 bg-grey/5 rounded-2xl border border-grey/10 space-y-2.5'>
+                                            <div className='flex items-center justify-between'>
+                                                <div>
+                                                    <span className='text-xs font-bold text-grey-dark flex items-center gap-1.5'>
+                                                        <Icon icon='solar:star-bold' className='text-amber-500 text-sm' />
+                                                        <span>Featured / Most Popular Badge</span>
+                                                    </span>
+                                                    <span className='text-[11px] text-grey-muted block mt-0.5'>
+                                                        Highlights this plan with a ribbon on website cards
+                                                    </span>
+                                                </div>
+                                                <StatusToggle
+                                                    isActive={formData.isPopular}
+                                                    onToggle={(val) => setFormData({ ...formData, isPopular: val })}
+                                                    disabled={isViewOnly}
+                                                />
+                                            </div>
+
+                                            {formData.isPopular && (
+                                                <div className='pt-2 space-y-1.5 border-t border-grey/10 mt-1'>
+                                                    <div className='flex items-center justify-between'>
+                                                        <label className='admin-label text-[11px] mb-0'>Ribbon Badge Text</label>
+                                                        <span className='text-[10px] text-grey-muted'>Type any custom tag</span>
+                                                    </div>
+                                                    <input
+                                                        type='text'
+                                                        value={formData.badgeText}
+                                                        readOnly={isViewOnly}
+                                                        onChange={(e) => setFormData({ ...formData, badgeText: e.target.value })}
+                                                        className={`admin-input text-xs py-2 ${isViewOnly ? 'cursor-default' : ''}`}
+                                                        placeholder='e.g. Most Popular, Best Value, Chef Special...'
+                                                    />
+                                                </div>
+                                            )}
+                                        </div>
+
                                         {/* Description */}
                                         <div>
-                                            <label className='admin-label'>Plan Description</label>
+                                            <div className='flex items-center justify-between mb-1.5'>
+                                                <label className='admin-label mb-0'>Plan Description</label>
+                                                <span className='text-[10px] text-grey-muted'>
+                                                    {formData.description.length}/200 chars
+                                                </span>
+                                            </div>
                                             <textarea
-                                                rows={4}
+                                                rows={3}
                                                 value={formData.description}
                                                 readOnly={isViewOnly}
                                                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                                className={`admin-input resize-none ${isViewOnly ? 'cursor-default' : ''}`}
+                                                className={`admin-input resize-none text-xs leading-relaxed ${isViewOnly ? 'cursor-default' : ''}`}
                                                 placeholder='Describe the package, meal timings, or special diet highlights...'
                                             />
+                                        </div>
+
+                                        {/* Servings No. (Meals Per Day) Selection */}
+                                        <div className='p-3.5 bg-grey/5 rounded-2xl border border-grey/10 space-y-2.5'>
+                                            <div className='flex items-center justify-between'>
+                                                <label className='admin-label mb-0 text-xs font-black uppercase tracking-wider text-grey-dark'>
+                                                    Serving No. (Meals Per Day) *
+                                                </label>
+                                                <span className='px-2.5 py-0.5 rounded-full bg-primary/20 text-grey-dark font-extrabold text-[10px] border border-primary/30'>
+                                                    {formData.servingCount} Time Plan
+                                                </span>
+                                            </div>
+
+                                            <div className='grid grid-cols-3 gap-2'>
+                                                {([1, 2, 3] as const).map((num) => {
+                                                    const isSelected = formData.servingCount === num
+                                                    return (
+                                                        <button
+                                                            key={num}
+                                                            type='button'
+                                                            disabled={isViewOnly}
+                                                            onClick={() => {
+                                                                setFormData((prev) => {
+                                                                    let newSelectedMealTypes = [...prev.selectedMealTypeIds]
+                                                                    if (num === 3) {
+                                                                        newSelectedMealTypes = activeMealTypes.map((m) => m.id)
+                                                                    } else if (newSelectedMealTypes.length === 0) {
+                                                                        newSelectedMealTypes = activeMealTypes.slice(0, num).map((m) => m.id)
+                                                                    }
+                                                                    return {
+                                                                        ...prev,
+                                                                        servingCount: num,
+                                                                        selectedMealTypeIds: newSelectedMealTypes,
+                                                                    }
+                                                                })
+                                                            }}
+                                                            className={`py-2.5 px-2 rounded-xl text-xs font-black text-center transition-all cursor-pointer border ${
+                                                                isSelected
+                                                                    ? 'bg-primary text-grey-dark border-primary shadow-xs scale-[1.02]'
+                                                                    : 'bg-white text-grey-muted border-grey/10 hover:border-primary/40 hover:text-grey-dark'
+                                                            }`}
+                                                        >
+                                                            <span>{num} Time</span>
+                                                            <span className='block text-[10px] font-bold opacity-75'>
+                                                                {num === 1 ? '1 Meal/Day' : num === 2 ? '2 Meals/Day' : '3 Meals/Day'}
+                                                            </span>
+                                                        </button>
+                                                    )
+                                                })}
+                                            </div>
+
+                                            <p className='text-[11px] text-grey-muted font-medium'>
+                                                {formData.servingCount === 1 && "Customer can choose any 1 meal slot (e.g. Lunch or Dinner) when ordering."}
+                                                {formData.servingCount === 2 && "Customer can choose any 2 meal slots (e.g. Lunch + Dinner) when ordering."}
+                                                {formData.servingCount === 3 && "Customer gets all 3 meal slots (Breakfast + Lunch + Dinner) when ordering."}
+                                            </p>
+                                        </div>
+
+                                        {/* Plan Highlights & Feature Checklist */}
+                                        <div className='p-3.5 bg-grey/5 rounded-2xl border border-grey/10 space-y-2.5'>
+                                            <div className='flex items-center justify-between'>
+                                                <label className='admin-label mb-0 text-xs font-black uppercase tracking-wider text-grey-dark flex items-center gap-1.5'>
+                                                    <Icon icon='solar:checklist-minimalistic-bold-duotone' className='text-primary text-base' />
+                                                    <span>Card Feature Highlights ({formData.features.length})</span>
+                                                </label>
+                                                {!isViewOnly && (
+                                                    <button
+                                                        type='button'
+                                                        onClick={handleLoadDefaultFeatures}
+                                                        className='text-[10px] font-bold text-primary hover:underline flex items-center gap-1 cursor-pointer'
+                                                        title='Reset to recommended feature checklist'
+                                                    >
+                                                        <Icon icon='solar:restart-bold' />
+                                                        <span>Auto-Fill</span>
+                                                    </button>
+                                                )}
+                                            </div>
+
+                                            <p className='text-[11px] text-grey-muted'>
+                                                Bullet points displayed on the website card for this meal plan:
+                                            </p>
+
+                                            {/* Existing feature bullet items */}
+                                            <div className='space-y-1.5 max-h-48 overflow-y-auto pr-1'>
+                                                {formData.features.map((feat, idx) => (
+                                                    <div
+                                                        key={idx}
+                                                        className='flex items-center justify-between gap-2 p-2 bg-white rounded-xl border border-grey/10 text-xs font-medium text-grey-dark group'
+                                                    >
+                                                        <div className='flex items-start gap-2 min-w-0'>
+                                                            <div className='w-4 h-4 rounded-full bg-primary/20 text-grey-dark flex items-center justify-center shrink-0 mt-0.5'>
+                                                                <Icon icon='solar:check-read-bold' className='text-[10px]' />
+                                                            </div>
+                                                            <span className='leading-tight break-words text-[11px] font-semibold text-grey-dark'>
+                                                                {feat}
+                                                            </span>
+                                                        </div>
+                                                        {!isViewOnly && (
+                                                            <button
+                                                                type='button'
+                                                                onClick={() => handleRemoveFeature(idx)}
+                                                                className='text-grey-muted hover:text-red-500 p-1 rounded-md hover:bg-red-50 transition-colors shrink-0 cursor-pointer'
+                                                                title='Remove highlight'
+                                                            >
+                                                                <Icon icon='solar:trash-bin-trash-bold' className='text-xs' />
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                ))}
+                                                {formData.features.length === 0 && (
+                                                    <div className='p-3 bg-white rounded-xl border border-dashed border-grey/20 text-center text-xs text-grey-muted'>
+                                                        No custom highlights added. Standard automatic points will be used.
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            {/* Add new feature input */}
+                                            {!isViewOnly && (
+                                                <div className='flex items-center gap-1.5 pt-1'>
+                                                    <input
+                                                        type='text'
+                                                        value={newFeatureText}
+                                                        onChange={(e) => setNewFeatureText(e.target.value)}
+                                                        onKeyDown={(e) => {
+                                                            if (e.key === 'Enter') {
+                                                                e.preventDefault()
+                                                                handleAddFeature()
+                                                            }
+                                                        }}
+                                                        placeholder='e.g. Free Friday Biryani included...'
+                                                        className='w-full px-3 py-2 bg-white border border-grey/15 focus:border-primary rounded-xl text-xs outline-hidden text-grey-dark placeholder:text-grey-muted'
+                                                    />
+                                                    <button
+                                                        type='button'
+                                                        onClick={handleAddFeature}
+                                                        className='px-3 py-2 bg-primary hover:bg-primary/90 text-grey-dark font-bold rounded-xl text-xs shrink-0 transition-all cursor-pointer'
+                                                    >
+                                                        Add
+                                                    </button>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
 
@@ -990,16 +1305,24 @@ export default function FoodPlansPage() {
                                                     <button
                                                         type='button'
                                                         onClick={() => toggleMealTypeInclusion(currentMealTab)}
-                                                        className={`px-2 py-0.5 rounded-lg text-[10px] font-black border transition-all cursor-pointer ${
+                                                        className={`px-2.5 py-1 rounded-lg text-xs font-black border transition-all cursor-pointer flex items-center gap-1.5 ${
                                                             formData.selectedMealTypeIds.includes(currentMealTab)
-                                                                ? 'bg-amber-500/10 border-amber-500/30 text-amber-800'
-                                                                : 'bg-grey/10 border-grey/20 text-grey-muted hover:border-amber-500/40'
+                                                                ? 'bg-amber-500 text-white border-amber-600 shadow-xs'
+                                                                : 'bg-grey/10 border-grey/20 text-grey-dark hover:bg-amber-500/20'
                                                         }`}
                                                         title='Include or exclude this meal slot from the plan'
                                                     >
-                                                        {formData.selectedMealTypeIds.includes(currentMealTab)
-                                                            ? '✓ Included in Plan'
-                                                            : '+ Include in Plan'}
+                                                        {formData.selectedMealTypeIds.includes(currentMealTab) ? (
+                                                            <>
+                                                                <Icon icon='solar:check-circle-bold' className='text-sm' />
+                                                                <span>Slot Included</span>
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <Icon icon='solar:add-circle-bold' className='text-sm' />
+                                                                <span>+ Include Slot</span>
+                                                            </>
+                                                        )}
                                                     </button>
                                                 )}
                                             </div>

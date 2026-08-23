@@ -1,11 +1,14 @@
 'use client'
 
-import React, { useState, useMemo } from 'react'
+import React, { useState, useEffect, useMemo, Suspense } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { useSearchParams, useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 import axios from 'axios'
+import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Icon } from '@iconify/react'
-import Image from 'next/image'
+import toast from 'react-hot-toast'
 import { getFullImageUrl } from '@/utils/image'
 
 type FoodItem = {
@@ -13,7 +16,13 @@ type FoodItem = {
     name: string
     image: string | null
     price: number
-    monthlyPrice?: number
+    category?: { name: string }
+}
+
+type MealType = {
+    id: string
+    name: string
+    icon?: string
 }
 
 type FoodMenu = {
@@ -21,622 +30,1236 @@ type FoodMenu = {
     name: string
     description: string | null
     price: number
-    availableDays: string[]
+    days?: number
+    servingCount?: number
+    isActive?: boolean
+    availableDays?: string[]
+    scheduleJson?: any
+    mealType?: MealType | null
     foodItems: FoodItem[]
 }
 
-export default function GetStartedPage() {
-    const [selectedMenuIds, setSelectedMenuIds] = useState<string[]>([])
-    // State: menuId -> { dayName: itemId }
-    const [selectedItemIds, setSelectedItemIds] = useState<Record<string, Record<string, string>>>({})
+const ALL_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
-    const { data: menus = [], isLoading } = useQuery<FoodMenu[]>({
-        queryKey: ['public-food-menu'],
+const STANDARD_MEAL_SLOTS = [
+    { key: 'breakfast', label: 'Breakfast', icon: 'solar:cup-hot-bold-duotone', desc: 'Morning freshly cooked breakfast' },
+    { key: 'lunch', label: 'Lunch', icon: 'solar:sun-bold-duotone', desc: 'Hearty afternoon lunch meal' },
+    { key: 'dinner', label: 'Dinner', icon: 'solar:moon-stars-bold-duotone', desc: 'Wholesome evening dinner meal' },
+]
+
+const DROP_LOCATIONS = [
+    { value: 'Inside my room', label: 'Inside my room', icon: 'solar:door-bold-duotone' },
+    { value: 'Outside my room', label: 'Outside my room', icon: 'solar:door-minimalistic-bold-duotone' },
+    { value: 'Security desk', label: 'Security desk', icon: 'solar:shield-user-bold-duotone' },
+    { value: 'Others', label: 'Others (Custom location)', icon: 'solar:map-point-wave-bold-duotone' },
+]
+
+function GetStartedContent() {
+    const router = useRouter()
+    const searchParams = useSearchParams()
+    const urlPlanId = searchParams.get('planId')
+    const { data: session, status: authStatus } = useSession()
+
+    // 1. Fetch all public food plans
+    const { data: menus = [], isLoading: isMenusLoading } = useQuery<FoodMenu[]>({
+        queryKey: ['public-food-plans-order'],
         queryFn: async () => {
-            const response = await axios.get('/api/food-menu')
+            const response = await axios.get('/api/food-menu?activeOnly=true')
             return response.data
         },
+        staleTime: 1000 * 60 * 5,
     })
 
-    const regularMenus = menus.filter(m => !m.availableDays.includes('Sunday') || m.availableDays.length > 1)
-    const sundayMenus = menus.filter(m => m.availableDays.includes('Sunday') && m.availableDays.length === 1)
+    // Fetch live bank transfer and website configuration settings
+    const { data: siteSettings } = useQuery<Record<string, string>>({
+        queryKey: ['site-settings'],
+        queryFn: async () => {
+            const response = await axios.get('/api/settings')
+            return response.data
+        },
+        staleTime: 1000 * 60 * 5,
+    })
 
-    const toggleMenu = (menuId: string) => {
-        setSelectedMenuIds(prev =>
-            prev.includes(menuId) ? prev.filter(id => id !== menuId) : [...prev, menuId]
+    const [copiedField, setCopiedField] = useState<string | null>(null)
+    const handleCopyText = (text: string, fieldName: string) => {
+        if (!text) return
+        navigator.clipboard.writeText(text)
+        setCopiedField(fieldName)
+        toast.success(`Copied ${fieldName} to clipboard!`, { icon: '📋' })
+        setTimeout(() => setCopiedField(null), 2500)
+    }
+
+    const activePlans = useMemo(() => menus.filter((m) => m.isActive !== false), [menus])
+
+    // Selected plan state
+    const [selectedPlanId, setSelectedPlanId] = useState<string>('')
+
+    // Initialize or sync selected plan from URL / default
+    useEffect(() => {
+        if (activePlans.length === 0) return
+        if (urlPlanId && activePlans.some((p) => p.id === urlPlanId)) {
+            setSelectedPlanId(urlPlanId)
+        } else if (!selectedPlanId || !activePlans.some((p) => p.id === selectedPlanId)) {
+            setSelectedPlanId(activePlans[0].id)
+        }
+    }, [urlPlanId, activePlans, selectedPlanId])
+
+    const selectedPlan = useMemo(() => {
+        return activePlans.find((p) => p.id === selectedPlanId) || activePlans[0] || null
+    }, [activePlans, selectedPlanId])
+
+    const servingCount = selectedPlan?.servingCount || 1
+
+    // Customer chosen meal slots for this plan (e.g. ['lunch'], or ['lunch', 'dinner'], or ['breakfast', 'lunch', 'dinner'])
+    const [chosenMealSlots, setChosenMealSlots] = useState<string[]>([])
+
+    // Initialize chosen meal slots based on plan's servingCount
+    useEffect(() => {
+        if (!selectedPlan) return
+
+        const planNameLower = selectedPlan.name.toLowerCase()
+        const defaultSlots: string[] = []
+
+        if (servingCount === 3) {
+            defaultSlots.push('breakfast', 'lunch', 'dinner')
+        } else if (servingCount === 2) {
+            if (planNameLower.includes('breakfast') && planNameLower.includes('lunch')) {
+                defaultSlots.push('breakfast', 'lunch')
+            } else {
+                defaultSlots.push('lunch', 'dinner')
+            }
+        } else {
+            // servingCount === 1
+            if (planNameLower.includes('breakfast')) {
+                defaultSlots.push('breakfast')
+            } else if (planNameLower.includes('lunch')) {
+                defaultSlots.push('lunch')
+            } else {
+                defaultSlots.push('dinner')
+            }
+        }
+
+        setChosenMealSlots(defaultSlots)
+    }, [selectedPlan, servingCount])
+
+    // Toggle or pick meal slots when servingCount is 1 or 2
+    const handleToggleMealSlot = (slotKey: string) => {
+        if (servingCount === 3) return // All 3 slots fixed
+
+        if (servingCount === 1) {
+            setChosenMealSlots([slotKey])
+            return
+        }
+
+        // servingCount === 2
+        setChosenMealSlots((prev) => {
+            if (prev.includes(slotKey)) {
+                if (prev.length === 1) return prev // Keep at least 1
+                return prev.filter((s) => s !== slotKey)
+            } else {
+                if (prev.length >= 2) {
+                    // Replace the first one to keep strictly 2
+                    return [prev[1], slotKey]
+                }
+                return [...prev, slotKey]
+            }
+        })
+    }
+
+    // Days configured for the selected plan
+    const planServingDays = useMemo(() => {
+        if (!selectedPlan) return []
+        if (selectedPlan.availableDays && selectedPlan.availableDays.length > 0) {
+            return ALL_DAYS.filter((d) => selectedPlan.availableDays?.includes(d))
+        }
+        if (selectedPlan.scheduleJson && typeof selectedPlan.scheduleJson === 'object') {
+            return ALL_DAYS.filter((d) => Boolean(selectedPlan.scheduleJson[d]))
+        }
+        return ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+    }, [selectedPlan])
+
+    // Active day tab state for dish selection
+    const [activeDayTab, setActiveDayTab] = useState<string>('')
+
+    useEffect(() => {
+        if (planServingDays.length > 0 && (!activeDayTab || !planServingDays.includes(activeDayTab))) {
+            setActiveDayTab(planServingDays[0])
+        }
+    }, [planServingDays, activeDayTab])
+
+    // Customer day-by-day SINGLE dish selection: { [dayName]: { [mealSlot]: foodItemId } }
+    const [selections, setSelections] = useState<Record<string, Record<string, string>>>({})
+
+    // Auto-select first available dish for each chosen slot when plan or chosen slots change
+    useEffect(() => {
+        if (!selectedPlan || chosenMealSlots.length === 0) return
+
+        const planItems = selectedPlan.foodItems || []
+        const sched = selectedPlan.scheduleJson || {}
+
+        setSelections((prev) => {
+            const next: Record<string, Record<string, string>> = { ...prev }
+
+            planServingDays.forEach((day) => {
+                if (!next[day]) next[day] = {}
+                const daySched = sched[day] || {}
+
+                chosenMealSlots.forEach((slot) => {
+                    if (!next[day][slot]) {
+                        // Find matching dish ID from schedule or fallback
+                        let candidateIds: string[] = []
+                        if (daySched[slot] && Array.isArray(daySched[slot])) {
+                            candidateIds = daySched[slot]
+                        } else {
+                            Object.keys(daySched).forEach((k) => {
+                                if (k.toLowerCase().includes(slot.toLowerCase()) && Array.isArray(daySched[k])) {
+                                    candidateIds = daySched[k]
+                                }
+                            })
+                        }
+
+                        const validItem =
+                            planItems.find((i) => candidateIds.includes(i.id)) ||
+                            planItems.find((i) => i.name.toLowerCase().includes(slot.toLowerCase())) ||
+                            planItems[0]
+
+                        if (validItem) {
+                            next[day][slot] = validItem.id
+                        }
+                    }
+                })
+            })
+
+            return next
+        })
+    }, [selectedPlan, planServingDays, chosenMealSlots])
+
+    // Helper: Select only ONE item for a given day and slot
+    const handleSelectDish = (day: string, slot: string, itemId: string) => {
+        setSelections((prev) => ({
+            ...prev,
+            [day]: {
+                ...(prev[day] || {}),
+                [slot]: itemId,
+            },
+        }))
+    }
+
+    // Helper: Copy selection of current day to all other serving days
+    const handleCopyToAllDays = () => {
+        if (!activeDayTab || !selections[activeDayTab]) return
+        const currentDayChoices = selections[activeDayTab]
+
+        setSelections((prev) => {
+            const next = { ...prev }
+            planServingDays.forEach((day) => {
+                next[day] = { ...currentDayChoices }
+            })
+            return next
+        })
+        toast.success(`Applied ${activeDayTab}'s menu selection to all days!`, { icon: '✨' })
+    }
+
+    // Customer & Delivery Form State
+    const tomorrowDate = useMemo(() => {
+        const d = new Date()
+        d.setDate(d.getDate() + 1)
+        return d.toISOString().split('T')[0]
+    }, [])
+
+    const todayDate = useMemo(() => new Date().toISOString().split('T')[0], [])
+
+    const [formData, setFormData] = useState({
+        customerName: '',
+        customerPhone: '',
+        customerEmail: '',
+        whatsappNo: '',
+        startDate: tomorrowDate,
+        flatRoomNumber: '',
+        buildingName: '',
+        areaCity: 'Al Nahda, Dubai',
+        dropLocation: 'Inside my room',
+        customDropLocation: '',
+        specialNotes: '',
+        paymentMethod: 'COD',
+    })
+
+    const [isSubmitting, setIsSubmitting] = useState(false)
+
+    // Pre-fill from session if logged in
+    useEffect(() => {
+        if (session?.user) {
+            setFormData((prev) => ({
+                ...prev,
+                customerName: prev.customerName || session.user?.name || '',
+                customerEmail: prev.customerEmail || session.user?.email || '',
+                customerPhone: prev.customerPhone || (session.user as any)?.phone || '',
+                whatsappNo: prev.whatsappNo || (session.user as any)?.whatsappNo || (session.user as any)?.phone || '',
+            }))
+        }
+    }, [session])
+
+    // Copy Contact Number to WhatsApp Number helper
+    const handleCopyPhoneToWhatsApp = () => {
+        if (!formData.customerPhone) {
+            toast.error('Please enter your Contact Number first')
+            return
+        }
+        setFormData((prev) => ({ ...prev, whatsappNo: prev.customerPhone }))
+        toast.success('WhatsApp number synced with Contact Number!')
+    }
+
+    // Validate and submit order
+    const handlePlaceOrder = async (e: React.FormEvent) => {
+        e.preventDefault()
+
+        if (!selectedPlan) {
+            toast.error('Please select a meal plan')
+            return
+        }
+
+        if (chosenMealSlots.length !== servingCount) {
+            toast.error(`Please select exactly ${servingCount} meal slot(s) for your ${servingCount} Time Meal Plan`)
+            return
+        }
+
+        if (!formData.customerName.trim()) {
+            toast.error('Please enter your Full Name')
+            return
+        }
+
+        if (!formData.customerPhone.trim()) {
+            toast.error('Please enter your Contact Phone Number')
+            return
+        }
+
+        if (!formData.whatsappNo.trim()) {
+            toast.error('Please enter your WhatsApp Number for delivery updates')
+            return
+        }
+
+        if (!formData.flatRoomNumber.trim()) {
+            toast.error('Please enter your Flat or Room Number')
+            return
+        }
+
+        if (!formData.buildingName.trim()) {
+            toast.error('Please enter your Building Name')
+            return
+        }
+
+        if (!formData.areaCity.trim()) {
+            toast.error('Please enter your Area or City')
+            return
+        }
+
+        if (formData.dropLocation === 'Others' && !formData.customDropLocation.trim()) {
+            toast.error('Please specify your custom drop location instructions')
+            return
+        }
+
+        setIsSubmitting(true)
+
+        try {
+            const finalDropLocation =
+                formData.dropLocation === 'Others'
+                    ? `Others: ${formData.customDropLocation.trim()}`
+                    : formData.dropLocation
+
+            const fullAddress = `${formData.buildingName.trim()}, ${formData.flatRoomNumber.trim()}, ${formData.areaCity.trim()}`
+
+            const payload = {
+                customerName: formData.customerName.trim(),
+                customerPhone: formData.customerPhone.trim(),
+                customerEmail: formData.customerEmail.trim() || undefined,
+                whatsappNo: formData.whatsappNo.trim(),
+                address: fullAddress,
+                buildingName: formData.buildingName.trim(),
+                flatRoomNumber: formData.flatRoomNumber.trim(),
+                deliveryLocation: finalDropLocation,
+                startDate: formData.startDate,
+                totalAmount: selectedPlan.price,
+                paymentMethod: formData.paymentMethod,
+                orderRemarks: [
+                    `Plan: ${selectedPlan.name} (${chosenMealSlots.map((s) => s.toUpperCase()).join(' + ')})`,
+                    formData.specialNotes.trim() ? `Notes: ${formData.specialNotes.trim()}` : '',
+                ]
+                    .filter(Boolean)
+                    .join(' | '),
+                menuIds: [selectedPlan.id],
+                selectionsJson: {
+                    chosenMealSlots,
+                    dailyDishes: selections,
+                },
+                includeSundays: planServingDays.includes('Sunday'),
+                activeDates: planServingDays,
+            }
+
+            const response = await axios.post('/api/orders', payload)
+            const createdOrder = response.data
+
+            toast.success('🎉 Meal plan order placed successfully!')
+            router.push(`/checkout/success?orderId=${createdOrder.id}`)
+        } catch (err: any) {
+            console.error('Order placement error:', err)
+            toast.error(err.response?.data?.error || 'Failed to place order. Please try again.')
+        } finally {
+            setIsSubmitting(false)
+        }
+    }
+
+    if (isMenusLoading) {
+        return (
+            <div className='min-h-screen pt-36 pb-20 flex flex-col items-center justify-center bg-[#FFF9F5]'>
+                <div className='w-14 h-14 border-3 border-primary border-t-transparent rounded-full animate-spin mb-4' />
+                <p className='text-grey-dark font-bold text-sm tracking-wide'>
+                    Loading Meal Plans...
+                </p>
+            </div>
         )
     }
 
-    const setItemForDay = (menuId: string, day: string, itemId: string) => {
-        setSelectedItemIds(prev => ({
-            ...prev,
-            [menuId]: {
-                ...(prev[menuId] || {}),
-                [day]: itemId
-            }
-        }))
-    }
-
-    const copyToAllDays = (menuId: string, itemId: string) => {
-        const menu = menus.find(m => m.id === menuId)
-        if (!menu) return
-
-        const newDaySelections: Record<string, string> = {}
-        menu.availableDays.forEach(day => {
-            newDaySelections[day] = itemId
-        })
-
-        setSelectedItemIds(prev => ({
-            ...prev,
-            [menuId]: newDaySelections
-        }))
-    }
-
-    const calculateMenuTotal = (menuId: string) => {
-        const menu = menus.find(m => m.id === menuId)
-        if (!menu) return 0
-        const daySelections = selectedItemIds[menuId] || {}
-        return Object.values(daySelections).reduce((acc, itemId) => {
-            const item = menu.foodItems.find(i => i.id === itemId)
-            return acc + (item?.price || 0) * 25 // Monthly estimate: daily price * ~avg days in month
-        }, 0)
-    }
-
-    const totalPrice = useMemo(() => {
-        return selectedMenuIds.reduce((acc, id) => {
-            return acc + calculateMenuTotal(id)
-        }, 0)
-    }, [selectedMenuIds, selectedItemIds, menus])
-
-    // Load state from localStorage on mount
-    React.useEffect(() => {
-        const savedSelection = localStorage.getItem('order_selection')
-        if (savedSelection) {
-            try {
-                const { menuIds, selections } = JSON.parse(savedSelection)
-                if (menuIds) setSelectedMenuIds(menuIds)
-                if (selections) setSelectedItemIds(selections)
-            } catch (error) {
-                console.error('Failed to parse saved selection:', error)
-            }
-        }
-    }, [])
-
-    // Save state to localStorage whenever it changes
-    React.useEffect(() => {
-        if (selectedMenuIds.length > 0) {
-            const selection = {
-                menuIds: selectedMenuIds,
-                selections: selectedItemIds,
-                totalPrice: totalPrice,
-            }
-            localStorage.setItem('order_selection', JSON.stringify(selection))
-        }
-    }, [selectedMenuIds, selectedItemIds, totalPrice])
-
-    if (isLoading) return (
-        <div className='min-h-screen flex items-center justify-center bg-[#FFFBF7]'>
-            <div className='relative'>
-                <div className='w-20 h-20 border-4 border-primary/20 border-t-primary rounded-full animate-spin'></div>
-                <div className='absolute inset-0 flex items-center justify-center'>
-                    <Icon icon="ion:fast-food" className="text-primary text-2xl animate-pulse" />
-                </div>
-            </div>
-        </div>
-    )
-
     return (
-        <main className='min-h-screen pt-32 pb-48 bg-[#FFFBF7] overflow-x-hidden selection:bg-primary/20'>
-            {/* Header Section */}
-            <div className='container max-w-7xl mx-auto px-6 mb-16'>
-                <div className='flex flex-col md:flex-row md:items-end justify-between gap-8'>
-                    <div className='max-w-2xl text-left'>
-                        <motion.div
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            className='flex items-center gap-3 mb-6'
-                        >
-                            <span className='h-px w-10 bg-primary/40'></span>
-                            <span className='text-primary text-sm font-black tracking-[0.4em] uppercase'>Custom Subscription</span>
-                        </motion.div>
-                        <motion.h1
-                            initial={{ opacity: 0, y: 30 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className='text-6xl md:text-8xl font-black text-grey tracking-tighter leading-none mb-8'
-                        >
-                            Weekly <span className='text-primary italic relative'>
-                                Board
-                                <svg className="absolute -bottom-2 left-0 w-full" height="10" viewBox="0 0 100 10" preserveAspectRatio="none">
-                                    <path d="M0 5 Q 25 0, 50 5 T 100 5" fill="none" stroke="currentColor" strokeWidth="2" strokeDasharray="5 5" />
-                                </svg>
-                            </span>
-                        </motion.h1>
-                        <motion.p
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.2 }}
-                            className='text-grey/50 text-xl font-medium leading-relaxed'
-                        >
-                            Tailor your taste. Select your package, pick your daily dishes, and enjoy the convenience of automated home-style mess.
-                        </motion.p>
+        <main className='pt-20 bg-[#FFF9F5] min-h-screen text-grey-dark pb-24'>
+            {/* Top Page Header - Clean Admin Dashboard Typography */}
+            <div className='pt-14 pb-10 bg-linear-to-b from-primary/15 via-primary/5 to-transparent relative overflow-hidden'>
+                <div className='max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10'>
+                    <div className='inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/20 text-grey-dark text-xs font-semibold mb-3.5 border border-primary/30'>
+                        <Icon icon='solar:bag-check-bold' className='text-sm text-grey-dark' />
+                        <span>Step-by-Step Meal Subscription</span>
                     </div>
 
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        className='bg-white p-8 rounded-[2.5rem] border border-grey/5 shadow-2xl shadow-grey/5 hidden lg:block'
-                    >
-                        <div className='flex items-center gap-6'>
-                            <div className='w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center text-primary'>
-                                <Icon icon="ion:calendar-outline" className="text-2xl" />
-                            </div>
-                            <div>
-                                <p className='text-xs font-black text-grey/40 uppercase tracking-widest mb-1'>Billing Cycle</p>
-                                <p className='text-grey font-bold'>Monthly Subscription</p>
-                            </div>
-                        </div>
-                    </motion.div>
-                </div>
-            </div>
+                    <h1 className='text-3xl sm:text-4xl lg:text-5xl font-extrabold text-grey-dark tracking-tight'>
+                        Customize & <span className='text-primary'>Order Meal Plan</span>
+                    </h1>
 
-            {/* Horizontal Board */}
-            <div className='max-w-full overflow-x-auto pb-10 custom-scrollbar scroll-smooth'>
-                <div className='min-w-[1240px] max-w-7xl mx-auto px-6 space-y-12'>
-
-                    {/* Regular Menus */}
-                    <div className='space-y-8'>
-                        <SectionHeader title="Weekly Subscriptions" subtitle="Standard Plan Selection" />
-
-                        {regularMenus.map((menu, idx) => (
-                            <MenuHorizontalStrip
-                                key={menu.id}
-                                menu={menu}
-                                isSelected={selectedMenuIds.includes(menu.id)}
-                                onToggle={() => toggleMenu(menu.id)}
-                                selectedDayItems={selectedItemIds[menu.id] || {}}
-                                onSetItemForDay={(day, itemId) => setItemForDay(menu.id, day, itemId)}
-                                onCopyAll={(itemId) => copyToAllDays(menu.id, itemId)}
-                                index={idx}
-                            />
-                        ))}
-                    </div>
-
-                    {/* Sunday Specials */}
-                    {sundayMenus.length > 0 && (
-                        <div className='space-y-10'>
-                            <SectionHeader title="Sunday Gems" subtitle="Exclusive Signatures" isSpecial />
-
-                            {sundayMenus.map((menu, idx) => (
-                                <MenuHorizontalStrip
-                                    key={menu.id}
-                                    menu={menu}
-                                    isSelected={selectedMenuIds.includes(menu.id)}
-                                    onToggle={() => toggleMenu(menu.id)}
-                                    selectedDayItems={selectedItemIds[menu.id] || {}}
-                                    onSetItemForDay={(day, itemId) => setItemForDay(menu.id, day, itemId)}
-                                    onCopyAll={(itemId) => copyToAllDays(menu.id, itemId)}
-                                    index={idx}
-                                    isSpecial
-                                />
-                            ))}
-                        </div>
-                    )}
-                </div>
-            </div>
-
-            {/* Sticky Checkout Bar */}
-            <AnimatePresence>
-                {selectedMenuIds.length > 0 && (
-                    <motion.div
-                        initial={{ y: 100, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        exit={{ y: 100, opacity: 0 }}
-                        className='fixed bottom-8 left-1/2 -translate-x-1/2 w-full max-w-5xl px-6 z-50'
-                    >
-                        <div className='bg-grey/95 backdrop-blur-3xl rounded-[3.5rem] p-6 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.4)] border border-white/10 flex flex-col md:flex-row items-center justify-between gap-8'>
-                            <div className='flex items-center gap-10 px-6'>
-                                <div className='hidden sm:flex items-center gap-4'>
-                                    <div className='w-12 h-12 bg-primary rounded-2xl flex items-center justify-center text-grey'>
-                                        <Icon icon="ion:cart" className="text-xl" />
-                                    </div>
-                                    <div>
-                                        <p className='text-[10px] font-black text-white/40 uppercase tracking-[0.2em]'>Selection</p>
-                                        <p className='text-white font-bold'>{selectedMenuIds.length} Packages</p>
-                                    </div>
-                                </div>
-                                <div className='h-10 w-px bg-white/10 hidden sm:block'></div>
-                                <div>
-                                    <span className='text-[10px] font-black text-primary uppercase tracking-[0.3em] block mb-1'>Monthly Total</span>
-                                    <p className='text-white font-black text-3xl tracking-tighter'>
-                                        AED {totalPrice.toLocaleString()} <span className='text-sm text-white/40 font-medium'>/mo</span>
-                                    </p>
-                                </div>
-                            </div>
-
-                            <button
-                                onClick={() => {
-                                    const selection = {
-                                        menuIds: selectedMenuIds,
-                                        selections: selectedItemIds,
-                                        totalPrice: totalPrice,
-                                    }
-                                    localStorage.setItem('order_selection', JSON.stringify(selection))
-                                    window.location.href = '/checkout'
-                                }}
-                                className='w-full md:w-auto px-12 py-6 bg-primary text-grey rounded-[2.5rem] font-black text-xl shadow-2xl hover:bg-white hover:scale-105 transition-all flex items-center justify-center gap-4 group'
-                            >
-                                Finalize Order
-                                <Icon icon='ion:arrow-forward' className='group-hover:translate-x-2 transition-transform' />
-                            </button>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-        </main>
-    )
-}
-
-function SectionHeader({ title, subtitle, isSpecial }: { title: string, subtitle: string, isSpecial?: boolean }) {
-    return (
-        <div className='flex items-center gap-6'>
-            <div className='flex-col'>
-                <h2 className={`text-sm font-black uppercase tracking-[0.6em] whitespace-nowrap ${isSpecial ? 'text-primary' : 'text-black'}`}>{title}</h2>
-                <p className='text-[10px] font-black text-black uppercase tracking-[0.4em] mt-1'>{subtitle}</p>
-            </div>
-            <div className={`h-px grow ${isSpecial ? 'bg-primary/20' : 'bg-grey/10'}`}></div>
-        </div>
-    )
-}
-
-function MenuHorizontalStrip({
-    menu,
-    isSelected,
-    onToggle,
-    selectedDayItems,
-    onSetItemForDay,
-    onCopyAll,
-    index,
-    isSpecial
-}: {
-    menu: FoodMenu,
-    isSelected: boolean,
-    onToggle: () => void,
-    selectedDayItems: Record<string, string>,
-    onSetItemForDay: (day: string, itemId: string) => void,
-    onCopyAll: (itemId: string) => void,
-    index: number,
-    isSpecial?: boolean
-}) {
-    const [selectingDay, setSelectingDay] = useState<string | null>(null)
-
-    const menuPriceTotal = Object.values(selectedDayItems).reduce((acc, itemId) => {
-        if (!itemId) return acc
-        const item = menu.foodItems.find(i => i.id === itemId)
-        return acc + (item?.price || 0) * 25
-    }, 0)
-
-    const hasSelections = Object.values(selectedDayItems).some(id => !!id)
-
-    return (
-        <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
-            className={`
-                flex flex-col md:flex-row bg-white rounded-[4rem] overflow-hidden transition-all duration-500 border-2
-                ${isSelected
-                    ? (isSpecial ? 'border-primary ring-4 ring-primary/5 shadow-2xl shadow-primary/10' : 'border-grey ring-4 ring-grey/5 shadow-2xl shadow-grey/5')
-                    : 'border-grey/10 border-dashed opacity-90 hover:opacity-100 hover:border-primary/40'}
-            `}
-        >
-            {/* Left Box: Menu Title + Pricing */}
-            <div
-                onClick={onToggle}
-                className={`
-                    w-full md:w-[320px] p-8 flex flex-col justify-center cursor-pointer transition-all border-b md:border-b-0 md:border-r border-grey/5 relative group/sidebar
-                    ${isSelected ? (isSpecial ? 'bg-primary/5' : 'bg-grey/5') : 'bg-white hover:bg-grey/5'}
-                `}
-            >
-                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-6 shadow-lg transition-all transform group-hover/sidebar:scale-110 ${isSelected ? (isSpecial ? 'bg-primary text-grey' : 'bg-grey text-white') : 'bg-[#FFF9F5] text-grey/20'}`}>
-                    <Icon icon={isSelected ? 'ion:checkmark-done' : 'ion:add'} className='text-xl' />
-                </div>
-
-                <div className='space-y-1'>
-                    <h3 className='text-3xl font-black text-grey tracking-tight capitalize leading-none'>{menu.name}</h3>
-                    <p className='text-[9px] font-bold text-grey/30 uppercase tracking-[0.2em] leading-relaxed'>
-                        Signature flavor selection
+                    <p className='text-grey-muted mt-2.5 max-w-2xl text-sm sm:text-base font-normal leading-relaxed'>
+                        Select your meal package, choose your daily dishes, and enter your delivery address to get fresh home-cooked meals delivered daily.
                     </p>
                 </div>
-
-                <div className='mt-8 pt-8 border-t border-grey/5'>
-                    {hasSelections ? (
-                        <div className='flex flex-col'>
-                            <div className='flex items-baseline gap-1'>
-                                <span className='text-3xl font-black text-grey tracking-tighter'>AED {menuPriceTotal.toLocaleString()}</span>
-                                <span className='text-[9px] font-black text-grey/20 uppercase tracking-widest'>/mo</span>
-                            </div>
-                            <div className='flex items-center gap-2 mt-2'>
-                                <div className='w-1.5 h-1.5 rounded-full bg-primary' />
-                                <span className='text-[8px] font-black text-primary uppercase tracking-widest'>Plan Active</span>
-                            </div>
-                        </div>
-                    ) : (
-                        <div className='flex items-center gap-2 text-primary'>
-                            <Icon icon='ion:sparkles-outline' className='text-xs animate-pulse' />
-                            <p className='text-[9px] font-black uppercase tracking-widest'>Configure your menu</p>
-                        </div>
-                    )}
-                </div>
             </div>
 
-            {/* Middle: Grid Days - All Days Clearly Viewable */}
-            <div className={`flex-1 p-6 md:p-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 transition-all duration-700 ${isSelected ? 'opacity-100' : 'opacity-30 grayscale pointer-events-none'}`}>
-                {menu.availableDays.map(day => (
-                    <motion.div
-                        key={day}
-                        onClick={() => setSelectingDay(day)}
-                        whileHover={{ y: -4, scale: 1.02 }}
-                        className={`
-                            h-full min-h-[220px] p-2 rounded-[2.5rem] border-2 transition-all cursor-pointer group relative flex flex-col items-center justify-between
-                            ${selectedDayItems[day]
-                                ? (isSpecial ? 'bg-primary/5 border-primary shadow-lg shadow-primary/5' : 'bg-grey/5 border-grey shadow-lg shadow-grey/5')
-                                : 'bg-grey/5 border-transparent hover:bg-white hover:border-primary/20 hover:shadow-xl'}
-                            ${selectingDay === day ? 'ring-2 ring-primary ring-offset-4' : ''}
-                        `}
-                    >
-                        <div className='pt-4 pb-2'>
-                            <span className='text-[9px] font-black uppercase tracking-[0.2em] text-grey/30 group-hover:text-primary transition-colors'>{day.substring(0, 3)}</span>
-                        </div>
-
-                        <div className='flex-1 w-full flex flex-col items-center justify-center p-2 relative group/card'>
-                            {selectedDayItems[day] ? (
-                                <div className='flex flex-col items-center text-center'>
-                                    {/* Action Buttons Layer */}
-                                    <div className='absolute inset-0 z-10 opacity-0 group-hover/card:opacity-100 transition-all flex flex-col items-center justify-center bg-white/40 backdrop-blur-xs rounded-[2rem]'>
-                                        <button
-                                            onClick={(e) => { e.stopPropagation(); onSetItemForDay(day, '') }}
-                                            className='w-10 h-10 bg-red-500 text-white rounded-full flex items-center justify-center hover:scale-110 shadow-lg mb-2'
-                                            title="Clear"
-                                        >
-                                            <Icon icon="ion:trash-outline" className='text-lg' />
-                                        </button>
-                                        <div className='px-3 py-1 bg-grey text-white text-[8px] font-black uppercase rounded-full'>Change</div>
+            {/* Main Form Container */}
+            <div className='max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 -mt-2'>
+                <form onSubmit={handlePlaceOrder}>
+                    <div className='grid grid-cols-1 lg:grid-cols-12 gap-8 items-start'>
+                        
+                        {/* LEFT COLUMN: Steps (8 Cols) */}
+                        <div className='lg:col-span-8 space-y-8'>
+                            
+                            {/* STEP 1: Select Active Meal Plan */}
+                            <section className='bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-grey/10'>
+                                <div className='flex items-center justify-between border-b border-grey/10 pb-4 mb-6'>
+                                    <div className='flex items-center gap-3'>
+                                        <div className='w-8 h-8 rounded-xl bg-primary text-grey-dark font-bold text-sm flex items-center justify-center shadow-xs'>
+                                            1
+                                        </div>
+                                        <div>
+                                            <h2 className='text-lg sm:text-xl font-bold text-grey-dark'>
+                                                Select Your Meal Plan
+                                            </h2>
+                                            <p className='text-xs text-grey-muted font-normal'>
+                                                Choose your daily subscription package
+                                            </p>
+                                        </div>
                                     </div>
-
-                                    <div className='relative w-20 h-20 mb-3 rounded-full overflow-hidden border-2 border-white shadow-md'>
-                                        <Image
-                                            src={getFullImageUrl(menu.foodItems.find(i => i.id === selectedDayItems[day])?.image) || '/images/food/appetizer.png'}
-                                            alt="dish"
-                                            fill
-                                            className='object-cover'
-                                        />
-                                    </div>
-                                    <p className='text-[10px] font-black text-grey leading-tight px-1 line-clamp-2 min-h-[24px]'>
-                                        {menu.foodItems.find(i => i.id === selectedDayItems[day])?.name}
-                                    </p>
-                                </div>
-                            ) : (
-                                <div className='flex flex-col items-center gap-3'>
-                                    <div className='w-16 h-16 rounded-full border border-dashed border-grey/20 flex items-center justify-center group-hover:bg-primary/10 group-hover:border-primary group-hover:border-solid transition-all'>
-                                        <Icon icon='ion:restaurant-outline' className='text-xl text-grey/20 group-hover:text-primary' />
-                                    </div>
-                                    <span className='text-[8px] font-bold text-grey/20 uppercase tracking-widest group-hover:text-primary'>Choose</span>
-                                </div>
-                            )}
-                        </div>
-
-                        <div className='pb-4'>
-                            <div className={`w-6 h-6 rounded-full flex items-center justify-center transition-all ${selectedDayItems[day] ? 'bg-primary text-grey shadow-md' : 'bg-grey/5 text-transparent border border-grey/5'}`}>
-                                <Icon icon='ion:checkmark' className='text-[10px]' />
-                            </div>
-                        </div>
-                    </motion.div>
-                ))}
-            </div>
-
-            {/* Selection Overlay Popover */}
-            <AnimatePresence>
-                {selectingDay && (
-                    <MenuSelectionPopover
-                        menu={menu}
-                        selectingDay={selectingDay}
-                        onClose={() => setSelectingDay(null)}
-                        selectedItemId={selectedDayItems[selectingDay]}
-                        onSelectItem={(itemId) => {
-                            onSetItemForDay(selectingDay, itemId)
-                            setSelectingDay(null)
-                        }}
-                        onClear={() => {
-                            onSetItemForDay(selectingDay, '')
-                            setSelectingDay(null)
-                        }}
-                        onCopyAll={(itemId) => {
-                            onCopyAll(itemId)
-                            setSelectingDay(null)
-                        }}
-                        isSpecial={isSpecial}
-                    />
-                )}
-            </AnimatePresence>
-        </motion.div>
-    )
-}
-
-function MenuSelectionPopover({
-    menu,
-    selectingDay,
-    onClose,
-    selectedItemId,
-    onSelectItem,
-    onClear,
-    onCopyAll,
-    isSpecial
-}: {
-    menu: FoodMenu,
-    selectingDay: string,
-    onClose: () => void,
-    selectedItemId: string | undefined,
-    onSelectItem: (itemId: string) => void,
-    onClear: () => void,
-    onCopyAll: (itemId: string) => void,
-    isSpecial?: boolean
-}) {
-    const [currentPage, setCurrentPage] = useState(1)
-    const [showAll, setShowAll] = useState(false)
-    const itemsPerPage = 12
-
-    const displayedItems = showAll
-        ? menu.foodItems
-        : menu.foodItems.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-
-    const totalPages = Math.ceil(menu.foodItems.length / itemsPerPage)
-
-    return (
-        <motion.div
-            initial={{ opacity: 0, backdropFilter: 'blur(0px)' }}
-            animate={{ opacity: 1, backdropFilter: 'blur(10px)' }}
-            exit={{ opacity: 0, backdropFilter: 'blur(0px)' }}
-            className='fixed inset-0 z-[100] bg-grey/40 flex items-center justify-center p-4 md:p-8'
-        >
-            <motion.div
-                initial={{ scale: 0.9, opacity: 0, y: 50 }}
-                animate={{ scale: 1, opacity: 1, y: 0 }}
-                exit={{ scale: 0.95, opacity: 0, y: 30 }}
-                className='w-full max-w-7xl h-full max-h-[95vh] bg-white rounded-[3rem] shadow-[0_100px_100px_-50px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden border border-white/20'
-            >
-                {/* Header */}
-                <div className='flex flex-col md:flex-row items-center justify-between p-6 md:p-8 border-b border-grey/5 bg-linear-to-b from-[#FFFBF7] to-white gap-6'>
-                    <div className='flex items-center gap-6'>
-                        <button
-                            onClick={onClose}
-                            className='w-12 h-12 md:w-16 md:h-16 rounded-[1.5rem] bg-white border border-grey/10 flex items-center justify-center hover:bg-grey hover:text-white transition-all shadow-lg group'
-                        >
-                            <Icon icon='ion:close' className='text-2xl transition-transform group-hover:rotate-90' />
-                        </button>
-                        <div>
-                            <div className='flex items-center gap-3 mb-1'>
-                                <span className='px-3 py-0.5 bg-primary text-grey text-[10px] font-black uppercase tracking-widest rounded-full'>{selectingDay}</span>
-                                <h4 className='text-2xl md:text-3xl font-black text-grey tracking-tighter capitalize'>{menu.name}</h4>
-                            </div>
-                            <p className='text-[10px] font-bold text-grey/40 uppercase tracking-[0.3em]'>Choose your favorite flavor</p>
-                        </div>
-                    </div>
-
-                    <div className='flex flex-wrap items-center justify-center gap-3'>
-                        {/* Show All Toggle */}
-                        <button
-                            onClick={() => setShowAll(!showAll)}
-                            className={`px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all flex items-center gap-2 border ${showAll ? 'bg-primary border-primary text-grey' : 'bg-white border-grey/10 text-grey/40 hover:border-primary/40'}`}
-                        >
-                            <Icon icon={showAll ? 'ion:grid' : 'ion:list'} className='text-lg' />
-                            {showAll ? 'View Paginated' : 'Show All Items'}
-                        </button>
-
-                        {selectedItemId && (
-                            <button
-                                onClick={onClear}
-                                className='px-6 py-3 bg-red-50 text-red-500 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-red-500 hover:text-white transition-all flex items-center gap-2 border border-red-100'
-                            >
-                                <Icon icon='ion:trash-outline' className='text-lg' /> Clear
-                            </button>
-                        )}
-                        {selectedItemId && !isSpecial && (
-                            <button
-                                onClick={() => onCopyAll(selectedItemId)}
-                                className='px-8 py-3 bg-grey text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-primary hover:text-grey shadow-xl transition-all flex items-center gap-3 group'
-                            >
-                                <Icon icon='ion:copy-outline' className='text-xl group-hover:scale-110 transition-transform' />
-                                Copy to All
-                            </button>
-                        )}
-                    </div>
-                </div>
-
-                {/* Grid Content */}
-                <div className='flex-1 overflow-y-auto custom-scrollbar p-6 md:p-10 bg-white'>
-                    <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6'>
-                        {displayedItems.map(item => (
-                            <motion.div
-                                key={item.id}
-                                whileHover={{ y: -5 }}
-                                onClick={() => onSelectItem(item.id)}
-                                className={`
-                                    group relative p-5 rounded-[2.5rem] border-2 transition-all cursor-pointer flex flex-col items-center text-center
-                                    ${selectedItemId === item.id
-                                        ? 'bg-primary border-primary shadow-[0_20px_40px_-10px_rgba(250,203,21,0.4)]'
-                                        : 'bg-[#FFFBF7] border-transparent hover:bg-white hover:border-primary/40 hover:shadow-xl'}
-                                `}
-                            >
-                                <div className='relative w-24 h-24 md:w-32 md:h-32 mb-6 rounded-[2rem] overflow-hidden shadow-xl border-4 border-white group-hover:-rotate-2 transition-all duration-500'>
-                                    <Image
-                                        src={getFullImageUrl(item.image) || '/images/food/appetizer.png'}
-                                        alt={item.name}
-                                        fill
-                                        className='object-cover transform group-hover:scale-110 transition-transform duration-1000'
-                                    />
+                                    {selectedPlan && (
+                                        <span className='hidden sm:inline-flex px-3 py-1 bg-primary/15 text-grey-dark text-xs font-semibold rounded-full border border-primary/30'>
+                                            {selectedPlan.days || 30} Days Pass
+                                        </span>
+                                    )}
                                 </div>
 
-                                <div className='flex-1 w-full space-y-3 mb-4'>
-                                    <h5 className={`text-base font-black leading-tight tracking-tight transition-colors line-clamp-2 min-h-[2.5rem] flex items-center justify-center ${selectedItemId === item.id ? 'text-grey' : 'text-grey group-hover:text-primary'}`}>
-                                        {item.name}
-                                    </h5>
+                                <div className='grid grid-cols-1 sm:grid-cols-3 gap-4'>
+                                    {activePlans.map((plan) => {
+                                        const isSelected = selectedPlan?.id === plan.id
+                                        const days = plan.days || 30
+                                        const planServing = plan.servingCount || 1
 
-                                    <div className='flex flex-col gap-2'>
-                                        <div className={`px-3 py-1.5 rounded-xl flex flex-col items-center justify-center transition-all ${selectedItemId === item.id ? 'bg-white/20' : 'bg-primary/5'}`}>
-                                            <span className={`text-[8px] font-black uppercase tracking-widest ${selectedItemId === item.id ? 'text-grey/60' : 'text-grey/40'}`}>Monthly</span>
-                                            <span className={`text-sm font-black ${selectedItemId === item.id ? 'text-grey' : 'text-primary'}`}>AED {item.monthlyPrice || (item.price * 25).toLocaleString()}</span>
+                                        return (
+                                            <button
+                                                key={plan.id}
+                                                type='button'
+                                                onClick={() => setSelectedPlanId(plan.id)}
+                                                className={`p-5 rounded-2xl text-left transition-all duration-200 relative cursor-pointer flex flex-col justify-between border ${
+                                                    isSelected
+                                                        ? 'bg-primary/10 border-2 border-primary shadow-sm scale-[1.01]'
+                                                        : 'bg-grey/5 border-grey/10 hover:border-primary/40 hover:bg-white'
+                                                }`}
+                                            >
+                                                {isSelected && (
+                                                    <div className='absolute top-3 right-3 w-5 h-5 rounded-full bg-primary text-grey-dark flex items-center justify-center shadow-xs'>
+                                                        <Icon icon='solar:check-read-bold' className='text-xs font-bold' />
+                                                    </div>
+                                                )}
+
+                                                <div>
+                                                    <span className='text-[11px] font-semibold px-2 py-0.5 rounded-md bg-white border border-grey/10 text-grey-dark inline-block mb-2'>
+                                                        {planServing} Time Meal Plan
+                                                    </span>
+                                                    <h3 className='font-bold text-base text-grey-dark capitalize mb-1 line-clamp-1'>
+                                                        {plan.name}
+                                                    </h3>
+                                                    <p className='text-xs text-grey-muted font-normal mb-4 line-clamp-2'>
+                                                        {plan.description || `${planServing === 1 ? '1 Daily Meal' : planServing === 2 ? '2 Daily Meals' : 'Full Day 3 Meals'}`}
+                                                    </p>
+                                                </div>
+
+                                                <div className='border-t border-grey/10 pt-3 flex items-baseline justify-between'>
+                                                    <span className='text-lg font-bold text-grey-dark'>
+                                                        AED {plan.price.toFixed(0)}
+                                                    </span>
+                                                    <span className='text-xs font-normal text-grey-muted'>
+                                                        / {days} days
+                                                    </span>
+                                                </div>
+                                            </button>
+                                        )
+                                    })}
+                                </div>
+                            </section>
+
+                            {/* STEP 2: Choose Meal Type(s) Based on Serving Count */}
+                            <section className='bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-grey/10'>
+                                <div className='flex items-center justify-between border-b border-grey/10 pb-4 mb-6'>
+                                    <div className='flex items-center gap-3'>
+                                        <div className='w-8 h-8 rounded-xl bg-primary text-grey-dark font-bold text-sm flex items-center justify-center shadow-xs'>
+                                            2
+                                        </div>
+                                        <div>
+                                            <h2 className='text-lg sm:text-xl font-bold text-grey-dark'>
+                                                Choose Meal Type ({servingCount} Required)
+                                            </h2>
+                                            <p className='text-xs text-grey-muted font-normal'>
+                                                {servingCount === 1 && 'Select which meal you would like to receive daily (Choose 1):'}
+                                                {servingCount === 2 && 'Select any 2 meals you would like to receive daily (Choose 2):'}
+                                                {servingCount === 3 && 'All 3 meals (Breakfast + Lunch + Dinner) are included daily:'}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <span className='px-3 py-1 bg-emerald-500/10 text-emerald-700 text-xs font-semibold rounded-full border border-emerald-500/20'>
+                                        {chosenMealSlots.length}/{servingCount} Selected
+                                    </span>
+                                </div>
+
+                                <div className='grid grid-cols-1 sm:grid-cols-3 gap-4'>
+                                    {STANDARD_MEAL_SLOTS.map((slot) => {
+                                        const isChosen = chosenMealSlots.includes(slot.key)
+                                        const isLocked = servingCount === 3
+
+                                        return (
+                                            <div
+                                                key={slot.key}
+                                                onClick={() => !isLocked && handleToggleMealSlot(slot.key)}
+                                                className={`p-4 rounded-2xl border transition-all flex items-start gap-3.5 relative ${
+                                                    isLocked ? 'cursor-default' : 'cursor-pointer'
+                                                } ${
+                                                    isChosen
+                                                        ? 'bg-primary/10 border-2 border-primary shadow-xs'
+                                                        : 'bg-grey/5 border-grey/10 hover:border-primary/40'
+                                                }`}
+                                            >
+                                                {/* Checkbox / Radio Indicator */}
+                                                <div
+                                                    className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 border ${
+                                                        isChosen
+                                                            ? 'bg-primary border-primary text-grey-dark'
+                                                            : 'border-grey/30 bg-white'
+                                                    }`}
+                                                >
+                                                    {isChosen && (
+                                                        <Icon icon='solar:check-read-bold' className='text-xs font-bold' />
+                                                    )}
+                                                </div>
+
+                                                <div className='flex-1 min-w-0'>
+                                                    <div className='flex items-center gap-1.5 mb-1'>
+                                                        <Icon icon={slot.icon} className='text-base text-primary shrink-0' />
+                                                        <h4 className='font-bold text-sm text-grey-dark'>
+                                                            {slot.label}
+                                                        </h4>
+                                                    </div>
+                                                    <p className='text-xs text-grey-muted font-normal leading-tight'>
+                                                        {slot.desc}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            </section>
+
+                            {/* STEP 3: Day-by-Day Single Dish Selection */}
+                            <section className='bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-grey/10'>
+                                <div className='flex flex-wrap items-center justify-between border-b border-grey/10 pb-4 mb-6 gap-4'>
+                                    <div className='flex items-center gap-3'>
+                                        <div className='w-8 h-8 rounded-xl bg-primary text-grey-dark font-bold text-sm flex items-center justify-center shadow-xs'>
+                                            3
+                                        </div>
+                                        <div>
+                                            <h2 className='text-lg sm:text-xl font-bold text-grey-dark'>
+                                                Daily Dish Selection
+                                            </h2>
+                                            <p className='text-xs text-grey-muted font-normal'>
+                                                Select <strong className='text-grey-dark font-semibold'>1 dish per meal slot</strong> for each day
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <button
+                                        type='button'
+                                        onClick={handleCopyToAllDays}
+                                        className='px-3.5 py-1.5 rounded-xl bg-grey/5 hover:bg-primary/20 text-grey-dark border border-grey/10 hover:border-primary/40 text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer'
+                                    >
+                                        <Icon icon='solar:copy-bold' className='text-sm text-primary' />
+                                        <span>Apply {activeDayTab} Dishes to All Days</span>
+                                    </button>
+                                </div>
+
+                                {/* Day Selection Tabs */}
+                                <div className='flex items-center gap-2 overflow-x-auto pb-3 mb-6 scrollbar-none'>
+                                    {planServingDays.map((day) => {
+                                        const isActive = activeDayTab === day
+                                        const dayChoice = selections[day]
+                                        const hasSelection = dayChoice && Object.values(dayChoice).some(Boolean)
+
+                                        return (
+                                            <button
+                                                key={day}
+                                                type='button'
+                                                onClick={() => setActiveDayTab(day)}
+                                                className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all whitespace-nowrap flex items-center gap-2 cursor-pointer border ${
+                                                    isActive
+                                                        ? 'bg-primary text-grey-dark border-primary shadow-xs'
+                                                        : hasSelection
+                                                        ? 'bg-grey/5 text-grey-dark border-grey/10 hover:border-primary/40'
+                                                        : 'bg-white text-grey-muted border-grey/10 hover:bg-grey/5'
+                                                }`}
+                                            >
+                                                <span>{day}</span>
+                                                {hasSelection && (
+                                                    <span className='w-1.5 h-1.5 rounded-full bg-green-500 inline-block' />
+                                                )}
+                                            </button>
+                                        )
+                                    })}
+                                </div>
+
+                                {/* Dish Options for Active Day */}
+                                {(() => {
+                                    if (!selectedPlan) return null
+                                    const sched = selectedPlan.scheduleJson || {}
+                                    const daySched = sched[activeDayTab] || {}
+                                    const allPlanItems = selectedPlan.foodItems || []
+
+                                    return (
+                                        <div className='space-y-6'>
+                                            {chosenMealSlots.map((slotKey) => {
+                                                const slotInfo = STANDARD_MEAL_SLOTS.find((s) => s.key === slotKey)
+                                                
+                                                // Find candidate dish IDs in scheduleJson
+                                                let candidateIds: string[] = []
+                                                if (daySched[slotKey] && Array.isArray(daySched[slotKey])) {
+                                                    candidateIds = daySched[slotKey]
+                                                } else {
+                                                    Object.keys(daySched).forEach((k) => {
+                                                        if (k.toLowerCase().includes(slotKey.toLowerCase()) && Array.isArray(daySched[k])) {
+                                                            candidateIds = daySched[k]
+                                                        }
+                                                    })
+                                                }
+
+                                                let eligibleDishes = allPlanItems.filter((item) =>
+                                                    candidateIds.length > 0 ? candidateIds.includes(item.id) : true
+                                                )
+
+                                                if (eligibleDishes.length === 0) {
+                                                    eligibleDishes = allPlanItems
+                                                }
+
+                                                const selectedDishId = selections[activeDayTab]?.[slotKey] || eligibleDishes[0]?.id
+
+                                                return (
+                                                    <div key={slotKey} className='bg-[#FFF9F5] p-5 rounded-2xl border border-primary/20'>
+                                                        <div className='flex items-center justify-between mb-4'>
+                                                            <div className='flex items-center gap-2'>
+                                                                <Icon icon={slotInfo?.icon || 'solar:cup-hot-bold-duotone'} className='text-primary text-base' />
+                                                                <h4 className='font-bold text-sm text-grey-dark'>
+                                                                    {activeDayTab} • {slotInfo?.label || slotKey} Meal
+                                                                </h4>
+                                                            </div>
+                                                            <span className='text-xs font-normal text-grey-muted'>
+                                                                (Choose 1 option)
+                                                            </span>
+                                                        </div>
+
+                                                        {eligibleDishes.length === 0 ? (
+                                                            <p className='text-xs text-grey-muted py-4 text-center'>
+                                                                Chef's special rotating menu will be prepared for {activeDayTab} {slotKey}.
+                                                            </p>
+                                                        ) : (
+                                                            <div className='grid grid-cols-1 sm:grid-cols-2 gap-3.5'>
+                                                                {eligibleDishes.map((dish) => {
+                                                                    const isChosen = selectedDishId === dish.id
+
+                                                                    return (
+                                                                        <div
+                                                                            key={dish.id}
+                                                                            onClick={() => handleSelectDish(activeDayTab, slotKey, dish.id)}
+                                                                            className={`p-3.5 rounded-2xl flex items-center gap-3.5 transition-all cursor-pointer border ${
+                                                                                isChosen
+                                                                                    ? 'bg-white border-2 border-primary shadow-xs'
+                                                                                    : 'bg-white/80 border-grey/10 hover:border-primary/40 hover:bg-white'
+                                                                            }`}
+                                                                        >
+                                                                            {/* Radio Indicator */}
+                                                                            <div
+                                                                                className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 border ${
+                                                                                    isChosen
+                                                                                        ? 'bg-primary border-primary text-grey-dark'
+                                                                                        : 'border-grey/30 bg-transparent'
+                                                                                }`}
+                                                                            >
+                                                                                {isChosen && (
+                                                                                    <div className='w-1.5 h-1.5 rounded-full bg-grey-dark' />
+                                                                                )}
+                                                                            </div>
+
+                                                                            {/* Dish Image */}
+                                                                            <div className='w-12 h-12 rounded-xl overflow-hidden relative shrink-0 bg-grey/5 border border-grey/10'>
+                                                                                <Image
+                                                                                    src={getFullImageUrl(dish.image) || '/images/food/biryani_premium.png'}
+                                                                                    alt={dish.name}
+                                                                                    fill
+                                                                                    className='object-cover'
+                                                                                />
+                                                                            </div>
+
+                                                                            {/* Dish Details */}
+                                                                            <div className='flex-1 min-w-0'>
+                                                                                <h5 className='font-bold text-sm text-grey-dark capitalize line-clamp-2 leading-snug'>
+                                                                                    {dish.name}
+                                                                                </h5>
+                                                                                {dish.category?.name && (
+                                                                                    <span className='text-[11px] font-normal text-grey-muted'>
+                                                                                        {dish.category.name}
+                                                                                    </span>
+                                                                                )}
+                                                                            </div>
+                                                                        </div>
+                                                                    )
+                                                                })}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                )
+                                            })}
+                                        </div>
+                                    )
+                                })()}
+                            </section>
+
+                            {/* STEP 4: Delivery & Customer Information Form */}
+                            <section className='bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-grey/10 space-y-6'>
+                                <div className='flex items-center justify-between border-b border-grey/10 pb-4'>
+                                    <div className='flex items-center gap-3'>
+                                        <div className='w-8 h-8 rounded-xl bg-primary text-grey-dark font-bold text-sm flex items-center justify-center shadow-xs'>
+                                            4
+                                        </div>
+                                        <div>
+                                            <h2 className='text-lg sm:text-xl font-bold text-grey-dark'>
+                                                Service & Delivery Details
+                                            </h2>
+                                            <p className='text-xs text-grey-muted font-normal'>
+                                                Where and when should we deliver your meals?
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className={`w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all ${selectedItemId === item.id ? 'bg-white border-white text-primary' : 'bg-grey/10 border-transparent text-transparent group-hover:bg-primary group-hover:text-grey'}`}>
-                                    <Icon icon='ion:checkmark' className='text-lg' />
+                                {/* Auth Pre-fill Banner */}
+                                {session?.user ? (
+                                    <div className='p-3.5 rounded-2xl bg-primary/10 border border-primary/30 flex items-center gap-3 text-xs font-semibold text-grey-dark'>
+                                        <Icon icon='solar:user-check-bold' className='text-base text-primary shrink-0' />
+                                        <span>Logged in as <strong>{session.user.name || session.user.email}</strong>. Contact details pre-filled.</span>
+                                    </div>
+                                ) : (
+                                    <div className='p-3.5 rounded-2xl bg-grey/5 border border-grey/10 flex items-center justify-between gap-3 text-xs'>
+                                        <span className='text-grey-muted font-normal'>Ordering as guest. Have an account?</span>
+                                        <button
+                                            type='button'
+                                            onClick={() => router.push('/login')}
+                                            className='font-semibold text-primary hover:underline'
+                                        >
+                                            Sign In
+                                        </button>
+                                    </div>
+                                )}
+
+                                <div className='grid grid-cols-1 sm:grid-cols-2 gap-5'>
+                                    
+                                    {/* Start Service From (Date) */}
+                                    <div className='sm:col-span-2'>
+                                        <label className='block text-xs font-semibold uppercase tracking-wider text-grey-muted mb-2'>
+                                            Start My Service From (Select Date) <span className='text-red-500'>*</span>
+                                        </label>
+                                        <div className='relative'>
+                                            <input
+                                                type='date'
+                                                min={todayDate}
+                                                required
+                                                value={formData.startDate}
+                                                onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                                                className='w-full px-4 py-3 rounded-xl bg-grey/5 border border-grey/10 focus:border-primary focus:bg-white text-sm font-semibold text-grey-dark outline-hidden transition-all'
+                                            />
+                                        </div>
+                                        <span className='text-[11px] text-grey-muted mt-1 block'>
+                                            Your meal deliveries will begin on this selected date.
+                                        </span>
+                                    </div>
+
+                                    {/* Customer Name */}
+                                    <div>
+                                        <label className='block text-xs font-semibold uppercase tracking-wider text-grey-muted mb-2'>
+                                            Full Name <span className='text-red-500'>*</span>
+                                        </label>
+                                        <input
+                                            type='text'
+                                            required
+                                            placeholder='e.g. Suresh Kumar'
+                                            value={formData.customerName}
+                                            onChange={(e) => setFormData({ ...formData, customerName: e.target.value })}
+                                            className='w-full px-4 py-3 rounded-xl bg-grey/5 border border-grey/10 focus:border-primary focus:bg-white text-sm font-semibold text-grey-dark outline-hidden transition-all placeholder:font-normal'
+                                        />
+                                    </div>
+
+                                    {/* Contact Phone Number */}
+                                    <div>
+                                        <label className='block text-xs font-semibold uppercase tracking-wider text-grey-muted mb-2'>
+                                            Contact Number <span className='text-red-500'>*</span>
+                                        </label>
+                                        <input
+                                            type='tel'
+                                            required
+                                            placeholder='+971 50 123 4567'
+                                            value={formData.customerPhone}
+                                            onChange={(e) => setFormData({ ...formData, customerPhone: e.target.value })}
+                                            className='w-full px-4 py-3 rounded-xl bg-grey/5 border border-grey/10 focus:border-primary focus:bg-white text-sm font-semibold text-grey-dark outline-hidden transition-all placeholder:font-normal'
+                                        />
+                                    </div>
+
+                                    {/* WhatsApp Number with Quick Sync Button */}
+                                    <div className='sm:col-span-2'>
+                                        <div className='flex items-center justify-between mb-2'>
+                                            <label className='text-xs font-semibold uppercase tracking-wider text-grey-muted'>
+                                                WhatsApp Number (For Delivery Updates) <span className='text-red-500'>*</span>
+                                            </label>
+                                            <button
+                                                type='button'
+                                                onClick={handleCopyPhoneToWhatsApp}
+                                                className='text-xs font-semibold text-primary hover:underline flex items-center gap-1 cursor-pointer'
+                                            >
+                                                <Icon icon='solar:copy-bold' />
+                                                <span>Same as Contact Number</span>
+                                            </button>
+                                        </div>
+                                        <div className='relative'>
+                                            <input
+                                                type='tel'
+                                                required
+                                                placeholder='+971 50 123 4567'
+                                                value={formData.whatsappNo}
+                                                onChange={(e) => setFormData({ ...formData, whatsappNo: e.target.value })}
+                                                className='w-full px-4 py-3 rounded-xl bg-grey/5 border border-grey/10 focus:border-primary focus:bg-white text-sm font-semibold text-grey-dark outline-hidden transition-all pl-11 placeholder:font-normal'
+                                            />
+                                            <Icon icon='logos:whatsapp-icon' className='text-lg absolute left-4 top-1/2 -translate-y-1/2' />
+                                        </div>
+                                    </div>
+
+                                    {/* Flat / Room Number */}
+                                    <div>
+                                        <label className='block text-xs font-semibold uppercase tracking-wider text-grey-muted mb-2'>
+                                            Flat / Room Number <span className='text-red-500'>*</span>
+                                        </label>
+                                        <input
+                                            type='text'
+                                            required
+                                            placeholder='e.g. Room 304 or Flat 12B'
+                                            value={formData.flatRoomNumber}
+                                            onChange={(e) => setFormData({ ...formData, flatRoomNumber: e.target.value })}
+                                            className='w-full px-4 py-3 rounded-xl bg-grey/5 border border-grey/10 focus:border-primary focus:bg-white text-sm font-semibold text-grey-dark outline-hidden transition-all placeholder:font-normal'
+                                        />
+                                    </div>
+
+                                    {/* Building Name */}
+                                    <div>
+                                        <label className='block text-xs font-semibold uppercase tracking-wider text-grey-muted mb-2'>
+                                            Building Name <span className='text-red-500'>*</span>
+                                        </label>
+                                        <input
+                                            type='text'
+                                            required
+                                            placeholder='e.g. Al Hilal Building'
+                                            value={formData.buildingName}
+                                            onChange={(e) => setFormData({ ...formData, buildingName: e.target.value })}
+                                            className='w-full px-4 py-3 rounded-xl bg-grey/5 border border-grey/10 focus:border-primary focus:bg-white text-sm font-semibold text-grey-dark outline-hidden transition-all placeholder:font-normal'
+                                        />
+                                    </div>
+
+                                    {/* Area / City */}
+                                    <div className='sm:col-span-2'>
+                                        <label className='block text-xs font-semibold uppercase tracking-wider text-grey-muted mb-2'>
+                                            Area / City (UAE) <span className='text-red-500'>*</span>
+                                        </label>
+                                        <input
+                                            type='text'
+                                            required
+                                            placeholder='e.g. Al Nahda 2, Dubai / Muhaisnah / Deira'
+                                            value={formData.areaCity}
+                                            onChange={(e) => setFormData({ ...formData, areaCity: e.target.value })}
+                                            className='w-full px-4 py-3 rounded-xl bg-grey/5 border border-grey/10 focus:border-primary focus:bg-white text-sm font-semibold text-grey-dark outline-hidden transition-all placeholder:font-normal'
+                                        />
+                                    </div>
+
+                                    {/* Drop My Food Delivery (Dropdown) */}
+                                    <div className='sm:col-span-2'>
+                                        <label className='block text-xs font-semibold uppercase tracking-wider text-grey-muted mb-2'>
+                                            Drop My Food Delivery <span className='text-red-500'>*</span>
+                                        </label>
+                                        <div className='grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3'>
+                                            {DROP_LOCATIONS.map((loc) => {
+                                                const isSelected = formData.dropLocation === loc.value
+                                                return (
+                                                    <button
+                                                        key={loc.value}
+                                                        type='button'
+                                                        onClick={() => setFormData({ ...formData, dropLocation: loc.value })}
+                                                        className={`p-3.5 rounded-2xl text-left flex items-center gap-3 transition-all cursor-pointer border ${
+                                                            isSelected
+                                                                ? 'bg-primary/10 border-2 border-primary text-grey-dark font-bold shadow-xs'
+                                                                : 'bg-grey/5 border-grey/10 text-grey-dark hover:border-primary/40'
+                                                        }`}
+                                                    >
+                                                        <div
+                                                            className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 border ${
+                                                                isSelected ? 'bg-primary border-primary' : 'border-grey/30'
+                                                            }`}
+                                                        >
+                                                            {isSelected && <div className='w-1.5 h-1.5 rounded-full bg-grey-dark' />}
+                                                        </div>
+                                                        <Icon icon={loc.icon} className='text-lg text-primary' />
+                                                        <span className='text-xs font-semibold'>{loc.label}</span>
+                                                    </button>
+                                                )
+                                            })}
+                                        </div>
+
+                                        {/* Dynamic "Others" custom location input */}
+                                        <AnimatePresence>
+                                            {formData.dropLocation === 'Others' && (
+                                                <motion.div
+                                                    initial={{ opacity: 0, height: 0 }}
+                                                    animate={{ opacity: 1, height: 'auto' }}
+                                                    exit={{ opacity: 0, height: 0 }}
+                                                    className='overflow-hidden pt-2'
+                                                >
+                                                    <label className='block text-xs font-semibold text-grey-muted mb-1.5'>
+                                                        Please specify drop instructions:
+                                                    </label>
+                                                    <input
+                                                        type='text'
+                                                        required
+                                                        placeholder='e.g. Leave with security guard Mr. Ali / Room 204 next door'
+                                                        value={formData.customDropLocation}
+                                                        onChange={(e) => setFormData({ ...formData, customDropLocation: e.target.value })}
+                                                        className='w-full px-4 py-3 rounded-xl bg-white border-2 border-primary/60 focus:border-primary text-xs font-semibold text-grey-dark outline-hidden shadow-xs'
+                                                    />
+                                                </motion.div>
+                                            )}
+                                        </AnimatePresence>
+                                    </div>
+
+                                    {/* Special Notes */}
+                                    <div className='sm:col-span-2'>
+                                        <label className='block text-xs font-semibold uppercase tracking-wider text-grey-muted mb-2'>
+                                            Special Dietary / Delivery Instructions (Optional)
+                                        </label>
+                                        <textarea
+                                            rows={2}
+                                            placeholder='e.g. Less spicy, ring bell twice, no cutlery needed'
+                                            value={formData.specialNotes}
+                                            onChange={(e) => setFormData({ ...formData, specialNotes: e.target.value })}
+                                            className='w-full px-4 py-3 rounded-xl bg-grey/5 border border-grey/10 focus:border-primary focus:bg-white text-xs font-normal text-grey-dark outline-hidden transition-all'
+                                        />
+                                    </div>
                                 </div>
-                            </motion.div>
-                        ))}
-                    </div>
-
-                    {displayedItems.length === 0 && (
-                        <div className='h-full flex flex-col items-center justify-center py-20 text-grey/20'>
-                            <Icon icon="ion:restaurant-outline" className="text-8xl mb-4" />
-                            <p className='text-xl font-bold italic'>No items found for this menu.</p>
+                            </section>
                         </div>
-                    )}
-                </div>
 
-                {/* Pagination Controls */}
-                {!showAll && totalPages > 1 && (
-                    <div className='p-6 border-t border-grey/5 bg-[#FFFBF7] flex items-center justify-center gap-8'>
-                        <button
-                            disabled={currentPage === 1}
-                            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                            className={`w-12 h-12 rounded-2xl flex items-center justify-center border-2 transition-all ${currentPage === 1 ? 'border-grey/5 text-grey/10 cursor-not-allowed' : 'border-grey/10 text-grey hover:border-primary hover:bg-primary'}`}
-                        >
-                            <Icon icon='ion:chevron-back' className='text-xl' />
-                        </button>
+                        {/* RIGHT COLUMN: Sticky Order Summary & Submit (4 Cols) */}
+                        <div className='lg:col-span-4 lg:sticky lg:top-28 space-y-6'>
+                            <div className='bg-white rounded-3xl p-6 sm:p-7 shadow-sm border border-grey/10 space-y-6'>
+                                <div className='border-b border-grey/10 pb-4'>
+                                    <span className='text-xs font-semibold uppercase tracking-wider text-primary block mb-1'>
+                                        Order Summary
+                                    </span>
+                                    <h3 className='text-lg sm:text-xl font-bold text-grey-dark'>
+                                        Subscription Overview
+                                    </h3>
+                                </div>
 
-                        <div className='flex items-center gap-3'>
-                            {[...Array(totalPages)].map((_, i) => (
+                                {selectedPlan && (
+                                    <div className='space-y-4 text-xs'>
+                                        {/* Plan Name & Price */}
+                                        <div className='bg-[#FFF9F5] p-4 rounded-2xl border border-primary/20'>
+                                            <span className='text-xs font-semibold uppercase tracking-wider text-grey-muted block mb-1'>
+                                                Selected Package
+                                            </span>
+                                            <div className='flex items-baseline justify-between'>
+                                                <h4 className='font-bold text-base text-grey-dark capitalize'>
+                                                    {selectedPlan.name}
+                                                </h4>
+                                                <span className='font-bold text-lg text-grey-dark'>
+                                                    AED {selectedPlan.price.toFixed(0)}
+                                                </span>
+                                            </div>
+                                            <div className='mt-2 flex items-center gap-1.5 flex-wrap'>
+                                                <span className='px-2 py-0.5 rounded-md bg-primary/20 text-grey-dark font-semibold text-[11px]'>
+                                                    {servingCount} Time Meal Plan
+                                                </span>
+                                                <span className='px-2 py-0.5 rounded-md bg-grey/10 text-grey-dark font-medium text-[11px]'>
+                                                    {chosenMealSlots.map((s) => s.toUpperCase()).join(' + ')}
+                                                </span>
+                                                <span className='px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-700 font-medium text-[11px]'>
+                                                    {selectedPlan.days || 30} Days
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        {/* Delivery Info Preview */}
+                                        <div className='space-y-2.5 px-1'>
+                                            <div className='flex items-center justify-between text-grey-muted'>
+                                                <span className='font-normal'>Start Date:</span>
+                                                <strong className='text-grey-dark font-semibold'>{formData.startDate || 'Tomorrow'}</strong>
+                                            </div>
+                                            <div className='flex items-center justify-between text-grey-muted'>
+                                                <span className='font-normal'>Serving Days:</span>
+                                                <strong className='text-grey-dark font-semibold'>{planServingDays.length} Days / Week</strong>
+                                            </div>
+                                            <div className='flex items-center justify-between text-grey-muted'>
+                                                <span className='font-normal'>Meals Per Day:</span>
+                                                <strong className='text-grey-dark font-semibold'>{servingCount} Meal(s) Daily</strong>
+                                            </div>
+                                            <div className='flex items-center justify-between text-grey-muted'>
+                                                <span className='font-normal'>Drop Location:</span>
+                                                <strong className='text-grey-dark font-semibold truncate max-w-[150px]'>
+                                                    {formData.dropLocation}
+                                                </strong>
+                                            </div>
+                                            <div className='flex items-center justify-between text-grey-muted'>
+                                                <span className='font-normal'>Delivery Charge:</span>
+                                                <span className='text-emerald-600 font-semibold uppercase tracking-wider text-[11px] bg-emerald-100 px-2 py-0.5 rounded-full'>
+                                                    FREE
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        {/* Payment Method Selection */}
+                                        <div className='pt-3 border-t border-grey/10 space-y-3'>
+                                            <div className='flex items-center justify-between'>
+                                                <span className='text-xs font-semibold uppercase tracking-wider text-grey-muted block'>
+                                                    Payment Method
+                                                </span>
+                                                <span className='text-[10px] font-semibold text-primary px-2 py-0.5 rounded-full bg-primary/10'>
+                                                    {formData.paymentMethod === 'BANK_TRANSFER' ? 'Direct Bank Wire' : 'Pay Upon Delivery'}
+                                                </span>
+                                            </div>
+                                            <div className='grid grid-cols-2 gap-2'>
+                                                <button
+                                                    type='button'
+                                                    onClick={() => setFormData({ ...formData, paymentMethod: 'COD' })}
+                                                    className={`p-2.5 rounded-xl text-center text-xs font-semibold transition-all border cursor-pointer flex items-center justify-center gap-1.5 ${
+                                                        formData.paymentMethod === 'COD'
+                                                            ? 'bg-primary text-grey-dark border-primary shadow-xs'
+                                                            : 'bg-grey/5 text-grey-muted border-grey/10 hover:border-primary/40'
+                                                    }`}
+                                                >
+                                                    <Icon icon='solar:hand-money-bold-duotone' className='text-base' />
+                                                    <span>Cash On Delivery</span>
+                                                </button>
+                                                <button
+                                                    type='button'
+                                                    onClick={() => setFormData({ ...formData, paymentMethod: 'BANK_TRANSFER' })}
+                                                    className={`p-2.5 rounded-xl text-center text-xs font-semibold transition-all border cursor-pointer flex items-center justify-center gap-1.5 ${
+                                                        formData.paymentMethod === 'BANK_TRANSFER'
+                                                            ? 'bg-primary text-grey-dark border-primary shadow-xs'
+                                                            : 'bg-grey/5 text-grey-muted border-grey/10 hover:border-primary/40'
+                                                    }`}
+                                                >
+                                                    <Icon icon='solar:card-2-bold-duotone' className='text-base' />
+                                                    <span>Bank Transfer</span>
+                                                </button>
+                                            </div>
+
+                                            {/* Dynamic Bank Transfer Voucher / Details */}
+                                            <AnimatePresence>
+                                                {formData.paymentMethod === 'BANK_TRANSFER' && (
+                                                    <motion.div
+                                                        initial={{ opacity: 0, y: -6, height: 0 }}
+                                                        animate={{ opacity: 1, y: 0, height: 'auto' }}
+                                                        exit={{ opacity: 0, y: -6, height: 0 }}
+                                                        transition={{ duration: 0.2 }}
+                                                        className='overflow-hidden'
+                                                    >
+                                                        <div className='bg-gradient-to-b from-[#1C1D22] to-[#25262E] text-white p-4 rounded-2xl border border-white/10 shadow-md space-y-3 mt-1'>
+                                                            {/* Bank Header */}
+                                                            <div className='flex items-center justify-between border-b border-white/10 pb-2.5'>
+                                                                <div className='flex items-center gap-2'>
+                                                                    <Icon icon='solar:buildings-bold-duotone' className='text-xl text-[#f3ba2f]' />
+                                                                    <span className='font-bold text-xs uppercase tracking-wide text-white'>
+                                                                        {siteSettings?.bank_name || 'Emirates NBD'}
+                                                                    </span>
+                                                                </div>
+                                                                <span className='text-[9px] font-mono tracking-widest text-[#f3ba2f] font-bold px-2 py-0.5 rounded-md border border-[#f3ba2f]/30 bg-[#f3ba2f]/10'>
+                                                                    UAE CORPORATE
+                                                                </span>
+                                                            </div>
+
+                                                            {/* Account Name */}
+                                                            <div>
+                                                                <span className='text-[9px] uppercase tracking-wider text-white/50 block'>
+                                                                    Beneficiary Name
+                                                                </span>
+                                                                <span className='text-xs font-semibold text-white/95 block'>
+                                                                    {siteSettings?.account_name || 'Al Shamil Mess Services LLC'}
+                                                                </span>
+                                                            </div>
+
+                                                            {/* IBAN with 1-click Copy */}
+                                                            <div className='p-2.5 rounded-xl bg-white/5 border border-white/10 space-y-1'>
+                                                                <div className='flex items-center justify-between'>
+                                                                    <span className='text-[9px] uppercase tracking-wider text-white/50'>
+                                                                        Official IBAN Number
+                                                                    </span>
+                                                                    <button
+                                                                        type='button'
+                                                                        onClick={() => handleCopyText(siteSettings?.iban_number || 'AE12 0310 0000 1012 3456 7890', 'IBAN')}
+                                                                        className='text-[10px] font-bold text-[#f3ba2f] hover:text-[#f3ba2f]/80 transition-colors flex items-center gap-1 cursor-pointer'
+                                                                    >
+                                                                        <Icon icon={copiedField === 'IBAN' ? 'solar:check-circle-bold' : 'solar:copy-bold-duotone'} />
+                                                                        <span>{copiedField === 'IBAN' ? 'Copied' : 'Copy IBAN'}</span>
+                                                                    </button>
+                                                                </div>
+                                                                <p className='font-mono font-bold text-xs text-[#f3ba2f] tracking-wider break-all select-all'>
+                                                                    {siteSettings?.iban_number || 'AE12 0310 0000 1012 3456 7890'}
+                                                                </p>
+                                                            </div>
+
+                                                            {/* Account Number & SWIFT */}
+                                                            <div className='grid grid-cols-2 gap-2 pt-1 border-t border-white/10 text-[11px]'>
+                                                                <div>
+                                                                    <div className='flex items-center justify-between'>
+                                                                        <span className='text-[9px] uppercase tracking-wider text-white/50'>Account No</span>
+                                                                        <button
+                                                                            type='button'
+                                                                            onClick={() => handleCopyText(siteSettings?.account_number || '101234567890', 'Account Number')}
+                                                                            className='text-[9px] text-white/70 hover:text-white flex items-center gap-0.5 cursor-pointer'
+                                                                        >
+                                                                            <Icon icon={copiedField === 'Account Number' ? 'solar:check-circle-bold' : 'solar:copy-bold'} />
+                                                                        </button>
+                                                                    </div>
+                                                                    <span className='font-mono font-semibold text-white/90'>
+                                                                        {siteSettings?.account_number || '101234567890'}
+                                                                    </span>
+                                                                </div>
+                                                                <div className='text-right'>
+                                                                    <span className='text-[9px] uppercase tracking-wider text-white/50 block'>SWIFT / BIC</span>
+                                                                    <span className='font-mono font-semibold text-white/90'>
+                                                                        {siteSettings?.swift_code || 'EBILAEADXXX'}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+
+                                                            {/* WhatsApp / Confirmation Guidance Note */}
+                                                            <div className='p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-start gap-2 text-[10px] text-amber-200 leading-snug'>
+                                                                <Icon icon='logos:whatsapp-icon' className='text-sm shrink-0 mt-0.5' />
+                                                                <span>
+                                                                    {siteSettings?.whatsapp_instruction ||
+                                                                        'Please share your transfer confirmation receipt screenshot on WhatsApp after placing the order for immediate plan activation.'}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </motion.div>
+                                                )}
+                                            </AnimatePresence>
+                                        </div>
+
+                                        {/* Total Amount */}
+                                        <div className='pt-4 border-t-2 border-dashed border-grey/15 flex items-baseline justify-between'>
+                                            <div>
+                                                <span className='text-xs font-medium text-grey-muted block'>Total Payable:</span>
+                                                <span className='text-[11px] text-grey-muted'>Includes all meals & delivery</span>
+                                            </div>
+                                            <span className='text-2xl font-bold text-grey-dark'>
+                                                AED {selectedPlan.price.toFixed(0)}
+                                            </span>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Submit Button */}
                                 <button
-                                    key={i}
-                                    onClick={() => setCurrentPage(i + 1)}
-                                    className={`w-10 h-10 rounded-xl text-xs font-black transition-all ${currentPage === i + 1 ? 'bg-grey text-white scale-110' : 'bg-white border border-grey/5 text-grey/40 hover:border-primary'}`}
+                                    type='submit'
+                                    disabled={isSubmitting || !selectedPlan}
+                                    className='w-full py-3.5 rounded-xl bg-primary hover:bg-primary/90 text-grey-dark font-bold text-sm flex items-center justify-center gap-2 shadow-sm hover:shadow-md transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
                                 >
-                                    {i + 1}
+                                    {isSubmitting ? (
+                                        <>
+                                            <div className='w-4 h-4 border-2 border-grey-dark border-t-transparent rounded-full animate-spin' />
+                                            <span>Processing Order...</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <span>Confirm & Place Order</span>
+                                            <Icon icon='solar:arrow-right-bold' className='text-base' />
+                                        </>
+                                    )}
                                 </button>
-                            ))}
-                        </div>
 
-                        <button
-                            disabled={currentPage === totalPages}
-                            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                            className={`w-12 h-12 rounded-2xl flex items-center justify-center border-2 transition-all ${currentPage === totalPages ? 'border-grey/5 text-grey/10 cursor-not-allowed' : 'border-grey/10 text-grey hover:border-primary hover:bg-primary'}`}
-                        >
-                            <Icon icon='ion:chevron-forward' className='text-xl' />
-                        </button>
+                                {/* Trust Badges */}
+                                <div className='pt-2 space-y-2 text-xs text-grey-muted font-medium'>
+                                    <div className='flex items-center gap-2'>
+                                        <Icon icon='solar:shield-check-bold' className='text-primary text-base shrink-0' />
+                                        <span>Authentic Home-Cooked Quality</span>
+                                    </div>
+                                    <div className='flex items-center gap-2'>
+                                        <Icon icon='solar:clock-circle-bold' className='text-primary text-base shrink-0' />
+                                        <span>On-Time Room & Flat Delivery Daily</span>
+                                    </div>
+                                    <div className='flex items-center gap-2'>
+                                        <Icon icon='solar:refresh-circle-bold' className='text-primary text-base shrink-0' />
+                                        <span>Pause or Adjust Dates Anytime</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                )}
-            </motion.div>
-        </motion.div>
+                </form>
+            </div>
+        </main>
+    )
+}
+
+export default function GetStartedPage() {
+    return (
+        <Suspense
+            fallback={
+                <div className='min-h-screen pt-36 pb-20 flex items-center justify-center bg-[#FFF9F5]'>
+                    <div className='w-14 h-14 border-3 border-primary border-t-transparent rounded-full animate-spin' />
+                </div>
+            }
+        >
+            <GetStartedContent />
+        </Suspense>
     )
 }

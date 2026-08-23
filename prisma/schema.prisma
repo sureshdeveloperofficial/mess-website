@@ -71,6 +71,7 @@ model FoodMenu {
   description   String?
   price         Float
   days          Int        @default(30)
+  servingCount  Int        @default(1)
   isActive      Boolean    @default(true)
   availableDays String[]   @default(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"])
   scheduleJson  Json?

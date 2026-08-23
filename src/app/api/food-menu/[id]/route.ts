@@ -51,14 +51,17 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         let mealType = null
         let scheduleJson = null
         let metaDays = null
+        let metaServingCount = 1
+
         try {
             const metaRows = await prisma.$queryRawUnsafe<any[]>(
-                `SELECT "mealTypeId", "scheduleJson", "days" FROM "FoodMenu" WHERE id = $1 LIMIT 1;`,
+                `SELECT "mealTypeId", "scheduleJson", "days", "servingCount" FROM "FoodMenu" WHERE id = $1 LIMIT 1;`,
                 id
             )
             if (metaRows.length > 0) {
                 scheduleJson = metaRows[0].scheduleJson
                 metaDays = metaRows[0].days
+                metaServingCount = metaRows[0].servingCount ?? 1
                 if (metaRows[0].mealTypeId) {
                     try {
                         const mtRows = await prisma.$queryRawUnsafe<any[]>(
@@ -81,7 +84,16 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
             } catch {}
         }
 
-        return NextResponse.json({ ...foodMenu, days: (foodMenu as any).days ?? metaDays ?? 30, mealType, scheduleJson })
+        return NextResponse.json({ 
+            ...foodMenu, 
+            days: (foodMenu as any).days ?? metaDays ?? 30, 
+            servingCount: (foodMenu as any).servingCount ?? metaServingCount ?? 1,
+            mealType, 
+            scheduleJson,
+            features: Array.isArray(scheduleJson?.features) ? scheduleJson.features : [],
+            isPopular: Boolean(scheduleJson?.isPopular),
+            badgeText: scheduleJson?.badgeText || (scheduleJson?.isPopular ? 'Most Popular' : '')
+        })
     } catch (error) {
         console.error('GET Food Menu Error:', error)
         return NextResponse.json({ error: 'Failed to fetch food menu' }, { status: 500 })
@@ -95,9 +107,32 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     try {
         const { id } = await params
         const body = await req.json()
-        const { name, description, price, days, foodItemIds, scheduleJson, availableDays, mealTypeId, isActive } = body
+        const { 
+            name, 
+            description, 
+            price, 
+            days, 
+            servingCount,
+            foodItemIds, 
+            scheduleJson, 
+            availableDays, 
+            mealTypeId, 
+            features,
+            isPopular,
+            badgeText,
+            isActive 
+        } = body
 
-        const allDishIds = extractAllDishIds(scheduleJson, foodItemIds)
+        const mergedScheduleJson = scheduleJson !== undefined || features !== undefined || isPopular !== undefined || badgeText !== undefined
+            ? {
+                ...(typeof scheduleJson === 'object' && scheduleJson !== null ? scheduleJson : {}),
+                ...(Array.isArray(features) ? { features } : {}),
+                ...(isPopular !== undefined ? { isPopular: Boolean(isPopular) } : {}),
+                ...(badgeText !== undefined ? { badgeText: String(badgeText).trim() } : {}),
+            }
+            : undefined
+
+        const allDishIds = extractAllDishIds(mergedScheduleJson ?? scheduleJson, foodItemIds)
 
         const updateData: any = {}
         if (name !== undefined) updateData.name = name
@@ -105,9 +140,17 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         if (price !== undefined) updateData.price = parseFloat(price)
         if (availableDays !== undefined) updateData.availableDays = availableDays
         if (isActive !== undefined) updateData.isActive = isActive
-        if (allDishIds.length > 0 || foodItemIds !== undefined || scheduleJson !== undefined) {
+        if (allDishIds.length > 0 || foodItemIds !== undefined || scheduleJson !== undefined || features !== undefined) {
+            let validDishIds: string[] = []
+            if (allDishIds.length > 0) {
+                const existingItems = await prisma.foodItem.findMany({
+                    where: { id: { in: allDishIds } },
+                    select: { id: true },
+                })
+                validDishIds = existingItems.map((f) => f.id)
+            }
             updateData.foodItems = {
-                set: allDishIds.map((itemId: string) => ({ id: itemId })),
+                set: validDishIds.map((itemId: string) => ({ id: itemId })),
             }
         }
 
@@ -118,23 +161,55 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         })
 
         const parsedDays = days !== undefined ? parseInt(days.toString(), 10) || 30 : null
-        if (mealTypeId !== undefined || scheduleJson !== undefined || parsedDays !== null) {
+        const parsedServingCount = servingCount !== undefined ? parseInt(servingCount.toString(), 10) || 1 : null
+
+        if (mealTypeId !== undefined || mergedScheduleJson !== undefined || parsedDays !== null || parsedServingCount !== null) {
             try {
                 await prisma.$executeRawUnsafe(
                     `UPDATE "FoodMenu" 
                      SET "mealTypeId" = COALESCE($1, "mealTypeId"), 
                          "scheduleJson" = COALESCE($2::jsonb, "scheduleJson"),
-                         "days" = COALESCE($3, "days")
-                     WHERE "id" = $4;`,
+                         "days" = COALESCE($3, "days"),
+                         "servingCount" = COALESCE($4, "servingCount")
+                     WHERE "id" = $5;`,
                     mealTypeId || null,
-                    scheduleJson ? JSON.stringify(scheduleJson) : null,
+                    mergedScheduleJson ? JSON.stringify(mergedScheduleJson) : null,
                     parsedDays,
+                    parsedServingCount,
                     id
                 )
-            } catch {}
+            } catch {
+                try {
+                    await prisma.$executeRawUnsafe(`ALTER TABLE "FoodMenu" ADD COLUMN IF NOT EXISTS "servingCount" INTEGER NOT NULL DEFAULT 1;`)
+                    await prisma.$executeRawUnsafe(
+                        `UPDATE "FoodMenu" 
+                         SET "mealTypeId" = COALESCE($1, "mealTypeId"), 
+                             "scheduleJson" = COALESCE($2::jsonb, "scheduleJson"),
+                             "days" = COALESCE($3, "days"),
+                             "servingCount" = COALESCE($4, "servingCount")
+                         WHERE "id" = $5;`,
+                        mealTypeId || null,
+                        mergedScheduleJson ? JSON.stringify(mergedScheduleJson) : null,
+                        parsedDays,
+                        parsedServingCount,
+                        id
+                    )
+                } catch {}
+            }
         }
 
-        return NextResponse.json({ ...foodMenu, days: parsedDays ?? (foodMenu as any).days ?? 30, mealTypeId, scheduleJson })
+        const finalSchedule = mergedScheduleJson ?? scheduleJson
+
+        return NextResponse.json({ 
+            ...foodMenu, 
+            days: parsedDays ?? (foodMenu as any).days ?? 30, 
+            servingCount: parsedServingCount ?? (foodMenu as any).servingCount ?? 1,
+            mealTypeId, 
+            scheduleJson: finalSchedule,
+            features: finalSchedule?.features || [],
+            isPopular: Boolean(finalSchedule?.isPopular),
+            badgeText: finalSchedule?.badgeText || ''
+        })
     } catch (error) {
         console.error(error)
         return NextResponse.json({ error: 'Failed to update food menu' }, { status: 500 })

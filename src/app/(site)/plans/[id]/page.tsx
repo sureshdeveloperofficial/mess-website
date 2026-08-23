@@ -138,7 +138,7 @@ export default function MealPlanDetailPage({ params }: { params: Promise<{ id: s
                             </div>
 
                             <Link
-                                href='/get-started'
+                                href={`/get-started?planId=${menu.id}`}
                                 className='px-8 py-3.5 bg-primary hover:bg-primary/90 text-grey-dark rounded-2xl font-black text-sm uppercase tracking-wider flex items-center gap-2 shadow-md transition-all'
                             >
                                 <span>Order This Plan</span>
