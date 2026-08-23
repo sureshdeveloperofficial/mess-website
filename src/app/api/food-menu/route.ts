@@ -31,18 +31,8 @@ function extractAllDishIds(scheduleJson: any, foodItemIds?: string[]): string[] 
     return Array.from(set)
 }
 
-export async function GET(req: Request) {
+async function fetchFoodMenusWithRetry(where: any, retries = 2): Promise<[any[], any[], any[]]> {
     try {
-        const { searchParams } = new URL(req.url)
-        const activeOnly = searchParams.get('activeOnly') === 'true'
-        const mealTypeId = searchParams.get('mealTypeId')
-
-        const where: any = {}
-        if (activeOnly) {
-            where.isActive = true
-        }
-
-        // Run all queries in parallel for 3x faster response
         const [foodMenus, rawPlansResult, allMealTypesResult] = await Promise.all([
             prisma.foodMenu.findMany({
                 where,
@@ -76,6 +66,29 @@ export async function GET(req: Request) {
             }),
             prisma.$queryRawUnsafe<any[]>(`SELECT * FROM "MealType";`).catch(() => []),
         ])
+        return [foodMenus, rawPlansResult, allMealTypesResult]
+    } catch (err) {
+        if (retries > 0) {
+            await new Promise((resolve) => setTimeout(resolve, 500))
+            return fetchFoodMenusWithRetry(where, retries - 1)
+        }
+        throw err
+    }
+}
+
+export async function GET(req: Request) {
+    try {
+        const { searchParams } = new URL(req.url)
+        const activeOnly = searchParams.get('activeOnly') === 'true'
+        const mealTypeId = searchParams.get('mealTypeId')
+
+        const where: any = {}
+        if (activeOnly) {
+            where.isActive = true
+        }
+
+        // Run all queries with automatic retry on transient network drops
+        const [foodMenus, rawPlansResult, allMealTypesResult] = await fetchFoodMenusWithRetry(where)
 
         const planMetaMap = new Map((rawPlansResult || []).map((rp: any) => [
             rp.id, 
