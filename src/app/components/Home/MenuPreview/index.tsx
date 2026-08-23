@@ -59,14 +59,14 @@ const MenuPreview = () => {
     }
 
     return (
-        <section id='menu' className='py-32 bg-[#FFF9F5]'>
+        <section id='menu' className='py-16 bg-[#FFF9F5]'>
             <div className='container'>
-                <div className='flex flex-col md:flex-row justify-between items-end mb-20 gap-8'>
+                <div className='flex flex-col md:flex-row justify-between items-end mb-10 gap-8'>
                     <div className='max-w-2xl'>
                         <motion.p
                             initial={{ opacity: 0, x: -20 }}
                             whileInView={{ opacity: 1, x: 0 }}
-                            className='text-primary text-sm font-black mb-4 tracking-[0.5em] uppercase'
+                            className='text-primary text-xs font-semibold mb-4 tracking-wider uppercase'
                         >
                             Wholesome Goodness
                         </motion.p>
@@ -74,7 +74,7 @@ const MenuPreview = () => {
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.1 }}
-                            className='text-5xl md:text-7xl font-black text-[#2D2A26] tracking-tighter leading-none'
+                            className='text-4xl md:text-6xl font-extrabold text-grey-dark tracking-tight leading-none'
                         >
                             Today's <span className='text-primary italic'>Soul-Satiating</span> Specials
                         </motion.h2>
@@ -84,7 +84,7 @@ const MenuPreview = () => {
                         <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            className='flex items-center gap-2 text-primary font-black uppercase tracking-widest text-sm bg-white px-8 py-4 rounded-full border border-primary/10 hover:bg-primary hover:text-white transition-all duration-300'
+                            className='flex items-center gap-2 text-primary font-extrabold uppercase tracking-wider text-xs bg-white px-8 py-4 rounded-full border border-primary/10 hover:bg-primary hover:text-white transition-all duration-300'
                         >
                             All Meal Plans <Icon icon='ion:arrow-forward' />
                         </motion.button>
@@ -117,7 +117,7 @@ const MenuPreview = () => {
                                         className='object-cover transform transition-transform duration-1000 group-hover:scale-110'
                                     />
                                     <div className='absolute top-6 right-6 px-4 py-2 bg-white/90 backdrop-blur-sm rounded-full'>
-                                        <span className='text-[10px] font-black uppercase tracking-widest text-primary'>
+                                        <span className='text-[10px] font-semibold uppercase tracking-wider text-primary'>
                                             {item.tag}
                                         </span>
                                     </div>
@@ -128,14 +128,14 @@ const MenuPreview = () => {
                                 <div className='p-10'>
                                     <div className='flex justify-between items-start mb-4'>
                                         <div>
-                                            <p className='text-[10px] font-black uppercase tracking-widest text-primary mb-1'>{item.title}</p>
-                                            <h3 className='text-2xl font-black text-[#2D2A26] tracking-tight group-hover:text-primary transition-colors'>
+                                            <p className='text-[10px] font-semibold uppercase tracking-wider text-primary mb-1'>{item.title}</p>
+                                            <h3 className='text-xl font-extrabold text-grey-dark tracking-tight group-hover:text-primary transition-colors'>
                                                 {item.name}
                                             </h3>
                                         </div>
                                         <div className='text-right'>
-                                            <div className='text-3xl font-black text-primary'>{item.monthlyPrice}</div>
-                                            <div className='text-[10px] font-black text-grey/40 mt-1 uppercase tracking-widest'>Per Month</div>
+                                            <div className='text-2xl font-extrabold text-primary'>{item.monthlyPrice}</div>
+                                            <div className='text-[10px] font-semibold text-grey-dark/40 mt-1 uppercase tracking-wider'>Per Month</div>
                                         </div>
                                     </div>
 

@@ -5,7 +5,7 @@ import { Icon } from '@iconify/react'
 
 const Cook = () => {
   return (
-    <section className='relative py-32 bg-white' id='aboutus'>
+    <section className='relative py-16 bg-white' id='aboutus'>
       <div className='container'>
         <div className='grid grid-cols-1 lg:grid-cols-12 items-center gap-20'>
           <div className='lg:col-span-6 relative'>
@@ -39,7 +39,7 @@ const Cook = () => {
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className='text-[#FACB15] text-sm font-black mb-4 tracking-[0.5em] uppercase'
+              className='text-primary text-xs font-semibold mb-4 tracking-wider uppercase'
             >
               The Heart of our Mess
             </motion.p>
@@ -48,14 +48,14 @@ const Cook = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className='text-5xl md:text-7xl font-black text-[#2D2A26] tracking-tighter leading-tight mb-8'
+              className='text-4xl md:text-6xl font-extrabold text-grey-dark tracking-tight leading-tight mb-8'
             >
-              Crafted with <span className='text-[#FACB15]'>Passion</span>, Served with Pride
+              Crafted with <span className='text-primary'>Passion</span>, Served with Pride
             </motion.h2>
 
-            <div className='space-y-6 text-lg font-medium text-[#2D2A26]/60 leading-relaxed mb-12'>
+            <div className='space-y-6 text-base font-normal text-grey-dark/75 leading-relaxed mb-12'>
               <p>
-                At <span className='text-[#2D2A26] font-black'>AL SHAMIL MESS</span>, every dish tells a story. Our team blends
+                At <span className='text-grey-dark font-extrabold'>AL SHAMIL MESS</span>, every dish tells a story. Our team blends
                 tradition with quality to deliver a hearty home-style dining experience that
                 delights the senses.
               </p>
@@ -69,7 +69,7 @@ const Cook = () => {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className='text-xl font-black rounded-4xl text-white py-6 px-12 bg-[#2D2A26] shadow-2xl transition-all duration-300 hover:bg-[#FACB15]'
+                className='text-base font-extrabold rounded-4xl text-white py-6 px-12 bg-[#2D2A26] shadow-2xl transition-all duration-300 hover:bg-[#FACB15]'
               >
                 Our Story
               </motion.button>
@@ -77,7 +77,7 @@ const Cook = () => {
                 <div className='w-12 h-12 rounded-full bg-[#FACB15]/10 flex items-center justify-center'>
                   <Icon icon='ion:play' className='text-[#FACB15]' />
                 </div>
-                <span className='font-black text-[#2D2A26] uppercase tracking-widest text-sm'>Watch Video</span>
+                <span className='font-extrabold text-grey-dark uppercase tracking-wider text-xs'>Watch Video</span>
               </div>
             </div>
           </div>

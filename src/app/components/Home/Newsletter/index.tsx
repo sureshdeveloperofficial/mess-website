@@ -37,7 +37,7 @@ const Newsletter = () => {
   }, [])
 
   return (
-    <section ref={containerRef} className='relative overflow-hidden py-24 sm:py-32'>
+    <section ref={containerRef} className='relative overflow-hidden py-12 sm:py-16'>
       {/* Decorative background gradients */}
       <div className='absolute top-0 left-0 w-full h-full bg-[#FFF9F5] pointer-events-none' />
       <div className='absolute -top-24 -right-24 w-96 h-96 bg-[#FACB15]/5 rounded-full blur-[100px] pointer-events-none' />
@@ -64,17 +64,17 @@ const Newsletter = () => {
                 className='flex items-center gap-3 mb-6'
               >
                 <div className='w-10 h-[2px] bg-[#FACB15]' />
-                <span className='text-[10px] font-black uppercase tracking-[0.4em] text-[#FACB15]'>
+                <span className='text-[10px] font-semibold uppercase tracking-wider text-primary'>
                   Daily Broadcast
                 </span>
               </motion.div>
 
-              <h2 className='text-5xl md:text-7xl font-black text-white mb-8 tracking-tighter leading-none'>
+              <h2 className='text-4xl md:text-6xl font-extrabold text-white mb-8 tracking-tight leading-none'>
                 Today's Special <br />
-                <span className='text-[#FACB15] italic'>Revealed Daily.</span>
+                <span className='text-primary italic'>Revealed Daily.</span>
               </h2>
 
-              <p className='text-white/40 text-lg md:text-xl font-medium mb-12 max-w-xl leading-relaxed italic'>
+              <p className='text-white/60 text-base font-normal mb-12 max-w-xl leading-relaxed italic'>
                 "Never miss a favorite. Join the Al Shamil Mess daily list for fresh menu updates, regional specialties, and exclusive tasting notes."
               </p>
 
@@ -99,7 +99,7 @@ const Newsletter = () => {
 
               <div className='mt-8 flex items-center gap-4 text-white/20'>
                 <Icon icon='ion:shield-checkmark' className='text-xl' />
-                <p className='text-[10px] font-bold uppercase tracking-widest'>Pure Taste. 100% Privacy. Al Shamil Mess Quality.</p>
+                <p className='text-[10px] font-semibold uppercase tracking-wider'>Pure Taste. 100% Privacy. Al Shamil Mess Quality.</p>
               </div>
             </div>
 

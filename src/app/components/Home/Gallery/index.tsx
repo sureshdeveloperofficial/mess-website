@@ -39,20 +39,20 @@ const Gallery = () => {
   }, [])
 
   return (
-    <section ref={sectionRef} id='gallery' className='py-32 bg-white'>
+    <section ref={sectionRef} id='gallery' className='py-16 bg-white'>
       <div className='container'>
-        <div className='text-center mb-24'>
+        <div className='text-center mb-12'>
           <motion.p
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
-            className='text-primary text-sm font-black mb-4 tracking-[0.5em] uppercase'
+            className='text-primary text-xs font-semibold mb-4 tracking-wider uppercase'
           >
             Visual Feast
           </motion.p>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            className='text-5xl md:text-7xl font-black text-[#2D2A26] tracking-tighter leading-none'
+            className='text-4xl md:text-6xl font-extrabold text-grey-dark tracking-tight leading-none'
           >
             Explore Our <span className='text-primary italic'>Signature Dishes</span>
           </motion.h2>
@@ -80,12 +80,12 @@ const Gallery = () => {
                   <div className='absolute inset-0 bg-linear-to-t from-[#2D2A26]/80 via-[#2D2A26]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
 
                   <div className='absolute bottom-0 left-0 w-full p-10 translate-y-10 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500'>
-                    <p className='text-white text-3xl font-black mb-4 tracking-tight'>{item.name}</p>
+                    <p className='text-white text-2xl font-extrabold mb-4 tracking-tight'>{item.name}</p>
                     <div className='flex items-center justify-between'>
-                      <p className='text-white text-xl font-bold'>AED {item.price}</p>
+                      <p className='text-white text-lg font-extrabold'>AED {item.price}</p>
                       <Link
                         href='/plans'
-                        className='bg-primary text-white px-8 py-3 rounded-full text-sm font-black uppercase tracking-widest hover:bg-white hover:text-primary transition-all duration-300'
+                        className='bg-primary text-white px-8 py-3 rounded-full text-xs font-extrabold uppercase tracking-wider hover:bg-white hover:text-primary transition-all duration-300'
                       >
                         Order Now
                       </Link>

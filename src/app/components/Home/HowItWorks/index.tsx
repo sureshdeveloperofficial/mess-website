@@ -56,13 +56,13 @@ const HowItWorks = () => {
     }
 
     return (
-        <section className='py-32 bg-white overflow-hidden'>
+        <section className='py-16 bg-white overflow-hidden'>
             <div className='container'>
-                <div className='text-center mb-24'>
+                <div className='text-center mb-12'>
                     <motion.p
                         initial={{ opacity: 0, y: 10 }}
                         whileInView={{ opacity: 1, y: 0 }}
-                        className='text-[#FACB15] text-sm font-black mb-4 tracking-[0.5em] uppercase'
+                        className='text-primary text-xs font-semibold mb-4 tracking-wider uppercase'
                     >
                         Simple Process
                     </motion.p>
@@ -70,9 +70,9 @@ const HowItWorks = () => {
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.1 }}
-                        className='text-5xl md:text-7xl font-black text-[#2D2A26] tracking-tighter leading-none'
+                        className='text-4xl md:text-6xl font-extrabold text-grey-dark tracking-tight leading-none'
                     >
-                        How It <span className='text-[#FACB15] italic'>Works</span>
+                        How It <span className='text-primary italic'>Works</span>
                     </motion.h2>
                 </div>
 
@@ -104,13 +104,13 @@ const HowItWorks = () => {
                                 <Icon icon={step.icon} className='text-6xl text-[#FACB15] group-hover:text-white transition-colors duration-500' />
 
                                 {/* Step Number */}
-                                <div className='absolute -top-4 -right-4 w-12 h-12 bg-[#2D2A26] text-white rounded-2xl flex items-center justify-center font-black text-xl shadow-xl'>
+                                <div className='absolute -top-4 -right-4 w-12 h-12 bg-[#2D2A26] text-white rounded-2xl flex items-center justify-center font-extrabold text-base shadow-xl'>
                                     {i + 1}
                                 </div>
                             </motion.div>
 
-                            <h3 className='text-3xl font-black text-[#2D2A26] mb-4 tracking-tight'>{step.title}</h3>
-                            <p className='text-lg font-medium text-[#2D2A26]/50 max-w-xs leading-relaxed'>{step.desc}</p>
+                            <h3 className='text-2xl font-extrabold text-grey-dark mb-4 tracking-tight'>{step.title}</h3>
+                            <p className='text-base font-normal text-grey-dark/75 max-w-xs leading-relaxed'>{step.desc}</p>
                         </motion.div>
                     ))}
                 </motion.div>

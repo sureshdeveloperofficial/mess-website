@@ -102,7 +102,7 @@ const Hero = () => {
                 custom={0}
                 className='flex items-center gap-3 mb-6'
               >
-                <span className='px-4 py-1.5 bg-[#FACB15]/10 text-[#FACB15] text-[10px] font-black uppercase tracking-[0.2em] rounded-full'>
+                <span className='px-4 py-1.5 bg-primary/10 text-primary text-[10px] font-semibold uppercase tracking-wider rounded-full'>
                   Est. 2024 • Authentic Mess Dining
                 </span>
                 <div className='flex gap-0.5 text-yellow-500 font-bold'>
@@ -115,9 +115,9 @@ const Hero = () => {
                 initial="hidden"
                 animate="visible"
                 custom={1}
-                className='text-6xl md:text-8xl font-black text-[#2D2A26] lg:text-start text-center leading-[0.9] tracking-tighter mb-8'
+                className='text-5xl md:text-7xl font-extrabold text-grey-dark lg:text-start text-center leading-[0.9] tracking-tight mb-8'
               >
-                Deliciously <span className='text-[#FACB15] italic'>Home-Made.</span> Daily Delivered.
+                Deliciously <span className='text-primary italic'>Home-Made.</span> Daily Delivered.
               </motion.h1>
 
               <motion.p
@@ -125,7 +125,7 @@ const Hero = () => {
                 initial="hidden"
                 animate="visible"
                 custom={2}
-                className='text-[#2D2A26]/60 text-xl font-medium mb-12 lg:text-start text-center max-w-2xl leading-relaxed'
+                className='text-grey-dark/75 text-base font-normal mb-12 lg:text-start text-center max-w-2xl leading-relaxed'
               >
                 Experience the authentic taste of tradition every day. Wholesome mess meals crafted with fresh ingredients, slow-cooked spices, and a generous dash of home-style love.
               </motion.p>
@@ -141,7 +141,7 @@ const Hero = () => {
                   <motion.button
                     whileHover={{ scale: 1.05, boxShadow: '0 20px 40px -10px rgba(255,122,61,0.3)' }}
                     whileTap={{ scale: 0.95 }}
-                    className='text-xl font-black rounded-4xl text-white py-6 px-12 bg-[#FACB15] shadow-2xl shadow-[#FACB15]/20 transition-all duration-300 flex items-center gap-3 group'
+                    className='text-base font-extrabold rounded-4xl text-white py-6 px-12 bg-[#FACB15] shadow-2xl shadow-[#FACB15]/20 transition-all duration-300 flex items-center gap-3 group'
                   >
                     Explore Food Plans
                     <Icon icon='ion:calendar-outline' className='group-hover:translate-x-2 transition-transform' />
@@ -151,7 +151,7 @@ const Hero = () => {
                   <motion.button
                     whileHover={{ scale: 1.02, backgroundColor: 'rgba(45,42,38,0.05)' }}
                     whileTap={{ scale: 0.98 }}
-                    className='text-xl border-4 border-[#2D2A26]/5 rounded-4xl font-black py-6 px-12 text-[#2D2A26] transition-all duration-300 flex items-center gap-3 bg-transparent'
+                    className='text-base border-4 border-grey-dark/5 rounded-4xl font-extrabold py-6 px-12 text-grey-dark transition-all duration-300 flex items-center gap-3 bg-transparent'
                   >
                     View Today's Menu
                     <Icon icon='ion:restaurant-outline' />
@@ -173,8 +173,8 @@ const Hero = () => {
                     </div>
                   ))}
                 </div>
-                <p className='text-sm font-bold text-[#2D2A26] capitalize'>
-                  <span className='font-black'>2,000+</span> Happy Diners This Month
+                <p className='text-sm font-medium text-grey-dark capitalize'>
+                  <span className='font-extrabold'>2,000+</span> Happy Diners This Month
                 </p>
               </motion.div>
             </div>
@@ -193,8 +193,8 @@ const Hero = () => {
                   <Icon icon='ion:heart' className='text-white text-xl animate-pulse' />
                 </div>
                 <div>
-                  <p className='text-[10px] font-black uppercase tracking-[0.2em] text-[#FACB15]'>Our Promise</p>
-                  <p className='font-black text-[#2D2A26] text-base leading-tight'>Tradition in<br />Every Bite</p>
+                  <p className='text-[10px] font-semibold uppercase tracking-wider text-primary'>Our Promise</p>
+                  <p className='font-extrabold text-grey-dark text-base leading-tight'>Tradition in<br />Every Bite</p>
                 </div>
               </motion.div>
 
@@ -253,7 +253,7 @@ const Hero = () => {
       </div>
 
       {/* Auto Scrolling Marquee Section */}
-      <div className='mt-32 pb-10 border-t border-[#2D2A26]/5'>
+      <div className='mt-16 pb-8 border-t border-[#2D2A26]/5'>
         <div className='py-6 bg-[#2D2A26]/2'>
           <MarqueeRow images={PREMIUM_IMAGES} speed={40} />
           <MarqueeRow images={[...PREMIUM_IMAGES].reverse()} direction='right' speed={50} />

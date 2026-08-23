@@ -60,7 +60,7 @@ const Expert = () => {
   }
 
   return (
-    <section className='bg-[#FACB15]/5 py-32 relative overflow-hidden'>
+    <section className='bg-[#FACB15]/5 py-16 relative overflow-hidden'>
       {/* Decorative background circle */}
       <div className='absolute top-0 right-0 w-[500px] h-[500px] bg-[#FACB15]/2 rounded-full blur-[150px] -translate-y-1/2 translate-x-1/2'></div>
 

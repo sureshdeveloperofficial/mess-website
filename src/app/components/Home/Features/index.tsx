@@ -53,14 +53,14 @@ const Features = () => {
   }
 
   return (
-    <section id='features' className='py-32 bg-white relative overflow-hidden'>
+    <section id='features' className='py-16 bg-white relative overflow-hidden'>
       <div className='container relative z-10'>
-        <div className='text-center mb-24'>
+        <div className='text-center mb-12'>
           <motion.p
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className='text-[#FACB15] text-sm font-black mb-4 tracking-[0.5em] uppercase'
+            className='text-primary text-xs font-semibold mb-4 tracking-wider uppercase'
           >
             Our Standards
           </motion.p>
@@ -69,9 +69,9 @@ const Features = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className='text-5xl md:text-7xl font-black text-[#2D2A26] tracking-tighter leading-none'
+            className='text-4xl md:text-6xl font-extrabold text-grey-dark tracking-tight leading-none'
           >
-            Why Choose Al Shamil <span className='text-[#FACB15] italic underline decoration-[#2D2A26]/5 underline-offset-8 transform hover:skew-x-3 transition-transform duration-500'>Mess?</span>
+            Why Choose Al Shamil <span className='text-primary italic underline decoration-grey-dark/5 underline-offset-8 transform hover:skew-x-3 transition-transform duration-500'>Mess?</span>
           </motion.h2>
         </div>
 
@@ -93,11 +93,11 @@ const Features = () => {
                 <Icon icon={item.icon} className='text-4xl text-[#FACB15] group-hover:text-white transition-colors duration-500' />
               </div>
 
-              <h3 className='text-2xl font-black text-[#2D2A26] mb-4 tracking-tight group-hover:text-[#FACB15] transition-colors'>
+              <h3 className='text-xl font-extrabold text-grey-dark mb-4 tracking-tight group-hover:text-primary transition-colors'>
                 {item.heading}
               </h3>
 
-              <p className='text-base font-medium text-[#2D2A26]/50 leading-relaxed'>
+              <p className='text-sm font-normal text-grey-dark/75 leading-relaxed'>
                 {item.subheading}
               </p>
 
