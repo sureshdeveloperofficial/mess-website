@@ -30,6 +30,7 @@ type FoodMenu = {
     name: string
     description: string | null
     price: number
+    orderNo?: number
     days?: number
     servingCount?: number
     isActive?: boolean
@@ -89,21 +90,31 @@ function GetStartedContent() {
         setTimeout(() => setCopiedField(null), 2500)
     }
 
-    const activePlans = useMemo(() => menus.filter((m) => m.isActive !== false), [menus])
+    const activePlans = useMemo(
+        () =>
+            menus
+                .filter((m) => m.isActive !== false)
+                .sort((a, b) => (a.orderNo ?? 0) - (b.orderNo ?? 0)),
+        [menus]
+    )
 
     // Partition into Weekday Plans (Mon - Sat) and Sunday Special Plans
     const weekdayPlans = useMemo(() => {
-        return activePlans.filter((p) => {
-            const isSundayOnly = (p.availableDays?.length === 1 && p.availableDays[0] === 'Sunday') || p.name.toLowerCase().includes('sunday')
-            return !isSundayOnly
-        })
+        return activePlans
+            .filter((p) => {
+                const isSundayOnly = (p.availableDays?.length === 1 && p.availableDays[0] === 'Sunday') || p.name.toLowerCase().includes('sunday')
+                return !isSundayOnly
+            })
+            .sort((a, b) => (a.orderNo ?? 0) - (b.orderNo ?? 0))
     }, [activePlans])
 
     const sundayPlans = useMemo(() => {
-        return activePlans.filter((p) => {
-            const isSundayOnly = (p.availableDays?.length === 1 && p.availableDays[0] === 'Sunday') || p.name.toLowerCase().includes('sunday')
-            return isSundayOnly
-        })
+        return activePlans
+            .filter((p) => {
+                const isSundayOnly = (p.availableDays?.length === 1 && p.availableDays[0] === 'Sunday') || p.name.toLowerCase().includes('sunday')
+                return isSundayOnly
+            })
+            .sort((a, b) => (a.orderNo ?? 0) - (b.orderNo ?? 0))
     }, [activePlans])
 
     // Plan Mode: 'full' (Monthly Weekday + Optional Sunday Add-on) vs 'sunday_only'

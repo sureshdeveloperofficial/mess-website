@@ -41,6 +41,7 @@ type FoodMenu = {
     name: string
     description?: string
     price: number
+    orderNo?: number
     days?: number
     servingCount?: number
     isActive?: boolean
@@ -77,6 +78,7 @@ export default function FoodPlansPage() {
         name: '',
         description: '',
         price: '',
+        orderNo: '1',
         days: '30',
         servingCount: 1 as 1 | 2 | 3,
         selectedMealTypeIds: [] as string[],
@@ -168,10 +170,12 @@ export default function FoodPlansPage() {
         mutationFn: async (data: any) => {
             const parsedDays = parseInt(data.days?.toString() || '30', 10) || 30
             const parsedServingCount = parseInt(data.servingCount?.toString() || '1', 10) || 1
+            const parsedOrderNo = parseInt(data.orderNo?.toString() || '0', 10) || 0
             const payload = {
                 name: data.name,
                 description: data.description,
                 price: parseFloat(data.price),
+                orderNo: parsedOrderNo,
                 days: parsedDays,
                 servingCount: parsedServingCount,
                 mealTypeId: data.selectedMealTypeIds[0] || null,
@@ -213,6 +217,7 @@ export default function FoodPlansPage() {
                 name: data.name,
                 description: data.description,
                 price: parseFloat(data.price) || 0,
+                orderNo: parseInt(data.orderNo?.toString() || '0', 10) || 0,
                 days: parseInt(data.days?.toString() || '30', 10) || 30,
                 servingCount: parseInt(data.servingCount?.toString() || '1', 10) || 1,
                 mealTypeId: data.selectedMealTypeIds[0] || null,
@@ -321,6 +326,7 @@ export default function FoodPlansPage() {
             name: '',
             description: '',
             price: '',
+            orderNo: '1',
             days: '30',
             servingCount: 1,
             selectedMealTypeIds: activeMealTypes.map((m) => m.id),
@@ -484,6 +490,7 @@ export default function FoodPlansPage() {
                 name: plan.name,
                 description: plan.description || '',
                 price: plan.price.toString(),
+                orderNo: (plan.orderNo ?? 0).toString(),
                 days: (plan.days || 30).toString(),
                 servingCount: planServingCount,
                 selectedMealTypeIds: initialMealTypeIds,
@@ -517,6 +524,7 @@ export default function FoodPlansPage() {
                 name: '',
                 description: '',
                 price: '',
+                orderNo: (foodPlans.length + 1).toString(),
                 days: '30',
                 servingCount: 1,
                 selectedMealTypeIds: initialMealTypeIds,
@@ -741,6 +749,18 @@ export default function FoodPlansPage() {
 
     const columns = useMemo(
         () => [
+            columnHelper.accessor('orderNo', {
+                header: 'Order No',
+                cell: (info) => {
+                    const orderNo = info.getValue() ?? 0
+                    return (
+                        <span className='px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-900 font-extrabold text-xs border border-amber-500/20 inline-flex items-center gap-0.5 shadow-2xs'>
+                            <span className='text-[10px] text-amber-600 font-bold'>#</span>
+                            <span>{orderNo}</span>
+                        </span>
+                    )
+                },
+            }),
             columnHelper.accessor('name', {
                 header: 'Food Plan Name',
                 cell: (info) => {
@@ -989,8 +1009,8 @@ export default function FoodPlansPage() {
                                             />
                                         </div>
 
-                                        {/* Pricing & Plan Days (No. of Days) */}
-                                        <div className='grid grid-cols-1 sm:grid-cols-2 gap-3'>
+                                        {/* Pricing, Validity & Order No */}
+                                        <div className='grid grid-cols-1 sm:grid-cols-3 gap-3'>
                                             <div>
                                                 <label className='admin-label'>Plan Price (AED) *</label>
                                                 <input
@@ -1006,7 +1026,7 @@ export default function FoodPlansPage() {
                                             </div>
 
                                             <div>
-                                                <label className='admin-label'>No. of Days (Validity) *</label>
+                                                <label className='admin-label'>Validity (Days) *</label>
                                                 <input
                                                     type='number'
                                                     min='1'
@@ -1017,6 +1037,23 @@ export default function FoodPlansPage() {
                                                     onChange={(e) => setFormData({ ...formData, days: e.target.value })}
                                                     className={`admin-input ${isViewOnly ? 'cursor-default' : ''}`}
                                                     placeholder='30'
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label className='admin-label flex items-center justify-between'>
+                                                    <span>Order No *</span>
+                                                    <span className='text-[10px] text-grey-muted font-normal'>Position</span>
+                                                </label>
+                                                <input
+                                                    type='number'
+                                                    min='0'
+                                                    required
+                                                    value={formData.orderNo}
+                                                    readOnly={isViewOnly}
+                                                    onChange={(e) => setFormData({ ...formData, orderNo: e.target.value })}
+                                                    className={`admin-input ${isViewOnly ? 'cursor-default' : ''}`}
+                                                    placeholder='1'
                                                 />
                                             </div>
                                         </div>

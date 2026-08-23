@@ -52,16 +52,18 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         let scheduleJson = null
         let metaDays = null
         let metaServingCount = 1
+        let metaOrderNo = 0
 
         try {
             const metaRows = await prisma.$queryRawUnsafe<any[]>(
-                `SELECT "mealTypeId", "scheduleJson", "days", "servingCount" FROM "FoodMenu" WHERE id = $1 LIMIT 1;`,
+                `SELECT "mealTypeId", "scheduleJson", "days", "servingCount", "orderNo" FROM "FoodMenu" WHERE id = $1 LIMIT 1;`,
                 id
             )
             if (metaRows.length > 0) {
                 scheduleJson = metaRows[0].scheduleJson
                 metaDays = metaRows[0].days
                 metaServingCount = metaRows[0].servingCount ?? 1
+                metaOrderNo = metaRows[0].orderNo ?? 0
                 if (metaRows[0].mealTypeId) {
                     try {
                         const mtRows = await prisma.$queryRawUnsafe<any[]>(
@@ -86,6 +88,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
         return NextResponse.json({ 
             ...foodMenu, 
+            orderNo: (foodMenu as any).orderNo ?? metaOrderNo ?? 0,
             days: (foodMenu as any).days ?? metaDays ?? 30, 
             servingCount: (foodMenu as any).servingCount ?? metaServingCount ?? 1,
             mealType, 
@@ -111,6 +114,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
             name, 
             description, 
             price, 
+            orderNo,
             days, 
             servingCount,
             foodItemIds, 
@@ -162,36 +166,42 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
         const parsedDays = days !== undefined ? parseInt(days.toString(), 10) || 30 : null
         const parsedServingCount = servingCount !== undefined ? parseInt(servingCount.toString(), 10) || 1 : null
+        const parsedOrderNo = orderNo !== undefined ? parseInt(orderNo.toString(), 10) || 0 : null
 
-        if (mealTypeId !== undefined || mergedScheduleJson !== undefined || parsedDays !== null || parsedServingCount !== null) {
+        if (mealTypeId !== undefined || mergedScheduleJson !== undefined || parsedDays !== null || parsedServingCount !== null || parsedOrderNo !== null) {
             try {
                 await prisma.$executeRawUnsafe(
                     `UPDATE "FoodMenu" 
                      SET "mealTypeId" = COALESCE($1, "mealTypeId"), 
                          "scheduleJson" = COALESCE($2::jsonb, "scheduleJson"),
                          "days" = COALESCE($3, "days"),
-                         "servingCount" = COALESCE($4, "servingCount")
-                     WHERE "id" = $5;`,
+                         "servingCount" = COALESCE($4, "servingCount"),
+                         "orderNo" = COALESCE($5, "orderNo")
+                     WHERE "id" = $6;`,
                     mealTypeId || null,
                     mergedScheduleJson ? JSON.stringify(mergedScheduleJson) : null,
                     parsedDays,
                     parsedServingCount,
+                    parsedOrderNo,
                     id
                 )
             } catch {
                 try {
+                    await prisma.$executeRawUnsafe(`ALTER TABLE "FoodMenu" ADD COLUMN IF NOT EXISTS "orderNo" INTEGER NOT NULL DEFAULT 0;`)
                     await prisma.$executeRawUnsafe(`ALTER TABLE "FoodMenu" ADD COLUMN IF NOT EXISTS "servingCount" INTEGER NOT NULL DEFAULT 1;`)
                     await prisma.$executeRawUnsafe(
                         `UPDATE "FoodMenu" 
                          SET "mealTypeId" = COALESCE($1, "mealTypeId"), 
                              "scheduleJson" = COALESCE($2::jsonb, "scheduleJson"),
                              "days" = COALESCE($3, "days"),
-                             "servingCount" = COALESCE($4, "servingCount")
-                         WHERE "id" = $5;`,
+                             "servingCount" = COALESCE($4, "servingCount"),
+                             "orderNo" = COALESCE($5, "orderNo")
+                         WHERE "id" = $6;`,
                         mealTypeId || null,
                         mergedScheduleJson ? JSON.stringify(mergedScheduleJson) : null,
                         parsedDays,
                         parsedServingCount,
+                        parsedOrderNo,
                         id
                     )
                 } catch {}
@@ -202,6 +212,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
         return NextResponse.json({ 
             ...foodMenu, 
+            orderNo: parsedOrderNo ?? (foodMenu as any).orderNo ?? 0,
             days: parsedDays ?? (foodMenu as any).days ?? 30, 
             servingCount: parsedServingCount ?? (foodMenu as any).servingCount ?? 1,
             mealTypeId, 

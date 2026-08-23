@@ -70,6 +70,7 @@ model FoodMenu {
   name          String
   description   String?
   price         Float
+  orderNo       Int        @default(0)
   days          Int        @default(30)
   servingCount  Int        @default(1)
   isActive      Boolean    @default(true)

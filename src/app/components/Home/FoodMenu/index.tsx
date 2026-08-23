@@ -25,6 +25,7 @@ type FoodMenu = {
     name: string
     description: string | null
     price: number
+    orderNo?: number
     days?: number
     servingCount?: number
     isActive?: boolean
@@ -169,7 +170,9 @@ const FoodMenu = () => {
         staleTime: 1000 * 60 * 10,
     })
 
-    const activePlans = menus.filter((m) => m.isActive !== false)
+    const activePlans = menus
+        .filter((m) => m.isActive !== false)
+        .sort((a, b) => (a.orderNo ?? 0) - (b.orderNo ?? 0))
     const hasAnyConfiguredPopular = activePlans.some(p => p.isPopular === true || p.scheduleJson?.isPopular === true)
 
     return (
