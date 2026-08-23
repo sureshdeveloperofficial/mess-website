@@ -91,24 +91,85 @@ function GetStartedContent() {
 
     const activePlans = useMemo(() => menus.filter((m) => m.isActive !== false), [menus])
 
-    // Selected plan state
-    const [selectedPlanId, setSelectedPlanId] = useState<string>('')
+    // Partition into Weekday Plans (Mon - Sat) and Sunday Special Plans
+    const weekdayPlans = useMemo(() => {
+        return activePlans.filter((p) => {
+            const isSundayOnly = (p.availableDays?.length === 1 && p.availableDays[0] === 'Sunday') || p.name.toLowerCase().includes('sunday')
+            return !isSundayOnly
+        })
+    }, [activePlans])
 
-    // Initialize or sync selected plan from URL / default
+    const sundayPlans = useMemo(() => {
+        return activePlans.filter((p) => {
+            const isSundayOnly = (p.availableDays?.length === 1 && p.availableDays[0] === 'Sunday') || p.name.toLowerCase().includes('sunday')
+            return isSundayOnly
+        })
+    }, [activePlans])
+
+    // Plan Mode: 'full' (Monthly Weekday + Optional Sunday Add-on) vs 'sunday_only'
+    const [planMode, setPlanMode] = useState<'full' | 'sunday_only'>('full')
+
+    // Selected Weekday plan ID (Mon - Sat)
+    const [selectedWeekdayPlanId, setSelectedWeekdayPlanId] = useState<string>('')
+
+    // Selected Sunday Feast plan ID (null = Mon-Sat only)
+    const [selectedSundayPlanId, setSelectedSundayPlanId] = useState<string | null>(null)
+
+    // Sync selected plan from URL / default
     useEffect(() => {
         if (activePlans.length === 0) return
-        if (urlPlanId && activePlans.some((p) => p.id === urlPlanId)) {
-            setSelectedPlanId(urlPlanId)
-        } else if (!selectedPlanId || !activePlans.some((p) => p.id === selectedPlanId)) {
-            setSelectedPlanId(activePlans[0].id)
+
+        if (urlPlanId) {
+            const isSunday = sundayPlans.some((p) => p.id === urlPlanId)
+            if (isSunday) {
+                setPlanMode('sunday_only')
+                setSelectedSundayPlanId(urlPlanId)
+                setSelectedWeekdayPlanId('')
+                return
+            }
+            const isWeekday = weekdayPlans.some((p) => p.id === urlPlanId)
+            if (isWeekday) {
+                setPlanMode('full')
+                setSelectedWeekdayPlanId(urlPlanId)
+                return
+            }
         }
-    }, [urlPlanId, activePlans, selectedPlanId])
 
-    const selectedPlan = useMemo(() => {
-        return activePlans.find((p) => p.id === selectedPlanId) || activePlans[0] || null
-    }, [activePlans, selectedPlanId])
+        // Set default weekday plan (prefer 2 Time Meal Plan)
+        if (!selectedWeekdayPlanId && weekdayPlans.length > 0) {
+            const defaultW = weekdayPlans.find((p) => p.servingCount === 2) || weekdayPlans[0]
+            setSelectedWeekdayPlanId(defaultW.id)
+        }
+    }, [urlPlanId, activePlans, weekdayPlans, sundayPlans, selectedWeekdayPlanId])
 
-    const servingCount = selectedPlan?.servingCount || 1
+    const selectedWeekdayPlan = useMemo(() => {
+        if (planMode === 'sunday_only') return null
+        return weekdayPlans.find((p) => p.id === selectedWeekdayPlanId) || weekdayPlans[0] || null
+    }, [weekdayPlans, selectedWeekdayPlanId, planMode])
+
+    const selectedSundayPlan = useMemo(() => {
+        if (!selectedSundayPlanId) return null
+        return sundayPlans.find((p) => p.id === selectedSundayPlanId) || null
+    }, [sundayPlans, selectedSundayPlanId])
+
+    // Primary representative plan for days / mealType
+    const selectedPlan = selectedWeekdayPlan || selectedSundayPlan || activePlans[0] || null
+
+    const totalPlanPrice = useMemo(() => {
+        if (planMode === 'sunday_only') {
+            return selectedSundayPlan?.price || 0
+        }
+        const wPrice = selectedWeekdayPlan?.price || 0
+        const sPrice = selectedSundayPlan?.price || 0
+        return wPrice + sPrice
+    }, [planMode, selectedWeekdayPlan, selectedSundayPlan])
+
+    const servingCount = useMemo(() => {
+        if (planMode === 'sunday_only') {
+            return selectedSundayPlan?.servingCount || 1
+        }
+        return selectedWeekdayPlan?.servingCount || 1
+    }, [planMode, selectedWeekdayPlan, selectedSundayPlan])
 
     // Customer chosen meal slots for this plan (e.g. ['lunch'], or ['lunch', 'dinner'], or ['breakfast', 'lunch', 'dinner'])
     const [chosenMealSlots, setChosenMealSlots] = useState<string[]>([])
@@ -166,17 +227,17 @@ function GetStartedContent() {
         })
     }
 
-    // Days configured for the selected plan
+    // Days configured for the selected plan combination
     const planServingDays = useMemo(() => {
-        if (!selectedPlan) return []
-        if (selectedPlan.availableDays && selectedPlan.availableDays.length > 0) {
-            return ALL_DAYS.filter((d) => selectedPlan.availableDays?.includes(d))
+        if (planMode === 'sunday_only') {
+            return ['Sunday']
         }
-        if (selectedPlan.scheduleJson && typeof selectedPlan.scheduleJson === 'object') {
-            return ALL_DAYS.filter((d) => Boolean(selectedPlan.scheduleJson[d]))
+        const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+        if (selectedSundayPlanId) {
+            days.push('Sunday')
         }
-        return ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-    }, [selectedPlan])
+        return ALL_DAYS.filter((d) => days.includes(d))
+    }, [planMode, selectedSundayPlanId])
 
     // Active day tab state for dish selection
     const [activeDayTab, setActiveDayTab] = useState<string>('')
@@ -187,6 +248,29 @@ function GetStartedContent() {
         }
     }, [planServingDays, activeDayTab])
 
+    // All available dishes pool from selected plans
+    const allPlanItems = useMemo(() => {
+        const items: FoodItem[] = []
+        const seen = new Set<string>()
+        if (selectedWeekdayPlan?.foodItems) {
+            selectedWeekdayPlan.foodItems.forEach((i) => {
+                if (!seen.has(i.id)) {
+                    seen.add(i.id)
+                    items.push(i)
+                }
+            })
+        }
+        if (selectedSundayPlan?.foodItems) {
+            selectedSundayPlan.foodItems.forEach((i) => {
+                if (!seen.has(i.id)) {
+                    seen.add(i.id)
+                    items.push(i)
+                }
+            })
+        }
+        return items.length > 0 ? items : selectedPlan?.foodItems || []
+    }, [selectedWeekdayPlan, selectedSundayPlan, selectedPlan])
+
     // Customer day-by-day SINGLE dish selection: { [dayName]: { [mealSlot]: foodItemId } }
     const [selections, setSelections] = useState<Record<string, Record<string, string>>>({})
 
@@ -194,15 +278,19 @@ function GetStartedContent() {
     useEffect(() => {
         if (!selectedPlan || chosenMealSlots.length === 0) return
 
-        const planItems = selectedPlan.foodItems || []
         const sched = selectedPlan.scheduleJson || {}
+        const sundaySched = selectedSundayPlan?.scheduleJson || {}
 
         setSelections((prev) => {
             const next: Record<string, Record<string, string>> = { ...prev }
 
             planServingDays.forEach((day) => {
                 if (!next[day]) next[day] = {}
-                const daySched = sched[day] || {}
+                const isSunday = day === 'Sunday'
+                const daySched = (isSunday && selectedSundayPlan) ? (sundaySched[day] || sched[day] || {}) : (sched[day] || {})
+                const targetItems = (isSunday && selectedSundayPlan?.foodItems && selectedSundayPlan.foodItems.length > 0)
+                    ? selectedSundayPlan.foodItems
+                    : allPlanItems
 
                 chosenMealSlots.forEach((slot) => {
                     if (!next[day][slot]) {
@@ -219,9 +307,9 @@ function GetStartedContent() {
                         }
 
                         const validItem =
-                            planItems.find((i) => candidateIds.includes(i.id)) ||
-                            planItems.find((i) => i.name.toLowerCase().includes(slot.toLowerCase())) ||
-                            planItems[0]
+                            targetItems.find((i) => candidateIds.includes(i.id)) ||
+                            targetItems.find((i) => i.name.toLowerCase().includes(slot.toLowerCase())) ||
+                            targetItems[0]
 
                         if (validItem) {
                             next[day][slot] = validItem.id
@@ -232,7 +320,7 @@ function GetStartedContent() {
 
             return next
         })
-    }, [selectedPlan, planServingDays, chosenMealSlots])
+    }, [selectedPlan, selectedSundayPlan, planServingDays, chosenMealSlots, allPlanItems])
 
     // Helper: Select only ONE item for a given day and slot
     const handleSelectDish = (day: string, slot: string, itemId: string) => {
@@ -368,6 +456,19 @@ function GetStartedContent() {
 
             const fullAddress = `${formData.buildingName.trim()}, ${formData.flatRoomNumber.trim()}, ${formData.areaCity.trim()}`
 
+            const selectedMenuIds = [
+                planMode === 'full' ? selectedWeekdayPlanId : null,
+                selectedSundayPlanId,
+            ].filter(Boolean) as string[]
+
+            const planRemarks = [
+                selectedWeekdayPlan ? `Weekday Plan: ${selectedWeekdayPlan.name} (${chosenMealSlots.map((s) => s.toUpperCase()).join(' + ')})` : '',
+                selectedSundayPlan ? `Sunday Feast: ${selectedSundayPlan.name}` : '',
+                formData.specialNotes.trim() ? `Notes: ${formData.specialNotes.trim()}` : '',
+            ]
+                .filter(Boolean)
+                .join(' | ')
+
             const payload = {
                 customerName: formData.customerName.trim(),
                 customerPhone: formData.customerPhone.trim(),
@@ -378,20 +479,18 @@ function GetStartedContent() {
                 flatRoomNumber: formData.flatRoomNumber.trim(),
                 deliveryLocation: finalDropLocation,
                 startDate: formData.startDate,
-                totalAmount: selectedPlan.price,
+                totalAmount: totalPlanPrice,
                 paymentMethod: formData.paymentMethod,
-                orderRemarks: [
-                    `Plan: ${selectedPlan.name} (${chosenMealSlots.map((s) => s.toUpperCase()).join(' + ')})`,
-                    formData.specialNotes.trim() ? `Notes: ${formData.specialNotes.trim()}` : '',
-                ]
-                    .filter(Boolean)
-                    .join(' | '),
-                menuIds: [selectedPlan.id],
+                orderRemarks: planRemarks,
+                menuIds: selectedMenuIds,
                 selectionsJson: {
                     chosenMealSlots,
                     dailyDishes: selections,
+                    weekdayPlan: selectedWeekdayPlan ? { id: selectedWeekdayPlan.id, name: selectedWeekdayPlan.name, price: selectedWeekdayPlan.price } : null,
+                    sundayPlan: selectedSundayPlan ? { id: selectedSundayPlan.id, name: selectedSundayPlan.name, price: selectedSundayPlan.price } : null,
                 },
                 includeSundays: planServingDays.includes('Sunday'),
+                sundaysCount: selectedSundayPlanId ? 4 : 0,
                 activeDates: planServingDays,
             }
 
@@ -448,87 +547,316 @@ function GetStartedContent() {
                         <div className='lg:col-span-8 space-y-8'>
                             
                             {/* STEP 1: Select Active Meal Plan */}
-                            <section className='bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-grey/10'>
-                                <div className='flex items-center justify-between border-b border-grey/10 pb-4 mb-6'>
+                            <section className='bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-grey/10 space-y-6'>
+                                <div className='flex items-center justify-between border-b border-grey/10 pb-4'>
                                     <div className='flex items-center gap-3'>
                                         <div className='w-8 h-8 rounded-xl bg-primary text-grey-dark font-bold text-sm flex items-center justify-center shadow-xs'>
                                             1
                                         </div>
                                         <div>
                                             <h2 className='text-lg sm:text-xl font-bold text-grey-dark'>
-                                                Select Your Meal Plan
+                                                Select Your Meal Package
                                             </h2>
                                             <p className='text-xs text-grey-muted font-normal'>
-                                                Choose your daily subscription package
+                                                Choose your weekday subscription and optional Sunday feast upgrade
                                             </p>
                                         </div>
                                     </div>
-                                    {selectedPlan && (
-                                        <span className='hidden sm:inline-flex px-3 py-1 bg-primary/15 text-grey-dark text-xs font-semibold rounded-full border border-primary/30'>
-                                            {selectedPlan.days || 30} Days Pass
-                                        </span>
-                                    )}
+                                    <div className='hidden sm:flex items-center gap-1.5 p-1 bg-grey/5 rounded-xl border border-grey/10'>
+                                        <button
+                                            type='button'
+                                            onClick={() => {
+                                                setPlanMode('full')
+                                                if (!selectedWeekdayPlanId && weekdayPlans.length > 0) {
+                                                    setSelectedWeekdayPlanId(weekdayPlans[0].id)
+                                                }
+                                            }}
+                                            className={`px-3 py-1 text-xs font-semibold rounded-lg transition-all ${
+                                                planMode === 'full'
+                                                    ? 'bg-white text-grey-dark shadow-xs border border-grey/10'
+                                                    : 'text-grey-muted hover:text-grey-dark'
+                                            }`}
+                                        >
+                                            🍱 Monthly Mess (Mon–Sat)
+                                        </button>
+                                        <button
+                                            type='button'
+                                            onClick={() => {
+                                                setPlanMode('sunday_only')
+                                                if (!selectedSundayPlanId && sundayPlans.length > 0) {
+                                                    setSelectedSundayPlanId(sundayPlans[0].id)
+                                                }
+                                            }}
+                                            className={`px-3 py-1 text-xs font-semibold rounded-lg transition-all ${
+                                                planMode === 'sunday_only'
+                                                    ? 'bg-white text-grey-dark shadow-xs border border-grey/10'
+                                                    : 'text-grey-muted hover:text-grey-dark'
+                                            }`}
+                                        >
+                                            🍗 Sunday Only Specials
+                                        </button>
+                                    </div>
                                 </div>
 
-                                <div className='grid grid-cols-1 sm:grid-cols-3 gap-4'>
-                                    {activePlans.map((plan) => {
-                                        const isSelected = selectedPlan?.id === plan.id
-                                        const days = plan.days || 30
-                                        const planServing = plan.servingCount || 1
+                                {/* Mobile Plan Mode Switcher */}
+                                <div className='sm:hidden flex items-center gap-1 p-1 bg-grey/5 rounded-xl border border-grey/10'>
+                                    <button
+                                        type='button'
+                                        onClick={() => {
+                                            setPlanMode('full')
+                                            if (!selectedWeekdayPlanId && weekdayPlans.length > 0) {
+                                                setSelectedWeekdayPlanId(weekdayPlans[0].id)
+                                            }
+                                        }}
+                                        className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all text-center ${
+                                            planMode === 'full'
+                                                ? 'bg-white text-grey-dark shadow-xs border border-grey/10'
+                                                : 'text-grey-muted'
+                                        }`}
+                                    >
+                                        🍱 Monthly (Mon–Sat)
+                                    </button>
+                                    <button
+                                        type='button'
+                                        onClick={() => {
+                                            setPlanMode('sunday_only')
+                                            if (!selectedSundayPlanId && sundayPlans.length > 0) {
+                                                setSelectedSundayPlanId(sundayPlans[0].id)
+                                            }
+                                        }}
+                                        className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all text-center ${
+                                            planMode === 'sunday_only'
+                                                ? 'bg-white text-grey-dark shadow-xs border border-grey/10'
+                                                : 'text-grey-muted'
+                                        }`}
+                                    >
+                                        🍗 Sunday Only
+                                    </button>
+                                </div>
 
-                                        return (
-                                            <button
-                                                key={plan.id}
-                                                type='button'
-                                                onClick={() => setSelectedPlanId(plan.id)}
-                                                className={`p-5 rounded-2xl text-left transition-all duration-200 relative cursor-pointer flex flex-col justify-between border ${
-                                                    isSelected
-                                                        ? 'bg-primary/10 border-2 border-primary shadow-sm scale-[1.01]'
-                                                        : 'bg-grey/5 border-grey/10 hover:border-primary/40 hover:bg-white'
-                                                }`}
-                                            >
-                                                {isSelected && (
-                                                    <div className='absolute top-3 right-3 w-5 h-5 rounded-full bg-primary text-grey-dark flex items-center justify-center shadow-xs'>
-                                                        <Icon icon='solar:check-read-bold' className='text-xs font-bold' />
+                                {planMode === 'full' ? (
+                                    <>
+                                        {/* SECTION 1: Weekday Base Plans (Mon - Sat) */}
+                                        <div className='space-y-3'>
+                                            <div className='flex items-center justify-between'>
+                                                <span className='text-xs font-bold uppercase tracking-wider text-grey-dark flex items-center gap-1.5'>
+                                                    <span>1. Base Weekday Plan (Monday – Saturday)</span>
+                                                    <span className='px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 text-[10px] font-semibold border border-blue-200'>
+                                                        6 Days/Wk
+                                                    </span>
+                                                </span>
+                                            </div>
+
+                                            <div className='grid grid-cols-1 sm:grid-cols-3 gap-4'>
+                                                {weekdayPlans.map((plan) => {
+                                                    const isSelected = selectedWeekdayPlanId === plan.id
+                                                    const planServing = plan.servingCount || 1
+
+                                                    return (
+                                                        <button
+                                                            key={plan.id}
+                                                            type='button'
+                                                            onClick={() => setSelectedWeekdayPlanId(plan.id)}
+                                                            className={`p-5 rounded-2xl text-left transition-all duration-200 relative cursor-pointer flex flex-col justify-between border ${
+                                                                isSelected
+                                                                    ? 'bg-primary/10 border-2 border-primary shadow-sm scale-[1.01]'
+                                                                    : 'bg-grey/5 border-grey/10 hover:border-primary/40 hover:bg-white'
+                                                            }`}
+                                                        >
+                                                            {isSelected && (
+                                                                <div className='absolute top-3 right-3 w-5 h-5 rounded-full bg-primary text-grey-dark flex items-center justify-center shadow-xs'>
+                                                                    <Icon icon='solar:check-read-bold' className='text-xs font-bold' />
+                                                                </div>
+                                                            )}
+
+                                                            <div>
+                                                                <div className='flex items-center gap-1.5 flex-wrap mb-2'>
+                                                                    <span className='text-[11px] font-semibold px-2 py-0.5 rounded-md bg-white border border-grey/10 text-grey-dark inline-block'>
+                                                                        {planServing} Time Daily
+                                                                    </span>
+                                                                    {planServing === 2 && (
+                                                                        <span className='text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-500 text-white inline-block shadow-2xs'>
+                                                                            ★ Most Popular
+                                                                        </span>
+                                                                    )}
+                                                                </div>
+                                                                <h3 className='font-bold text-base text-grey-dark capitalize mb-1 line-clamp-1'>
+                                                                    {plan.name}
+                                                                </h3>
+                                                                <p className='text-xs text-grey-muted font-normal mb-4 line-clamp-2'>
+                                                                    {plan.description || `${planServing === 1 ? '1 Daily Meal' : planServing === 2 ? '2 Daily Meals' : 'Full Day 3 Meals'}`}
+                                                                </p>
+                                                            </div>
+
+                                                            <div className='border-t border-grey/10 pt-3 flex items-baseline justify-between'>
+                                                                <span className='text-lg font-bold text-grey-dark'>
+                                                                    AED {plan.price.toFixed(0)}
+                                                                </span>
+                                                                <span className='text-xs font-normal text-grey-muted'>
+                                                                    / month
+                                                                </span>
+                                                            </div>
+                                                        </button>
+                                                    )
+                                                })}
+                                            </div>
+                                        </div>
+
+                                        {/* SECTION 2: Sunday Special Feast Upgrade */}
+                                        <div className='pt-4 border-t border-grey/10 space-y-3'>
+                                            <div className='flex items-center justify-between'>
+                                                <div className='flex items-center gap-2'>
+                                                    <Icon icon='solar:chef-hat-bold-duotone' className='text-primary text-lg' />
+                                                    <span className='text-xs font-bold uppercase tracking-wider text-grey-dark'>
+                                                        2. Add Sunday Special Feast Pass (Optional Weekend Upgrade)
+                                                    </span>
+                                                </div>
+                                                <span className='text-[11px] font-semibold text-purple-700 bg-purple-50 px-2.5 py-0.5 rounded-full border border-purple-200'>
+                                                    Biryani & Feasts
+                                                </span>
+                                            </div>
+                                            <p className='text-xs text-grey-muted'>
+                                                Include delicious Biryani, Ghee Rice, and special weekend feasts every Sunday with free doorstep delivery:
+                                            </p>
+
+                                            <div className='grid grid-cols-1 sm:grid-cols-4 gap-3'>
+                                                {/* Option: No Sunday */}
+                                                <button
+                                                    type='button'
+                                                    onClick={() => setSelectedSundayPlanId(null)}
+                                                    className={`p-3.5 rounded-2xl text-left transition-all border flex flex-col justify-between cursor-pointer ${
+                                                        selectedSundayPlanId === null
+                                                            ? 'bg-white border-2 border-primary shadow-xs'
+                                                            : 'bg-grey/5 border-grey/10 hover:border-primary/40'
+                                                    }`}
+                                                >
+                                                    <div className='flex items-center justify-between mb-1'>
+                                                        <span className='text-xs font-bold text-grey-dark'>
+                                                            No Sunday Pass
+                                                        </span>
+                                                        <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${selectedSundayPlanId === null ? 'border-primary bg-primary' : 'border-grey/30'}`}>
+                                                            {selectedSundayPlanId === null && <div className='w-1.5 h-1.5 rounded-full bg-grey-dark' />}
+                                                        </div>
                                                     </div>
-                                                )}
+                                                    <p className='text-[11px] text-grey-muted mb-2'>
+                                                        Mon – Sat only
+                                                    </p>
+                                                    <span className='text-xs font-bold text-grey-dark'>
+                                                        + AED 0
+                                                    </span>
+                                                </button>
 
+                                                {/* Sunday Plans (1 Time, 2 Time, 3 Time) */}
+                                                {sundayPlans.map((sPlan) => {
+                                                    const isSelected = selectedSundayPlanId === sPlan.id
+                                                    const sServing = sPlan.servingCount || 1
+
+                                                    return (
+                                                        <button
+                                                            key={sPlan.id}
+                                                            type='button'
+                                                            onClick={() => setSelectedSundayPlanId(sPlan.id)}
+                                                            className={`p-3.5 rounded-2xl text-left transition-all border flex flex-col justify-between cursor-pointer ${
+                                                                isSelected
+                                                                    ? 'bg-primary/10 border-2 border-primary shadow-xs'
+                                                                    : 'bg-purple-50/50 border-purple-200/60 hover:border-primary/40 hover:bg-white'
+                                                            }`}
+                                                        >
+                                                            <div className='flex items-center justify-between mb-1'>
+                                                                <span className='text-xs font-bold text-grey-dark'>
+                                                                    {sServing} Meal{sServing > 1 ? 's' : ''} / Sunday
+                                                                </span>
+                                                                <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${isSelected ? 'border-primary bg-primary' : 'border-grey/30'}`}>
+                                                                    {isSelected && <div className='w-1.5 h-1.5 rounded-full bg-grey-dark' />}
+                                                                </div>
+                                                            </div>
+                                                            <p className='text-[11px] text-grey-muted mb-2 line-clamp-1'>
+                                                                {sServing === 1 ? 'Biryani / Feast' : sServing === 2 ? 'Feast + Dinner' : 'Breakfast + Feast + Dinner'}
+                                                            </p>
+                                                            <div className='flex items-baseline justify-between'>
+                                                                <span className='text-xs font-bold text-purple-900'>
+                                                                    + AED {sPlan.price.toFixed(0)}
+                                                                </span>
+                                                                <span className='text-[10px] text-grey-muted'>
+                                                                    / 4 Sundays
+                                                                </span>
+                                                            </div>
+                                                        </button>
+                                                    )
+                                                })}
+                                            </div>
+                                        </div>
+                                    </>
+                                ) : (
+                                    /* SUNDAY ONLY PLANS */
+                                    <div className='space-y-4'>
+                                        <div className='bg-purple-50 border border-purple-200 p-4 rounded-2xl flex items-center justify-between'>
+                                            <div className='flex items-center gap-2.5'>
+                                                <Icon icon='solar:calendar-date-bold' className='text-purple-700 text-xl' />
                                                 <div>
-                                                    <div className='flex items-center gap-1.5 flex-wrap mb-2'>
-                                                        <span className='text-[11px] font-semibold px-2 py-0.5 rounded-md bg-white border border-grey/10 text-grey-dark inline-block'>
-                                                            {planServing} Time Meal Plan
-                                                        </span>
-                                                        <span className='text-[11px] font-semibold px-2 py-0.5 rounded-md bg-purple-50 border border-purple-200 text-purple-800 inline-flex items-center gap-1'>
-                                                            <Icon icon='solar:calendar-date-bold' className='text-[10px]' />
-                                                            <span>
-                                                                {plan.availableDays && plan.availableDays.length < 7
-                                                                    ? plan.availableDays.length === 1 && plan.availableDays[0] === 'Sunday'
-                                                                        ? 'Sunday Only'
-                                                                        : `${plan.availableDays.length} Days/Wk`
-                                                                    : '7 Days/Wk'}
-                                                            </span>
-                                                        </span>
-                                                    </div>
-                                                    <h3 className='font-bold text-base text-grey-dark capitalize mb-1 line-clamp-1'>
-                                                        {plan.name}
-                                                    </h3>
-                                                    <p className='text-xs text-grey-muted font-normal mb-4 line-clamp-2'>
-                                                        {plan.description || `${planServing === 1 ? '1 Daily Meal' : planServing === 2 ? '2 Daily Meals' : 'Full Day 3 Meals'}`}
+                                                    <h4 className='text-xs font-bold text-purple-900'>
+                                                        Sunday Only Feast Subscription
+                                                    </h4>
+                                                    <p className='text-[11px] text-purple-700'>
+                                                        Delivered strictly every Sunday (4 Sundays per month).
                                                     </p>
                                                 </div>
+                                            </div>
+                                        </div>
 
-                                                <div className='border-t border-grey/10 pt-3 flex items-baseline justify-between'>
-                                                    <span className='text-lg font-bold text-grey-dark'>
-                                                        AED {plan.price.toFixed(0)}
-                                                    </span>
-                                                    <span className='text-xs font-normal text-grey-muted'>
-                                                        / {days} days
-                                                    </span>
-                                                </div>
-                                            </button>
-                                        )
-                                    })}
-                                </div>
+                                        <div className='grid grid-cols-1 sm:grid-cols-3 gap-4'>
+                                            {sundayPlans.map((plan) => {
+                                                const isSelected = selectedSundayPlanId === plan.id
+                                                const planServing = plan.servingCount || 1
+
+                                                return (
+                                                    <button
+                                                        key={plan.id}
+                                                        type='button'
+                                                        onClick={() => setSelectedSundayPlanId(plan.id)}
+                                                        className={`p-5 rounded-2xl text-left transition-all duration-200 relative cursor-pointer flex flex-col justify-between border ${
+                                                            isSelected
+                                                                ? 'bg-primary/10 border-2 border-primary shadow-sm scale-[1.01]'
+                                                                : 'bg-grey/5 border-grey/10 hover:border-primary/40 hover:bg-white'
+                                                        }`}
+                                                    >
+                                                        {isSelected && (
+                                                            <div className='absolute top-3 right-3 w-5 h-5 rounded-full bg-primary text-grey-dark flex items-center justify-center shadow-xs'>
+                                                                <Icon icon='solar:check-read-bold' className='text-xs font-bold' />
+                                                            </div>
+                                                        )}
+
+                                                        <div>
+                                                            <div className='flex items-center gap-1.5 flex-wrap mb-2'>
+                                                                <span className='text-[11px] font-semibold px-2 py-0.5 rounded-md bg-white border border-grey/10 text-grey-dark inline-block'>
+                                                                    {planServing} Meal{planServing > 1 ? 's' : ''} / Sunday
+                                                                </span>
+                                                                <span className='text-[11px] font-semibold px-2 py-0.5 rounded-md bg-purple-100 text-purple-900 inline-block'>
+                                                                    Sunday Only
+                                                                </span>
+                                                            </div>
+                                                            <h3 className='font-bold text-base text-grey-dark capitalize mb-1 line-clamp-1'>
+                                                                {plan.name}
+                                                            </h3>
+                                                            <p className='text-xs text-grey-muted font-normal mb-4 line-clamp-2'>
+                                                                {plan.description}
+                                                            </p>
+                                                        </div>
+
+                                                        <div className='border-t border-grey/10 pt-3 flex items-baseline justify-between'>
+                                                            <span className='text-lg font-bold text-grey-dark'>
+                                                                AED {plan.price.toFixed(0)}
+                                                            </span>
+                                                            <span className='text-xs font-normal text-grey-muted'>
+                                                                / 4 Sundays
+                                                            </span>
+                                                        </div>
+                                                    </button>
+                                                )
+                                            })}
+                                        </div>
+                                    </div>
+                                )}
                             </section>
 
                             {/* STEP 2: Choose Meal Type(s) Based on Serving Count */}
@@ -1022,28 +1350,76 @@ function GetStartedContent() {
 
                                 {selectedPlan && (
                                     <div className='space-y-4 text-xs'>
-                                        {/* Plan Name & Price */}
-                                        <div className='bg-[#FFF9F5] p-4 rounded-2xl border border-primary/20'>
-                                            <span className='text-xs font-semibold uppercase tracking-wider text-grey-muted block mb-1'>
-                                                Selected Package
+                                        {/* Itemized Plan Breakdown */}
+                                        <div className='bg-[#FFF9F5] p-4 rounded-2xl border border-primary/20 space-y-3'>
+                                            <span className='text-xs font-semibold uppercase tracking-wider text-grey-muted block'>
+                                                Subscription Breakdown
                                             </span>
-                                            <div className='flex items-baseline justify-between'>
-                                                <h4 className='font-bold text-base text-grey-dark capitalize'>
-                                                    {selectedPlan.name}
-                                                </h4>
-                                                <span className='font-bold text-lg text-grey-dark'>
-                                                    AED {selectedPlan.price.toFixed(0)}
-                                                </span>
-                                            </div>
-                                            <div className='mt-2 flex items-center gap-1.5 flex-wrap'>
-                                                <span className='px-2 py-0.5 rounded-md bg-primary/20 text-grey-dark font-semibold text-[11px]'>
-                                                    {servingCount} Time Meal Plan
-                                                </span>
-                                                <span className='px-2 py-0.5 rounded-md bg-grey/10 text-grey-dark font-medium text-[11px]'>
-                                                    {chosenMealSlots.map((s) => s.toUpperCase()).join(' + ')}
-                                                </span>
-                                                <span className='px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-700 font-medium text-[11px]'>
-                                                    {selectedPlan.days || 30} Days
+
+                                            {/* Weekday Plan Row */}
+                                            {selectedWeekdayPlan && (
+                                                <div className='border-b border-primary/15 pb-2.5'>
+                                                    <div className='flex items-baseline justify-between'>
+                                                        <h4 className='font-bold text-sm text-grey-dark capitalize'>
+                                                            {selectedWeekdayPlan.name}
+                                                        </h4>
+                                                        <span className='font-bold text-sm text-grey-dark'>
+                                                            AED {selectedWeekdayPlan.price.toFixed(0)}
+                                                        </span>
+                                                    </div>
+                                                    <div className='mt-1 flex items-center gap-1 flex-wrap text-[10px] text-grey-muted'>
+                                                        <span className='px-1.5 py-0.5 rounded bg-primary/20 text-grey-dark font-semibold'>
+                                                            {selectedWeekdayPlan.servingCount} Time / Day
+                                                        </span>
+                                                        <span className='px-1.5 py-0.5 rounded bg-grey/10 text-grey-dark'>
+                                                            {chosenMealSlots.map((s) => s.toUpperCase()).join(' + ')}
+                                                        </span>
+                                                        <span className='px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 font-semibold'>
+                                                            Mon – Sat
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {/* Sunday Plan Row */}
+                                            {selectedSundayPlan ? (
+                                                <div className='border-b border-primary/15 pb-2.5'>
+                                                    <div className='flex items-baseline justify-between'>
+                                                        <h4 className='font-bold text-sm text-purple-900 capitalize flex items-center gap-1'>
+                                                            <span>🍗 {selectedSundayPlan.name}</span>
+                                                        </h4>
+                                                        <span className='font-bold text-sm text-purple-900'>
+                                                            + AED {selectedSundayPlan.price.toFixed(0)}
+                                                        </span>
+                                                    </div>
+                                                    <div className='mt-1 flex items-center gap-1 text-[10px] text-purple-700'>
+                                                        <span className='px-1.5 py-0.5 rounded bg-purple-100 font-semibold'>
+                                                            {selectedSundayPlan.servingCount} Meal(s) every Sunday
+                                                        </span>
+                                                        <span className='px-1.5 py-0.5 rounded bg-purple-100 font-semibold'>
+                                                            Biryani Feast
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            ) : planMode === 'full' ? (
+                                                <div className='border-b border-primary/15 pb-2 text-[11px] text-grey-muted flex items-center justify-between'>
+                                                    <span>Sunday Feast:</span>
+                                                    <span className='font-semibold text-grey-dark'>Not included (Mon–Sat)</span>
+                                                </div>
+                                            ) : null}
+
+                                            {/* Combined Total */}
+                                            <div className='pt-1 flex items-baseline justify-between'>
+                                                <div>
+                                                    <span className='text-xs font-bold text-grey-dark block'>
+                                                        Total Monthly Pass
+                                                    </span>
+                                                    <span className='text-[10px] text-grey-muted'>
+                                                        Includes all selected meals & delivery
+                                                    </span>
+                                                </div>
+                                                <span className='font-extrabold text-xl text-grey-dark'>
+                                                    AED {totalPlanPrice.toFixed(0)}
                                                 </span>
                                             </div>
                                         </div>
@@ -1055,10 +1431,10 @@ function GetStartedContent() {
                                                 <strong className='text-grey-dark font-semibold'>{formData.startDate || 'Tomorrow'}</strong>
                                             </div>
                                             <div className='flex items-center justify-between text-grey-muted'>
-                                                <span className='font-normal'>Serving Days:</span>
+                                                <span className='font-normal'>Serving Schedule:</span>
                                                 <strong className='text-grey-dark font-semibold text-right text-xs'>
                                                     {planServingDays.length === 7
-                                                        ? '7 Days / Wk (Everyday)'
+                                                        ? '7 Days / Wk (Mon - Sun)'
                                                         : planServingDays.length === 6 && !planServingDays.includes('Sunday')
                                                         ? '6 Days / Wk (Mon – Sat)'
                                                         : planServingDays.length === 1 && planServingDays.includes('Sunday')
