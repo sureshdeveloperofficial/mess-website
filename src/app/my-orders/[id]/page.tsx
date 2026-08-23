@@ -1,76 +1,89 @@
 'use client'
 
-import React from 'react'
-import { useSession } from 'next-auth/react'
+import React, { use } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { Icon } from '@iconify/react'
 import { motion } from 'framer-motion'
-import { useRouter, useParams } from 'next/navigation'
-import Link from 'next/link'
 import { useInvoiceDownload } from '@/app/hooks/useInvoiceDownload'
 
-type FoodItem = {
+interface FoodItem {
     id: string
     name: string
     category: string
+    price?: number
 }
 
-type FoodMenu = {
+interface FoodMenu {
     id: string
     name: string
+    price: number
     foodItems: FoodItem[]
 }
 
-type Order = {
+interface Order {
     id: string
-    totalAmount: number
-    status: string
-    paymentStatus: string
     createdAt: string
     startDate: string
-    activeDates: string[]
-    servedDates?: string[]
-    selectionsJson: any
-    selectedMenus: FoodMenu[]
+    status: string
+    paymentStatus: string
+    totalAmount: number
+    deliveryLocation: string
     address: string
-    buildingName: string | null
-    flatRoomNumber: string | null
+    buildingName?: string
+    flatRoomNumber?: string
+    selectedMenus: FoodMenu[]
+    selectionsJson: any
+    activeDates: string[]
+    servedDates: string[]
+    customer: {
+        name: string
+        phone: string
+        email: string
+    }
 }
 
-export default function OrderDetailsPage() {
-    const { data: session } = useSession()
+export default function OrderDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+    const resolvedParams = use(params)
     const router = useRouter()
-    const params = useParams()
-    const id = params.id as string
-    const { downloadInvoice, isGenerating: isDownloadingInvoice } = useInvoiceDownload()
+    const { downloadInvoice, isGenerating } = useInvoiceDownload()
 
-    const { data: order, isLoading } = useQuery<Order>({
-        queryKey: ['user-order', id],
+    const { data: order, isLoading, error } = useQuery<Order>({
+        queryKey: ['order', resolvedParams.id],
         queryFn: async () => {
-            const response = await axios.get(`/api/user/orders/${id}`)
-            return response.data
+            const res = await axios.get(`/api/orders/${resolvedParams.id}`)
+            return res.data
         },
-        enabled: !!session && !!id
     })
 
     if (isLoading) {
         return (
-            <div className='flex items-center justify-center min-h-[60vh]'>
-                <motion.div 
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                    className="w-16 h-16 border-4 border-primary/10 border-t-primary rounded-full"
-                />
+            <div className='flex flex-col items-center justify-center min-h-[50vh] space-y-4'>
+                <div className='w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary text-2xl animate-spin'>
+                    <Icon icon='line-md:loading-loop' />
+                </div>
+                <p className='text-xs font-semibold text-grey-muted'>Loading order details...</p>
             </div>
         )
     }
 
-    if (!order) {
+    if (error || !order) {
         return (
-            <div className="pt-32 pb-20 container max-w-4xl text-center">
-                <h1 className="text-2xl font-black text-grey uppercase italic">Order Not Found</h1>
-                <Link href="/my-orders" className="text-primary font-bold hover:underline mt-4 inline-block">Back to My Orders</Link>
+            <div className='bg-white rounded-3xl border border-grey/10 p-12 text-center shadow-xs space-y-4'>
+                <div className='w-14 h-14 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center text-2xl mx-auto border border-red-200'>
+                    <Icon icon='solar:danger-triangle-bold' />
+                </div>
+                <h2 className='text-lg font-bold text-grey-dark'>Order not found</h2>
+                <p className='text-xs text-grey-muted'>The requested subscription order could not be retrieved.</p>
+                <Link
+                    href='/my-orders'
+                    className='inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-white font-bold text-xs hover:bg-primary/90 transition-all'
+                >
+                    <Icon icon='solar:alt-arrow-left-bold' />
+                    <span>Back to My Orders</span>
+                </Link>
             </div>
         )
     }
@@ -79,227 +92,302 @@ export default function OrderDetailsPage() {
     const servedDates = order.servedDates || []
     const startDate = activeDates.length > 0 ? new Date(activeDates[0]) : null
     const endDate = activeDates.length > 0 ? new Date(activeDates[activeDates.length - 1]) : null
-    const today = new Date(new Date().setHours(0,0,0,0))
+    const today = new Date(new Date().setHours(0, 0, 0, 0))
     const servedCount = servedDates.length
     const totalDays = activeDates.length || (order.selectionsJson?.weekdayPlan?.days || 26) + (order.selectionsJson?.sundayPlan?.days || ((order as any).includeSundays ? 4 : 0))
-    const remainingDays = activeDates.filter(d => new Date(d) >= today && !servedDates.includes(d)).length
+    const remainingDays = activeDates.filter((d) => new Date(d) >= today && !servedDates.includes(d)).length
+    const servedPercent = Math.min(100, Math.round((servedCount / (totalDays || 1)) * 100))
 
     const formatDate = (date: Date | null) => {
         if (!date) return 'N/A'
         return date.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })
     }
 
-    const getItemsForDate = (dateStr: string) => {
-        const date = new Date(dateStr)
-        const dayName = date.toLocaleDateString('en-US', { weekday: 'long' })
-        const selections = order.selectionsJson?.dailyDishes || order.selectionsJson || {}
-        const items: FoodItem[] = []
+    const sanitizeDishName = (name: string) => {
+        if (!name) return ''
+        return name.replace(/^(breakfast|lunch|dinner|meal)\s*[-:]\s*/i, '').trim() || name
+    }
 
-        Object.keys(selections).forEach(menuId => {
-            const itemId = selections[menuId]?.[dayName]
-            if (itemId) {
-                const menu = order.selectedMenus.find(m => m.id === menuId)
-                const foodItem = menu?.foodItems.find(fi => fi.id === itemId)
-                if (foodItem) items.push(foodItem)
+    const getItemsForDate = (dateStr: string) => {
+        try {
+            const date = new Date(dateStr)
+            const dayName = date.toLocaleDateString('en-US', { weekday: 'long' })
+            const isSunday = dayName === 'Sunday'
+            const selections = order.selectionsJson || {}
+            const items: FoodItem[] = []
+
+            const chosenSlots: string[] = (selections.chosenMealSlots || []).map((s: string) => s.toLowerCase())
+
+            // 1. If it's Sunday
+            if (isSunday) {
+                const sundayPlan = selections.sundayPlan
+                if (sundayPlan || (order as any).includeSundays) {
+                    items.push({
+                        id: sundayPlan?.id || 'sunday-feast',
+                        name: sanitizeDishName(sundayPlan?.name || 'Sunday Special Biryani Feast'),
+                        category: 'SUNDAY FEAST',
+                    })
+                }
+                return items
             }
-        })
-        return items
+
+            // 2. Weekday Meals: Check modern dailyDishes structure: selectionsJson.dailyDishes[dayName] = { breakfast: itemId, lunch: itemId }
+            const dailyDishes = selections.dailyDishes || {}
+            if (dailyDishes[dayName] && typeof dailyDishes[dayName] === 'object') {
+                const daySlots = dailyDishes[dayName]
+
+                // Filter strictly by chosenMealSlots if defined
+                const slotsToInclude = chosenSlots.length > 0
+                    ? chosenSlots
+                    : Object.keys(daySlots)
+
+                slotsToInclude.forEach((slot) => {
+                    const dishIdOrObj = daySlots[slot] || daySlots[slot.toLowerCase()]
+                    if (!dishIdOrObj) return
+
+                    if (typeof dishIdOrObj === 'object' && dishIdOrObj.name) {
+                        items.push({
+                            id: dishIdOrObj.id || slot,
+                            name: sanitizeDishName(dishIdOrObj.name),
+                            category: slot.toUpperCase(),
+                        })
+                    } else {
+                        let matched: any = null
+                        order.selectedMenus?.forEach((m) => {
+                            const found = m.foodItems?.find((fi) => fi.id === dishIdOrObj || fi.name?.toLowerCase() === String(dishIdOrObj).toLowerCase())
+                            if (found) matched = found
+                        })
+                        items.push({
+                            id: dishIdOrObj,
+                            name: sanitizeDishName(matched ? matched.name : String(dishIdOrObj)),
+                            category: slot.toUpperCase(),
+                        })
+                    }
+                })
+            }
+
+            // 3. Legacy structure fallback
+            if (items.length === 0) {
+                Object.entries(selections).forEach(([key, val]: [string, any]) => {
+                    if (val && typeof val === 'object' && !Array.isArray(val) && val[dayName]) {
+                        const itemId = val[dayName]
+                        let matched: any = null
+                        order.selectedMenus?.forEach((m) => {
+                            const found = m.foodItems?.find((fi) => fi.id === itemId)
+                            if (found) matched = found
+                        })
+                        if (matched) {
+                            items.push({
+                                id: matched.id,
+                                name: sanitizeDishName(matched.name),
+                                category: matched.category?.toUpperCase() || 'MEAL',
+                            })
+                        } else if (typeof itemId === 'string') {
+                            items.push({
+                                id: itemId,
+                                name: sanitizeDishName(itemId),
+                                category: 'MEAL',
+                            })
+                        }
+                    }
+                })
+            }
+
+            return items
+        } catch {
+            return []
+        }
     }
 
     return (
-        <div className="pt-24 pb-20 container max-w-6xl">
+        <div className='space-y-6'>
             {/* Header */}
-            <div className="flex flex-col gap-4 mb-12">
-                <div className="flex items-center gap-4">
-                    <button 
+            <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-grey/10 shadow-xs'>
+                <div className='flex items-center gap-3.5'>
+                    <button
+                        type='button'
                         onClick={() => router.back()}
-                        className="group flex items-center gap-3 bg-white border border-grey/5 px-5 py-2.5 rounded-2xl text-grey hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all font-black uppercase tracking-widest text-[10px]"
+                        className='w-10 h-10 rounded-2xl bg-grey/5 hover:bg-grey/10 border border-grey/10 text-grey-dark flex items-center justify-center transition-colors cursor-pointer'
+                        title='Back to My Orders'
                     >
-                        <div className="w-6 h-6 rounded-full bg-grey/5 flex items-center justify-center group-hover:bg-primary/10 transition-all">
-                            <Icon icon="solar:alt-arrow-left-bold" className="text-xs group-hover:text-primary" />
-                        </div>
-                        Back
+                        <Icon icon='solar:alt-arrow-left-bold' className='text-base' />
                     </button>
-                    <div className="h-px grow bg-linear-to-r from-grey/5 via-grey/5 to-transparent" />
-                </div>
-
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div>
-                        <h1 className="text-4xl lg:text-5xl font-black text-grey uppercase tracking-tight italic mb-2">Order Details</h1>
-                        <p className="text-[10px] font-black text-grey/40 uppercase tracking-[0.2em]">Live Meal Delivery &amp; Schedule Breakdown</p>
-                    </div>
-                    <div className="flex items-center gap-4">
-                        <div className={`px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xs ${
-                            order.status === 'COMPLETED'
-                                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                                : order.status === 'ACTIVE'
-                                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                                : order.status === 'CONFIRMED' || order.status === 'ACCEPTED'
-                                ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                                : 'bg-primary/10 text-primary'
-                        }`}>
-                            {order.status === 'CONFIRMED' || order.status === 'ACCEPTED'
-                                ? 'Order Accepted'
-                                : order.status === 'ACTIVE'
-                                ? 'Active Delivering'
-                                : order.status === 'PENDING'
-                                ? 'Pending Review'
-                                : order.status}
+                        <div className='flex items-center gap-2.5 flex-wrap'>
+                            <h2 className='text-xl sm:text-2xl font-bold text-grey-dark tracking-tight'>
+                                Order #{order.id.slice(-6).toUpperCase()}
+                            </h2>
+                            <span
+                                className={`px-3 py-0.5 rounded-full text-[11px] font-semibold tracking-wide flex items-center gap-1.5 ${
+                                    order.status === 'CONFIRMED' || order.status === 'ACCEPTED'
+                                        ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                                        : order.status === 'ACTIVE'
+                                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                        : order.status === 'COMPLETED'
+                                        ? 'bg-green-50 text-green-700 border border-green-200'
+                                        : 'bg-amber-50 text-amber-800 border border-amber-200'
+                                }`}
+                            >
+                                <span
+                                    className={`w-1.5 h-1.5 rounded-full ${
+                                        order.status === 'CONFIRMED' || order.status === 'ACCEPTED'
+                                            ? 'bg-blue-600'
+                                            : order.status === 'ACTIVE'
+                                            ? 'bg-emerald-600'
+                                            : order.status === 'COMPLETED'
+                                            ? 'bg-green-600'
+                                            : 'bg-amber-500'
+                                    }`}
+                                />
+                                {order.status}
+                            </span>
                         </div>
+                        <p className='text-xs text-grey-muted mt-0.5'>
+                            Subscription Ref: <span className='font-mono text-grey-dark'>{order.id}</span>
+                        </p>
                     </div>
                 </div>
-            </div>
 
-            {/* Stats Overview */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-                <div className="bg-white p-6 rounded-[2rem] border border-grey/5 shadow-sm">
-                    <p className="text-[10px] font-black text-grey/30 uppercase tracking-widest mb-2">Start Date</p>
-                    <p className="text-lg font-black text-grey uppercase italic">{formatDate(startDate)}</p>
-                </div>
-                <div className="bg-white p-6 rounded-[2rem] border border-grey/5 shadow-sm">
-                    <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-2">Delivered</p>
-                    <p className="text-lg font-black text-emerald-700 uppercase italic">{servedCount} of {totalDays} Days</p>
-                </div>
-                <div className="bg-white p-6 rounded-[2rem] border border-grey/5 shadow-sm border-l-4 border-l-primary">
-                    <p className="text-[10px] font-black text-primary/50 uppercase tracking-widest mb-2">Remaining Meals</p>
-                    <p className="text-2xl font-black text-primary uppercase italic">{remainingDays} Days</p>
-                </div>
-                <div className="bg-grey p-6 rounded-[2rem] text-white">
-                    <p className="text-[10px] font-black text-white/30 uppercase tracking-widest mb-2">Total Paid</p>
-                    <p className="text-xl font-black text-primary italic leading-none">AED {order.totalAmount}</p>
+                <div className='flex items-center gap-2'>
+                    <button
+                        type='button'
+                        onClick={() => downloadInvoice(order.id)}
+                        disabled={isGenerating}
+                        className='px-4 py-2 bg-white hover:bg-grey/5 border border-grey/15 rounded-2xl text-xs font-semibold text-grey-dark transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50'
+                    >
+                        {isGenerating ? (
+                            <Icon icon='line-md:loading-loop' className='text-xs' />
+                        ) : (
+                            <Icon icon='solar:printer-bold-duotone' className='text-sm text-primary' />
+                        )}
+                        <span>Download Invoice</span>
+                    </button>
                 </div>
             </div>
 
-            {/* Food Schedule Table */}
-            <div className="bg-white rounded-[2.5rem] border border-grey/5 overflow-hidden shadow-xl mb-8">
-                <div className="bg-grey/2 p-6 border-b border-grey/5 flex items-center justify-between">
-                    <h2 className="text-lg font-black text-grey uppercase tracking-wider flex items-center gap-3">
-                        <Icon icon="solar:calendar-date-bold-duotone" className="text-primary text-xl" />
-                        Complete Delivery &amp; Food Schedule
-                    </h2>
-                    <span className="text-xs font-extrabold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-xl">
-                        {servedCount} Served • {remainingDays} Pending
+            {/* 4 Stats Cards */}
+            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
+                <div className='bg-white p-5 rounded-3xl border border-grey/10 shadow-xs space-y-1'>
+                    <span className='text-[10px] font-bold text-grey-muted uppercase tracking-wider block'>Start Date</span>
+                    <p className='text-base font-bold text-grey-dark'>{formatDate(startDate)}</p>
+                    <span className='text-[11px] text-grey-muted block'>Ends approx {formatDate(endDate)}</span>
+                </div>
+
+                <div className='bg-white p-5 rounded-3xl border border-grey/10 shadow-xs space-y-1'>
+                    <span className='text-[10px] font-bold text-emerald-700 uppercase tracking-wider block'>Delivered Progress</span>
+                    <p className='text-base font-bold text-emerald-700'>{servedCount} of {totalDays} Days ({servedPercent}%)</p>
+                    <span className='text-[11px] text-grey-muted block'>Completed meal servings</span>
+                </div>
+
+                <div className='bg-white p-5 rounded-3xl border border-grey/10 shadow-xs space-y-1'>
+                    <span className='text-[10px] font-bold text-primary uppercase tracking-wider block'>Remaining Meals</span>
+                    <p className='text-base font-bold text-primary'>{remainingDays} Days Remaining</p>
+                    <span className='text-[11px] text-grey-muted block'>Scheduled in your calendar</span>
+                </div>
+
+                <div className='bg-white p-5 rounded-3xl border border-grey/10 shadow-xs space-y-1'>
+                    <span className='text-[10px] font-bold text-grey-muted uppercase tracking-wider block'>Total Paid</span>
+                    <p className='text-base font-bold text-grey-dark'>AED {order.totalAmount.toFixed(2)}</p>
+                    <span className='text-[11px] text-emerald-700 font-semibold flex items-center gap-1'>
+                        <span className='w-1.5 h-1.5 rounded-full bg-emerald-500' />
+                        {order.paymentStatus || 'PENDING'}
                     </span>
                 </div>
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left">
-                        <thead>
-                            <tr className="bg-grey/1">
-                                <th className="px-8 py-5 text-[10px] font-black text-grey/30 uppercase tracking-[0.2em] w-48">Date / Day</th>
-                                <th className="px-8 py-5 text-[10px] font-black text-grey/30 uppercase tracking-[0.2em]">Delivery Status</th>
-                                <th className="px-8 py-5 text-[10px] font-black text-grey/30 uppercase tracking-[0.2em]">Menu Items &amp; Selections</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-grey/5">
-                            {activeDates.map((dateStr, idx) => {
-                                const date = new Date(dateStr)
-                                const isValid = !isNaN(date.getTime())
-                                const items = getItemsForDate(dateStr)
-                                const isServed = servedDates.includes(dateStr)
-                                
-                                return (
-                                    <tr key={idx} className={`group hover:bg-primary/[0.02] transition-colors ${isServed ? 'bg-emerald-50/20' : ''}`}>
-                                        <td className="px-8 py-5">
-                                            <div className="flex flex-col">
-                                                <span className="text-base font-black text-grey uppercase tracking-tight leading-none mb-1">
-                                                    {isValid ? date.toLocaleDateString('en-US', { day: 'numeric', month: 'short' }) : dateStr}
-                                                </span>
-                                                <span className="text-[9px] font-bold text-primary uppercase tracking-widest">
-                                                    {isValid ? date.toLocaleDateString('en-US', { weekday: 'long' }) : `Day ${idx + 1}`}
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className="px-8 py-5">
-                                            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-extrabold ${
-                                                isServed
-                                                    ? 'bg-emerald-600 text-white shadow-2xs'
-                                                    : 'bg-grey/10 text-grey-muted'
-                                            }`}>
-                                                {isServed ? (
-                                                    <>
-                                                        <Icon icon="solar:check-read-bold" className="text-xs" />
-                                                        <span>Delivered &amp; Served</span>
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <span>Scheduled / Upcoming</span>
-                                                    </>
-                                                )}
-                                            </span>
-                                        </td>
-                                        <td className="px-8 py-5">
-                                            <div className="flex flex-wrap gap-2">
-                                                {items.map((item, iIdx) => (
-                                                    <div key={iIdx} className="bg-grey/2 border border-grey/5 px-3 py-1.5 rounded-lg flex items-center gap-2 group-hover:border-primary/10 transition-all">
-                                                        <div className="w-1 h-1 rounded-full bg-primary" />
-                                                        <span className="text-[11px] font-black text-grey uppercase">{item.name}</span>
-                                                        <span className="text-[7px] font-black text-grey/20 uppercase tracking-tighter bg-white px-1.5 py-0.5 rounded-sm border border-grey/5">
-                                                            {item.category}
-                                                        </span>
-                                                    </div>
-                                                ))}
-                                                {items.length === 0 && (
-                                                    <div className="flex items-center gap-2 text-grey/40">
-                                                        <Icon icon="solar:chef-hat-bold-duotone" className="text-xs text-primary" />
-                                                        <span className="text-[10px] font-bold uppercase italic">Chef Daily Selection</span>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </td>
-                                    </tr>
-                                )
-                            })}
-                        </tbody>
-                    </table>
+            </div>
+
+            {/* Delivery Location & Notes */}
+            <div className='bg-white p-6 rounded-3xl border border-grey/10 shadow-xs grid grid-cols-1 md:grid-cols-2 gap-6'>
+                <div className='space-y-1 text-xs'>
+                    <span className='text-[10px] font-bold text-grey-muted uppercase tracking-wider block'>Delivery Location</span>
+                    <p className='font-bold text-grey-dark'>{order.address}</p>
+                    {(order.buildingName || order.flatRoomNumber) && (
+                        <p className='text-grey-muted font-medium'>
+                            Bldg: <strong>{order.buildingName || 'N/A'}</strong> • Flat/Room: <strong>{order.flatRoomNumber || 'N/A'}</strong>
+                        </p>
+                    )}
+                </div>
+                <div className='space-y-1 text-xs'>
+                    <span className='text-[10px] font-bold text-grey-muted uppercase tracking-wider block'>Drop Preference</span>
+                    <p className='font-bold text-primary bg-primary/10 px-2.5 py-1 rounded-lg inline-block'>
+                        {order.deliveryLocation}
+                    </p>
                 </div>
             </div>
 
-            {/* Delivery Footer */}
-            <div className="bg-grey rounded-[3rem] p-10 md:p-16 text-white relative overflow-hidden">
-                <Icon icon="solar:map-point-bold-duotone" className="absolute -right-20 -bottom-20 text-[20rem] text-white/5 rotate-12" />
-                <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-12">
+            {/* Full Calendar Schedule Grid */}
+            <div className='bg-white p-6 sm:p-8 rounded-3xl border border-grey/10 shadow-xs space-y-5'>
+                <div className='flex items-center justify-between border-b border-grey/10 pb-4'>
                     <div>
-                        <h3 className="text-2xl font-black uppercase tracking-tight italic mb-8 flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center">
-                                <Icon icon="solar:home-2-bold-duotone" className="text-primary text-xl" />
-                            </div>
-                            Delivery Address
-                        </h3>
-                        <div className="space-y-4">
-                            <p className="text-white/60 font-bold uppercase tracking-widest text-[10px]">Primary Address</p>
-                            <p className="text-lg font-black leading-tight">{order.address}</p>
-                            <div className="grid grid-cols-2 gap-4 mt-6">
-                                <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
-                                    <p className="text-[10px] font-black text-white/30 uppercase mb-1">Building/City</p>
-                                    <p className="font-black text-sm uppercase">{order.buildingName || 'N/A'}</p>
-                                </div>
-                                <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
-                                    <p className="text-[10px] font-black text-white/30 uppercase mb-1">Flat/Room</p>
-                                    <p className="font-black text-sm uppercase">{order.flatRoomNumber || 'N/A'}</p>
-                                </div>
-                            </div>
-                        </div>
+                        <h3 className='text-base font-bold text-grey-dark'>Complete Meal Calendar Schedule</h3>
+                        <p className='text-xs text-grey-muted'>Day-by-day food item dishes and delivery status</p>
                     </div>
-                    <div className="flex flex-col justify-center items-end">
-                        <div className="text-right">
-                            <p className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-2">Order ID Hash</p>
-                            <p className="text-xs font-mono text-white/40 break-all">{order.id}</p>
-                        </div>
-                        <div className="flex flex-col sm:flex-row gap-4 mt-10">
-                            <button 
-                                onClick={() => downloadInvoice(order.id)}
-                                disabled={isDownloadingInvoice}
-                                className="bg-white text-grey px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-primary hover:text-white transition-all flex items-center gap-3 border border-white/10 disabled:opacity-50"
+                    <span className='px-3 py-1 bg-emerald-50 text-emerald-800 rounded-xl text-xs font-bold border border-emerald-200'>
+                        {servedCount} / {totalDays} Served
+                    </span>
+                </div>
+
+                <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5'>
+                    {activeDates.map((dateStr, index) => {
+                        const date = new Date(dateStr)
+                        const isValid = !isNaN(date.getTime())
+                        const items = getItemsForDate(dateStr)
+                        const isServed = servedDates.includes(dateStr)
+
+                        return (
+                            <div
+                                key={index}
+                                className={`p-4 rounded-2xl border transition-all space-y-2.5 ${
+                                    isServed
+                                        ? 'bg-emerald-50/50 border-emerald-200'
+                                        : 'bg-white border-grey/10 hover:border-grey/25 shadow-2xs'
+                                }`}
                             >
-                                {isDownloadingInvoice ? (
-                                    <Icon icon="solar:refresh-bold" className="text-lg animate-spin" />
-                                ) : (
-                                    <Icon icon="solar:download-square-bold" className="text-lg" />
-                                )}
-                                {isDownloadingInvoice ? 'Architecting...' : 'Download Invoice'}
-                            </button>
-                        </div>
-                    </div>
+                                <div className='flex items-center justify-between border-b border-grey/10 pb-2'>
+                                    <div>
+                                        <span className='text-[10px] font-bold uppercase text-primary tracking-wider block'>
+                                            Day {index + 1} • {isValid ? date.toLocaleDateString('en-US', { weekday: 'short' }) : 'Day'}
+                                        </span>
+                                        <span className='text-xs font-bold text-grey-dark'>
+                                            {isValid ? date.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }) : dateStr}
+                                        </span>
+                                    </div>
+                                    <span
+                                        className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold flex items-center gap-1 ${
+                                            isServed
+                                                ? 'bg-emerald-600 text-white'
+                                                : 'bg-grey/10 text-grey-muted'
+                                        }`}
+                                    >
+                                        {isServed ? (
+                                            <>
+                                                <Icon icon='solar:check-read-bold' className='text-xs' />
+                                                <span>Served</span>
+                                            </>
+                                        ) : (
+                                            <span>Scheduled</span>
+                                        )}
+                                    </span>
+                                </div>
+
+                                <div className='space-y-1.5'>
+                                    {items.length > 0 ? (
+                                        items.map((item, iIdx) => (
+                                            <div key={iIdx} className='p-2 rounded-xl bg-grey/5 border border-grey/10 space-y-0.5'>
+                                                <span className='text-[9px] font-bold uppercase text-grey-muted tracking-wider block'>
+                                                    {item.category}
+                                                </span>
+                                                <span className='text-xs font-semibold text-grey-dark block leading-tight'>
+                                                    {item.name}
+                                                </span>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <p className='text-xs text-grey-muted italic py-1'>Chef Special Mess Preparation</p>
+                                    )}
+                                </div>
+                            </div>
+                        )
+                    })}
                 </div>
             </div>
         </div>

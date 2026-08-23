@@ -151,19 +151,25 @@ export function OrderViewDialog({ order, isOpen, onClose, onOrderUpdated }: Orde
     const servedCount = servedDatesList.length
     const servedPercent = Math.min(100, Math.round((servedCount / (totalDaysCount || 1)) * 100))
 
+    // Helper to sanitize dish name (strips "BREAKFAST - ", "LUNCH - ", "DINNER - ")
+    const sanitizeDishName = (name: string) => {
+        if (!name) return ''
+        return name.replace(/^(breakfast|lunch|dinner|meal)\s*[-:]\s*/i, '').trim() || name
+    }
+
     // Helper to resolve dish display for a day & slot
     const getDishInfo = (day: string, slot: string) => {
-        const dishIdOrName = dailyDishes?.[day]?.[slot]
+        const dishIdOrName = dailyDishes?.[day]?.[slot] || dailyDishes?.[day]?.[slot.toLowerCase()]
         if (!dishIdOrName) return null
 
         if (typeof dishIdOrName === 'object' && dishIdOrName !== null) {
-            return dishIdOrName
+            return { ...dishIdOrName, name: sanitizeDishName(dishIdOrName.name) }
         }
 
         const found = foodItemMap.get(dishIdOrName) || foodItemMap.get(String(dishIdOrName).toLowerCase())
-        if (found) return found
+        if (found) return { ...found, name: sanitizeDishName(found.name) }
 
-        return { name: dishIdOrName }
+        return { name: sanitizeDishName(dishIdOrName) }
     }
 
     const dayNameMap = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']

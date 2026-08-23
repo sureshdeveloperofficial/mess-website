@@ -191,8 +191,8 @@ export function DataTable<TData>({
                                             <th
                                                 key={header.id}
                                                 onClick={header.column.getToggleSortingHandler()}
-                                                className={`py-4 px-6 text-[11px] font-extrabold uppercase tracking-wider text-grey-dark select-none ${
-                                                    isSortable ? 'cursor-pointer hover:bg-grey/10 transition-colors' : ''
+                                                className={`py-4 px-6 text-[11px] font-bold uppercase tracking-wider text-grey-muted select-none whitespace-nowrap align-middle ${
+                                                    isSortable ? 'cursor-pointer hover:bg-grey/10 hover:text-grey-dark transition-colors' : ''
                                                 }`}
                                             >
                                                 <div className='flex items-center gap-1.5'>
@@ -245,7 +245,7 @@ export function DataTable<TData>({
                                         className='hover:bg-primary/[0.03] transition-colors group'
                                     >
                                         {row.getVisibleCells().map((cell) => (
-                                            <td key={cell.id} className='py-4 px-6 text-sm'>
+                                            <td key={cell.id} className='py-4 px-6 text-sm whitespace-nowrap align-middle'>
                                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                             </td>
                                         ))}

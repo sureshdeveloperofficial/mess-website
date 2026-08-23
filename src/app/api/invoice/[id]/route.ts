@@ -5,20 +5,23 @@ import prisma from '@/utils/prisma'
 // Function to get chromium on Vercel
 async function getChromium() {
     try {
-        // Try to import @sparticuz/chromium dynamically
-        // This allows the build to pass locally even if not installed
-        const chromium = require('@sparticuz/chromium')
-        return {
-            args: chromium.args,
-            defaultViewport: chromium.defaultViewport,
-            executablePath: await chromium.executablePath(),
-            headless: chromium.headless,
+        const moduleName = '@sparticuz/chromium'
+        // Dynamically import only in production environments
+        if (process.env.NODE_ENV === 'production') {
+            const chromium = await import(/* webpackIgnore: true */ moduleName)
+            return {
+                args: chromium.args,
+                defaultViewport: chromium.defaultViewport,
+                executablePath: await chromium.executablePath(),
+                headless: chromium.headless,
+            }
         }
-    } catch (e) {
-        // Fallback for local development
+        throw new Error('Local dev mode: using local Chrome executable')
+    } catch {
+        // Fallback for local development on Windows
         return {
             args: ['--no-sandbox', '--disable-setuid-sandbox'],
-            executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe', // Typical Windows path
+            executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
             headless: true,
         }
     }
