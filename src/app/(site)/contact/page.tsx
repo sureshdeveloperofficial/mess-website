@@ -11,7 +11,7 @@ export default function ContactPage() {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         setIsSubmitting(true)
-        
+
         const form = e.currentTarget
         const formData = new FormData(form)
         const name = (formData.get('name') as string) || ''
@@ -39,182 +39,269 @@ export default function ContactPage() {
     }
 
     return (
-        <main className="pt-32 pb-20 overflow-hidden">
-            <div className="container max-w-7xl mx-auto px-4">
-                
-                <div className="text-center mb-16">
-                    <motion.div
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6 }}
-                    >
-                        <h1 className="text-5xl md:text-7xl font-black text-grey uppercase tracking-tighter italic mb-4">
-                            Let's <span className="text-primary">Connect</span>
-                        </h1>
-                        <p className="text-sm font-bold text-grey/50 uppercase tracking-[0.3em] max-w-2xl mx-auto">
-                            HAVE A QUESTION OR NEED ASSISTANCE? WE'RE HERE TO HELP. REACH OUT TO OUR TEAM TODAY.
-                        </p>
-                    </motion.div>
-                </div>
+        <main className='pt-20 bg-[#FFF9F5] min-h-screen'>
+            {/* Hero Banner */}
+            <div className='pt-16 pb-12 bg-linear-to-b from-primary/10 via-primary/5 to-[#FFF9F5] text-center relative overflow-hidden'>
+                <div className='absolute -top-20 -left-20 w-72 h-72 bg-primary/15 rounded-full blur-3xl pointer-events-none' />
+                <div className='absolute -bottom-10 -right-10 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none' />
 
-                <div className="grid lg:grid-cols-5 gap-8 lg:gap-12 relative">
-                    {/* Background decorative blob */}
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[100px] -z-10 animate-pulse" />
-
-                    {/* Contact Info Cards */}
-                    <div className="lg:col-span-2 space-y-6">
-                        <motion.div 
-                            initial={{ opacity: 0, x: -30 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.6, delay: 0.1 }}
-                            className="bg-white p-8 rounded-[2.5rem] border border-grey/5 shadow-xl group hover:-translate-y-2 transition-all duration-300"
-                        >
-                            <div className="w-16 h-16 bg-primary/10 rounded-[1.5rem] flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform duration-300">
-                                <Icon icon="solar:phone-calling-bold-duotone" className="text-3xl" />
-                            </div>
-                            <h3 className="text-xl font-black text-grey uppercase italic tracking-tight mb-2">Call Us</h3>
-                            <p className="text-sm font-bold text-grey/50 mb-4">Daily Support, 9AM to 10PM</p>
-                            <a href="tel:+97142642613" className="text-2xl font-black text-primary hover:text-grey transition-colors inline-block">+971 4 264 2613</a>
-                        </motion.div>
-
-                        <motion.div 
-                            initial={{ opacity: 0, x: -30 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.6, delay: 0.2 }}
-                            className="bg-white p-8 rounded-[2.5rem] border border-grey/5 shadow-xl group hover:-translate-y-2 transition-all duration-300"
-                        >
-                            <div className="w-16 h-16 bg-primary/10 rounded-[1.5rem] flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform duration-300">
-                                <Icon icon="solar:letter-bold-duotone" className="text-3xl" />
-                            </div>
-                            <h3 className="text-xl font-black text-grey uppercase italic tracking-tight mb-2">Email Us</h3>
-                            <p className="text-sm font-bold text-grey/50 mb-4">We usually reply within a few hours</p>
-                            <a href="mailto:contact@chefs-kitchen.com" className="text-lg font-black text-primary hover:text-grey transition-colors break-all">contact@chefs-kitchen.com</a>
-                        </motion.div>
-
-                        <motion.div 
-                            initial={{ opacity: 0, x: -30 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.6, delay: 0.3 }}
-                            className="bg-primary p-8 rounded-[2.5rem] shadow-xl group hover:-translate-y-2 transition-all duration-300 relative overflow-hidden"
-                        >
-                            <div className="absolute -right-10 -top-10 text-white/10 group-hover:scale-110 transition-transform duration-500">
-                                <Icon icon="logos:whatsapp-icon" className="text-[150px]" />
-                            </div>
-                            <div className="relative z-10 w-16 h-16 bg-white/20 rounded-[1.5rem] flex items-center justify-center text-white mb-6 backdrop-blur-sm">
-                                <Icon icon="logos:whatsapp-icon" className="text-3xl" />
-                            </div>
-                            <h3 className="text-xl font-black text-white uppercase italic tracking-tight mb-2">WhatsApp</h3>
-                            <p className="text-sm font-bold text-white/80 mb-4">Instant support & ordering</p>
-                            <a href="https://wa.me/971501234567" target="_blank" rel="noopener noreferrer" className="text-2xl font-black text-white hover:text-white/80 transition-colors inline-block">+971 50 123 4567</a>
-                        </motion.div>
+                <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6 }}
+                    className='relative z-10'
+                >
+                    <div className='inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/20 text-grey-dark text-xs font-semibold mb-4 border border-primary/30'>
+                        <Icon icon='solar:chat-round-line-bold-duotone' className='text-sm' />
+                        Al Shamil Mess — Customer Support
                     </div>
 
-                    {/* Contact Form */}
-                    <motion.div 
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.4 }}
-                        className="lg:col-span-3"
-                    >
-                        <div className="bg-white rounded-[3rem] p-8 md:p-12 border border-grey/5 shadow-2xl h-full">
-                            <h2 className="text-3xl font-black text-grey uppercase italic tracking-tight mb-2">Send a Message</h2>
-                            <p className="text-xs font-bold text-grey/40 uppercase tracking-widest mb-10">Fill out the form below and we will be in touch</p>
+                    <h1 className='text-3xl sm:text-5xl lg:text-6xl font-extrabold text-grey-dark tracking-tight mb-4'>
+                        Get in <span className='text-primary'>Touch</span>
+                    </h1>
+                    <p className='text-grey-muted text-sm sm:text-base font-normal leading-relaxed max-w-xl mx-auto'>
+                        Have a question about your meal plan or delivery? We're here to help — reach out and we'll respond quickly.
+                    </p>
+                </motion.div>
+            </div>
 
-                            <form onSubmit={handleSubmit} className="space-y-6">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="space-y-2">
-                                        <label htmlFor="name" className="text-[10px] font-black text-grey/40 uppercase tracking-widest ml-4">Full Name</label>
-                                        <div className="relative">
-                                            <div className="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none text-grey/40">
-                                                <Icon icon="solar:user-bold-duotone" className="text-xl" />
-                                            </div>
-                                            <input
-                                                type="text"
-                                                id="name"
-                                                name="name"
-                                                required
-                                                className="w-full bg-grey/5 border border-transparent focus:bg-white focus:border-primary/20 px-6 py-4 pl-14 rounded-2xl text-grey font-bold focus:outline-none focus:ring-4 focus:ring-primary/10 transition-all placeholder:text-grey/30"
-                                                placeholder="John Doe"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label htmlFor="email" className="text-[10px] font-black text-grey/40 uppercase tracking-widest ml-4">Email Address</label>
-                                        <div className="relative">
-                                            <div className="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none text-grey/40">
-                                                <Icon icon="solar:letter-bold-duotone" className="text-xl" />
-                                            </div>
-                                            <input
-                                                type="email"
-                                                id="email"
-                                                name="email"
-                                                required
-                                                className="w-full bg-grey/5 border border-transparent focus:bg-white focus:border-primary/20 px-6 py-4 pl-14 rounded-2xl text-grey font-bold focus:outline-none focus:ring-4 focus:ring-primary/10 transition-all placeholder:text-grey/30"
-                                                placeholder="john@example.com"
-                                            />
-                                        </div>
-                                    </div>
+            {/* Main Content */}
+            <div className='relative z-20 -mt-4 pb-20'>
+                <div className='container max-w-6xl mx-auto px-4'>
+                    <div className='grid lg:grid-cols-5 gap-6 lg:gap-8'>
+
+                        {/* Left Column — Contact Info Cards */}
+                        <div className='lg:col-span-2 space-y-4'>
+
+                            {/* Call Us */}
+                            <motion.div
+                                initial={{ opacity: 0, x: -30 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ duration: 0.5, delay: 0.1 }}
+                                className='bg-white p-6 rounded-3xl border border-grey/10 shadow-xs hover:shadow-md hover:-translate-y-1 transition-all duration-300 group'
+                            >
+                                <div className='w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-4 group-hover:scale-105 transition-transform border border-primary/20'>
+                                    <Icon icon='solar:phone-calling-bold-duotone' className='text-2xl' />
                                 </div>
+                                <h3 className='text-base font-extrabold text-grey-dark mb-1'>Call Us</h3>
+                                <p className='text-xs font-medium text-grey-dark/75 mb-3'>Daily Support, 9AM to 10PM</p>
+                                <a href='tel:+97142642613' className='text-xl font-extrabold text-primary hover:text-grey-dark transition-colors'>
+                                    +971 4 264 2613
+                                </a>
+                            </motion.div>
 
-                                <div className="space-y-2">
-                                    <label htmlFor="subject" className="text-[10px] font-black text-grey/40 uppercase tracking-widest ml-4">Subject</label>
-                                    <div className="relative">
-                                        <div className="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none text-grey/40">
-                                            <Icon icon="solar:notes-bold-duotone" className="text-xl" />
-                                        </div>
-                                        <input
-                                            type="text"
-                                            id="subject"
-                                            name="subject"
-                                            required
-                                            className="w-full bg-grey/5 border border-transparent focus:bg-white focus:border-primary/20 px-6 py-4 pl-14 rounded-2xl text-grey font-bold focus:outline-none focus:ring-4 focus:ring-primary/10 transition-all placeholder:text-grey/30"
-                                            placeholder="How can we help?"
-                                        />
-                                    </div>
+                            {/* Email Us */}
+                            <motion.div
+                                initial={{ opacity: 0, x: -30 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ duration: 0.5, delay: 0.2 }}
+                                className='bg-white p-6 rounded-3xl border border-grey/10 shadow-xs hover:shadow-md hover:-translate-y-1 transition-all duration-300 group'
+                            >
+                                <div className='w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-4 group-hover:scale-105 transition-transform border border-primary/20'>
+                                    <Icon icon='solar:letter-bold-duotone' className='text-2xl' />
                                 </div>
+                                <h3 className='text-base font-extrabold text-grey-dark mb-1'>Email Us</h3>
+                                <p className='text-xs font-medium text-grey-dark/75 mb-3'>We usually reply within a few hours</p>
+                                <a href='mailto:contact@chefs-kitchen.com' className='text-sm font-extrabold text-primary hover:text-grey-dark transition-colors break-all'>
+                                    contact@chefs-kitchen.com
+                                </a>
+                            </motion.div>
 
-                                <div className="space-y-2">
-                                    <label htmlFor="message" className="text-[10px] font-black text-grey/40 uppercase tracking-widest ml-4">Your Message</label>
-                                    <div className="relative">
-                                        <div className="absolute top-5 left-0 pl-6 pointer-events-none text-grey/40">
-                                            <Icon icon="solar:pen-bold-duotone" className="text-xl" />
-                                        </div>
-                                        <textarea
-                                            id="message"
-                                            name="message"
-                                            rows={5}
-                                            required
-                                            style={{ resize: 'none' }}
-                                            className="w-full bg-grey/5 border border-transparent focus:bg-white focus:border-primary/20 px-6 py-4 pl-14 rounded-2xl text-grey font-bold focus:outline-none focus:ring-4 focus:ring-primary/10 transition-all placeholder:text-grey/30 rounded-bl-sm"
-                                            placeholder="Tell us everything..."
-                                        />
-                                    </div>
+                            {/* WhatsApp */}
+                            <motion.div
+                                initial={{ opacity: 0, x: -30 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ duration: 0.5, delay: 0.3 }}
+                                className='bg-primary p-6 rounded-3xl shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden'
+                            >
+                                <div className='absolute -right-8 -top-8 opacity-10 group-hover:opacity-20 transition-opacity duration-500'>
+                                    <Icon icon='logos:whatsapp-icon' className='text-[120px]' />
                                 </div>
-
-                                <button
-                                    type="submit"
-                                    disabled={isSubmitting}
-                                    className="w-full bg-grey text-white px-8 py-5 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-primary transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed group flex justify-center items-center gap-2 shadow-xl hover:shadow-primary/30"
+                                <div className='relative z-10 w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center mb-4 backdrop-blur-sm'>
+                                    <Icon icon='logos:whatsapp-icon' className='text-2xl' />
+                                </div>
+                                <h3 className='relative z-10 text-base font-extrabold text-grey-dark mb-1'>WhatsApp</h3>
+                                <p className='relative z-10 text-xs font-medium text-grey-dark/80 mb-3'>Instant support &amp; ordering</p>
+                                <a
+                                    href='https://wa.me/971501234567'
+                                    target='_blank'
+                                    rel='noopener noreferrer'
+                                    className='relative z-10 text-xl font-extrabold text-grey-dark hover:text-white transition-colors inline-block'
                                 >
-                                    {isSubmitting ? (
-                                        <>
-                                            <Icon icon="line-md:loading-loop" className="text-xl" />
-                                            Sending...
-                                        </>
-                                    ) : (
-                                        <>
-                                            Send Message
-                                            <Icon icon="solar:plain-2-bold" className="text-xl group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-                                        </>
-                                    )}
-                                </button>
-                            </form>
-                        </div>
-                    </motion.div>
-                </div>
+                                    +971 50 123 4567
+                                </a>
+                            </motion.div>
 
+                            {/* Location */}
+                            <motion.div
+                                initial={{ opacity: 0, x: -30 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ duration: 0.5, delay: 0.4 }}
+                                className='bg-white p-6 rounded-3xl border border-grey/10 shadow-xs hover:shadow-md hover:-translate-y-1 transition-all duration-300 group'
+                            >
+                                <div className='w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-4 group-hover:scale-105 transition-transform border border-primary/20'>
+                                    <Icon icon='solar:map-point-bold-duotone' className='text-2xl' />
+                                </div>
+                                <h3 className='text-base font-extrabold text-grey-dark mb-1'>Our Location</h3>
+                                <p className='text-xs font-medium text-grey-dark/75 mb-1'>Serving across Dubai &amp; Sharjah</p>
+                                <p className='text-sm font-bold text-grey-dark'>Dubai, United Arab Emirates</p>
+                            </motion.div>
+                        </div>
+
+                        {/* Right Column — Contact Form */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 30 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.6, delay: 0.2 }}
+                            className='lg:col-span-3'
+                        >
+                            <div className='bg-white rounded-3xl p-7 sm:p-10 border border-grey/10 shadow-xs h-full'>
+
+                                {/* Form Header */}
+                                <div className='mb-7'>
+                                    <div className='inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-grey-dark text-[10px] font-extrabold uppercase tracking-wider border border-primary/20 mb-3'>
+                                        <Icon icon='solar:plain-2-bold-duotone' className='text-xs text-primary' />
+                                        Send a Message
+                                    </div>
+                                    <h2 className='text-xl sm:text-2xl font-extrabold text-grey-dark tracking-tight'>
+                                        How Can We Help You?
+                                    </h2>
+                                    <p className='text-xs font-medium text-grey-dark/75 mt-1.5'>
+                                        Fill out the form and we'll respond within a few hours.
+                                    </p>
+                                </div>
+
+                                <form onSubmit={handleSubmit} className='space-y-5'>
+                                    {/* Name + Email */}
+                                    <div className='grid grid-cols-1 md:grid-cols-2 gap-5'>
+                                        <div className='space-y-1.5'>
+                                            <label htmlFor='name' className='text-[10px] font-extrabold text-grey-dark uppercase tracking-wider block'>
+                                                Full Name
+                                            </label>
+                                            <div className='relative'>
+                                                <div className='absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-grey-dark/40'>
+                                                    <Icon icon='solar:user-bold-duotone' className='text-lg' />
+                                                </div>
+                                                <input
+                                                    type='text'
+                                                    id='name'
+                                                    name='name'
+                                                    required
+                                                    className='w-full bg-grey/5 border border-grey/10 focus:bg-white focus:border-primary/30 px-4 py-3 pl-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-primary/10 transition-all placeholder:text-grey-dark/30'
+                                                    placeholder='John Doe'
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className='space-y-1.5'>
+                                            <label htmlFor='email' className='text-[10px] font-extrabold text-grey-dark uppercase tracking-wider block'>
+                                                Email Address
+                                            </label>
+                                            <div className='relative'>
+                                                <div className='absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-grey-dark/40'>
+                                                    <Icon icon='solar:letter-bold-duotone' className='text-lg' />
+                                                </div>
+                                                <input
+                                                    type='email'
+                                                    id='email'
+                                                    name='email'
+                                                    required
+                                                    className='w-full bg-grey/5 border border-grey/10 focus:bg-white focus:border-primary/30 px-4 py-3 pl-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-primary/10 transition-all placeholder:text-grey-dark/30'
+                                                    placeholder='john@example.com'
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Phone */}
+                                    <div className='space-y-1.5'>
+                                        <label htmlFor='phone' className='text-[10px] font-extrabold text-grey-dark uppercase tracking-wider block'>
+                                            Phone Number{' '}
+                                            <span className='font-medium normal-case text-grey-dark/50'>(optional)</span>
+                                        </label>
+                                        <div className='relative'>
+                                            <div className='absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-grey-dark/40'>
+                                                <Icon icon='solar:phone-bold-duotone' className='text-lg' />
+                                            </div>
+                                            <input
+                                                type='tel'
+                                                id='phone'
+                                                name='phone'
+                                                className='w-full bg-grey/5 border border-grey/10 focus:bg-white focus:border-primary/30 px-4 py-3 pl-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-primary/10 transition-all placeholder:text-grey-dark/30'
+                                                placeholder='+971 50 000 0000'
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Subject */}
+                                    <div className='space-y-1.5'>
+                                        <label htmlFor='subject' className='text-[10px] font-extrabold text-grey-dark uppercase tracking-wider block'>
+                                            Subject
+                                        </label>
+                                        <div className='relative'>
+                                            <div className='absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-grey-dark/40'>
+                                                <Icon icon='solar:notes-bold-duotone' className='text-lg' />
+                                            </div>
+                                            <input
+                                                type='text'
+                                                id='subject'
+                                                name='subject'
+                                                required
+                                                className='w-full bg-grey/5 border border-grey/10 focus:bg-white focus:border-primary/30 px-4 py-3 pl-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-primary/10 transition-all placeholder:text-grey-dark/30'
+                                                placeholder='How can we help?'
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Message */}
+                                    <div className='space-y-1.5'>
+                                        <label htmlFor='message' className='text-[10px] font-extrabold text-grey-dark uppercase tracking-wider block'>
+                                            Your Message
+                                        </label>
+                                        <div className='relative'>
+                                            <div className='absolute top-3.5 left-0 pl-4 pointer-events-none text-grey-dark/40'>
+                                                <Icon icon='solar:pen-bold-duotone' className='text-lg' />
+                                            </div>
+                                            <textarea
+                                                id='message'
+                                                name='message'
+                                                rows={5}
+                                                required
+                                                style={{ resize: 'none' }}
+                                                className='w-full bg-grey/5 border border-grey/10 focus:bg-white focus:border-primary/30 px-4 py-3 pl-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-primary/10 transition-all placeholder:text-grey-dark/30'
+                                                placeholder='Tell us about your question, subscription issue, or special request...'
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Submit */}
+                                    <button
+                                        type='submit'
+                                        disabled={isSubmitting}
+                                        className='w-full bg-primary hover:bg-primary/90 text-grey-dark px-8 py-3.5 rounded-2xl font-extrabold text-sm flex justify-center items-center gap-2.5 shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed group cursor-pointer'
+                                    >
+                                        {isSubmitting ? (
+                                            <>
+                                                <Icon icon='line-md:loading-loop' className='text-lg' />
+                                                <span>Sending...</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <span>Send Message</span>
+                                                <Icon icon='solar:plain-2-bold' className='text-lg group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform' />
+                                            </>
+                                        )}
+                                    </button>
+
+                                    <p className='text-[11px] font-medium text-grey-dark/50 text-center'>
+                                        We respect your privacy. Your information is never shared.
+                                    </p>
+                                </form>
+                            </div>
+                        </motion.div>
+
+                    </div>
+                </div>
             </div>
         </main>
     )
 }
-
