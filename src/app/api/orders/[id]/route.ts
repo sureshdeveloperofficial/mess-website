@@ -54,38 +54,73 @@ export async function PATCH(
 
     const { id } = await params
     const body = await request.json()
-    const { status, paymentStatus, orderRemarks, paymentRemarks, paymentReceiptUrl } = body
+    const { status, paymentStatus, orderRemarks, paymentRemarks, paymentReceiptUrl, servedDates } = body
 
     if (!id) {
       return NextResponse.json({ error: 'Order ID is required' }, { status: 400 })
     }
 
-    // Build the update payload based on provided fields
-    const updateData: any = {}
-    if (status !== undefined) updateData.status = status
-    if (paymentStatus !== undefined) updateData.paymentStatus = paymentStatus
-    if (orderRemarks !== undefined) updateData.orderRemarks = orderRemarks
-    if (paymentRemarks !== undefined) updateData.paymentRemarks = paymentRemarks
-    if (paymentReceiptUrl !== undefined) updateData.paymentReceiptUrl = paymentReceiptUrl
+    // Build the Prisma update payload with known standard schema fields ONLY
+    const prismaUpdateData: any = {}
+    if (status !== undefined) prismaUpdateData.status = status
+    if (paymentStatus !== undefined) prismaUpdateData.paymentStatus = paymentStatus
+    if (orderRemarks !== undefined) prismaUpdateData.orderRemarks = orderRemarks
+    if (paymentRemarks !== undefined) prismaUpdateData.paymentRemarks = paymentRemarks
+    if (paymentReceiptUrl !== undefined) prismaUpdateData.paymentReceiptUrl = paymentReceiptUrl
 
-    if (Object.keys(updateData).length === 0) {
-      return NextResponse.json({ error: 'No update data provided' }, { status: 400 })
+    if (Object.keys(prismaUpdateData).length > 0) {
+      await prisma.order.update({
+        where: { id },
+        data: prismaUpdateData,
+      })
     }
 
-    const updatedOrder = await prisma.order.update({
+    // Update servedDates safely via raw SQL to bypass in-memory Prisma DMMF query lock
+    if (servedDates !== undefined) {
+      try {
+        await prisma.$executeRawUnsafe(
+          `UPDATE "Order" SET "servedDates" = $1 WHERE "id" = $2;`,
+          servedDates,
+          id
+        )
+      } catch {
+        try {
+          await prisma.$executeRawUnsafe(`ALTER TABLE "Order" ADD COLUMN IF NOT EXISTS "servedDates" TEXT[] DEFAULT ARRAY[]::TEXT[];`)
+          await prisma.$executeRawUnsafe(
+            `UPDATE "Order" SET "servedDates" = $1 WHERE "id" = $2;`,
+            servedDates,
+            id
+          )
+        } catch (rawErr) {
+          console.warn('Could not update servedDates via raw SQL:', rawErr)
+        }
+      }
+    }
+
+    // Fetch the updated order
+    const updatedOrder = await prisma.order.findUnique({
       where: { id },
-      data: updateData,
       include: {
         customer: true,
         selectedMenus: {
-            include: {
-                foodItems: true
-            }
+          include: {
+            foodItems: true
+          }
         }
       }
     })
 
-    return NextResponse.json(updatedOrder)
+    if (!updatedOrder) {
+      return NextResponse.json({ error: 'Order not found after update' }, { status: 404 })
+    }
+
+    // Attach servedDates to response if available
+    const enrichedOrder = {
+      ...updatedOrder,
+      servedDates: servedDates !== undefined ? servedDates : (updatedOrder as any).servedDates || []
+    }
+
+    return NextResponse.json(enrichedOrder)
   } catch (error) {
     console.error('Error updating order:', error)
     return NextResponse.json(

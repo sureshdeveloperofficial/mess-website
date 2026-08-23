@@ -49,7 +49,13 @@ export default function OrdersPage() {
             return orders.filter((o) => o.status === 'PENDING')
         }
         if (activeFilter === 'confirmed') {
-            return orders.filter((o) => o.status === 'CONFIRMED')
+            return orders.filter((o) => o.status === 'CONFIRMED' || o.status === 'ACCEPTED')
+        }
+        if (activeFilter === 'active') {
+            return orders.filter((o) => o.status === 'ACTIVE')
+        }
+        if (activeFilter === 'completed') {
+            return orders.filter((o) => o.status === 'COMPLETED')
         }
         if (activeFilter === 'cancelled') {
             return orders.filter((o) => o.status === 'CANCELLED')
@@ -63,14 +69,18 @@ export default function OrdersPage() {
     // Filter options configuration with live counts
     const filterOptions: FilterOption[] = useMemo(() => {
         const pendingCount = orders.filter((o) => o.status === 'PENDING').length
-        const confirmedCount = orders.filter((o) => o.status === 'CONFIRMED').length
+        const confirmedCount = orders.filter((o) => o.status === 'CONFIRMED' || o.status === 'ACCEPTED').length
+        const activeDeliveryCount = orders.filter((o) => o.status === 'ACTIVE').length
+        const completedCount = orders.filter((o) => o.status === 'COMPLETED').length
         const cancelledCount = orders.filter((o) => o.status === 'CANCELLED').length
         const paidCount = orders.filter((o) => o.paymentStatus === 'PAID').length
 
         return [
             { id: 'all', label: 'All Orders', count: orders.length },
-            { id: 'confirmed', label: 'Confirmed', count: confirmedCount },
             { id: 'pending', label: 'Pending', count: pendingCount },
+            { id: 'confirmed', label: 'Confirmed', count: confirmedCount },
+            { id: 'active', label: 'Active Delivering', count: activeDeliveryCount },
+            { id: 'completed', label: 'Completed', count: completedCount },
             { id: 'paid', label: 'Paid', count: paidCount },
             { id: 'cancelled', label: 'Cancelled', count: cancelledCount },
         ]
@@ -146,11 +156,12 @@ export default function OrdersPage() {
                 },
             }),
             columnHelper.accessor('selectedMenus', {
-                header: 'Meal Plans',
+                header: 'Meal Plans & Deliveries',
                 cell: (info) => {
                     const row = info.row.original
                     const menus = info.getValue() || []
-                    const durationDays = row.activeDates?.length || 0
+                    const durationDays = row.activeDates?.length || (row.selectionsJson?.weekdayPlan?.days || 26) + (row.selectionsJson?.sundayPlan?.days || (row.includeSundays ? 4 : 0))
+                    const servedDays = row.servedDates?.length || 0
 
                     return (
                         <div className='space-y-1.5'>
@@ -168,9 +179,14 @@ export default function OrdersPage() {
                                     <span className='text-xs text-grey-muted italic'>Custom Plan</span>
                                 )}
                             </div>
-                            <span className='text-[10px] font-semibold text-grey-muted block'>
-                                Starts {format(new Date(row.startDate), 'dd MMM yyyy')} ({durationDays} Days)
-                            </span>
+                            <div className='flex items-center gap-2'>
+                                <span className='text-[10px] font-semibold text-grey-muted'>
+                                    Starts {format(new Date(row.startDate), 'dd MMM')}
+                                </span>
+                                <span className='px-1.5 py-0.2 rounded-md bg-emerald-50 text-emerald-800 text-[10px] font-extrabold border border-emerald-200'>
+                                    {servedDays}/{durationDays} Served
+                                </span>
+                            </div>
                         </div>
                     )
                 },
@@ -217,13 +233,19 @@ export default function OrdersPage() {
                 header: 'Order Status',
                 cell: (info) => {
                     const status = info.getValue()
-                    const isConfirmed = status === 'CONFIRMED'
+                    const isConfirmed = status === 'CONFIRMED' || status === 'ACCEPTED'
+                    const isActive = status === 'ACTIVE'
+                    const isCompleted = status === 'COMPLETED'
                     const isCancelled = status === 'CANCELLED'
 
                     return (
                         <span
                             className={`admin-badge ${
                                 isConfirmed
+                                    ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                                    : isActive
+                                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                    : isCompleted
                                     ? 'bg-green-50 text-green-700 border border-green-200'
                                     : isCancelled
                                     ? 'bg-red-50 text-red-700 border border-red-200'
@@ -232,7 +254,7 @@ export default function OrdersPage() {
                         >
                             <span
                                 className={`w-1.5 h-1.5 rounded-full ${
-                                    isConfirmed ? 'bg-green-600' : isCancelled ? 'bg-red-600' : 'bg-amber-500'
+                                    isConfirmed ? 'bg-blue-600' : isActive ? 'bg-emerald-600' : isCompleted ? 'bg-green-600' : isCancelled ? 'bg-red-600' : 'bg-amber-500'
                                 }`}
                             />
                             {status}

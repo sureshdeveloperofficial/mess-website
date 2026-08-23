@@ -422,6 +422,13 @@ function GetStartedContent() {
             return
         }
 
+        if (!session?.user) {
+            toast.error('Please sign in or create an account to place your order')
+            const currentUrl = typeof window !== 'undefined' ? window.location.pathname + window.location.search : '/get-started'
+            router.push(`/signin?callbackUrl=${encodeURIComponent(currentUrl)}`)
+            return
+        }
+
         if (!formData.customerName.trim()) {
             toast.error('Please enter your Full Name')
             return
@@ -497,8 +504,22 @@ function GetStartedContent() {
                 selectionsJson: {
                     chosenMealSlots,
                     dailyDishes: selections,
-                    weekdayPlan: selectedWeekdayPlan ? { id: selectedWeekdayPlan.id, name: selectedWeekdayPlan.name, price: selectedWeekdayPlan.price } : null,
-                    sundayPlan: selectedSundayPlan ? { id: selectedSundayPlan.id, name: selectedSundayPlan.name, price: selectedSundayPlan.price } : null,
+                    weekdayPlan: selectedWeekdayPlan ? {
+                        id: selectedWeekdayPlan.id,
+                        name: selectedWeekdayPlan.name,
+                        price: selectedWeekdayPlan.price,
+                        days: selectedWeekdayPlan.days || 26,
+                        servingCount: selectedWeekdayPlan.servingCount || 1,
+                        availableDays: selectedWeekdayPlan.availableDays || ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+                    } : null,
+                    sundayPlan: selectedSundayPlan ? {
+                        id: selectedSundayPlan.id,
+                        name: selectedSundayPlan.name,
+                        price: selectedSundayPlan.price,
+                        days: selectedSundayPlan.days || 4,
+                        servingCount: selectedSundayPlan.servingCount || 1,
+                        availableDays: selectedSundayPlan.availableDays || ['Sunday']
+                    } : null,
                 },
                 includeSundays: planServingDays.includes('Sunday'),
                 sundaysCount: selectedSundayPlanId ? 4 : 0,
@@ -1137,19 +1158,30 @@ function GetStartedContent() {
 
                                 {/* Auth Pre-fill Banner */}
                                 {session?.user ? (
-                                    <div className='p-3.5 rounded-2xl bg-primary/10 border border-primary/30 flex items-center gap-3 text-xs font-semibold text-grey-dark'>
-                                        <Icon icon='solar:user-check-bold' className='text-base text-primary shrink-0' />
-                                        <span>Logged in as <strong>{session.user.name || session.user.email}</strong>. Contact details pre-filled.</span>
+                                    <div className='p-3.5 rounded-2xl bg-primary/10 border border-primary/30 flex items-center justify-between gap-3 text-xs font-semibold text-grey-dark'>
+                                        <div className='flex items-center gap-2.5'>
+                                            <Icon icon='solar:user-check-bold' className='text-base text-primary shrink-0' />
+                                            <span>Logged in as <strong>{session.user.name || session.user.email}</strong>. Contact details pre-filled.</span>
+                                        </div>
+                                        <span className='text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200'>
+                                            Verified Account
+                                        </span>
                                     </div>
                                 ) : (
-                                    <div className='p-3.5 rounded-2xl bg-grey/5 border border-grey/10 flex items-center justify-between gap-3 text-xs'>
-                                        <span className='text-grey-muted font-normal'>Ordering as guest. Have an account?</span>
+                                    <div className='p-4 rounded-2xl bg-amber-50 border border-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs'>
+                                        <div className='flex items-center gap-2 text-amber-900'>
+                                            <Icon icon='solar:lock-bold' className='text-base text-amber-600 shrink-0' />
+                                            <span><strong>Account Required:</strong> Please sign in to confirm and place your order.</span>
+                                        </div>
                                         <button
                                             type='button'
-                                            onClick={() => router.push('/login')}
-                                            className='font-semibold text-primary hover:underline'
+                                            onClick={() => {
+                                                const currentUrl = typeof window !== 'undefined' ? window.location.pathname + window.location.search : '/get-started'
+                                                router.push(`/signin?callbackUrl=${encodeURIComponent(currentUrl)}`)
+                                            }}
+                                            className='px-3.5 py-1.5 rounded-xl bg-primary hover:bg-primary/90 text-grey-dark font-bold text-xs shrink-0 shadow-xs cursor-pointer'
                                         >
-                                            Sign In
+                                            Sign In / Register
                                         </button>
                                     </div>
                                 )}
@@ -1389,6 +1421,9 @@ function GetStartedContent() {
                                                         <span className='px-1.5 py-0.5 rounded bg-primary/20 text-grey-dark font-semibold'>
                                                             {selectedWeekdayPlan.servingCount} Time / Day
                                                         </span>
+                                                        <span className='px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-800 font-bold border border-emerald-200'>
+                                                            {selectedWeekdayPlan.days || 26} Days Plan
+                                                        </span>
                                                         <span className='px-1.5 py-0.5 rounded bg-grey/10 text-grey-dark'>
                                                             {chosenMealSlots.map((s) => s.toUpperCase()).join(' + ')}
                                                         </span>
@@ -1625,12 +1660,19 @@ function GetStartedContent() {
                                 <button
                                     type='submit'
                                     disabled={isSubmitting || !selectedPlan}
-                                    className='w-full py-3.5 rounded-xl bg-primary hover:bg-primary/90 text-grey-dark font-bold text-sm flex items-center justify-center gap-2 shadow-sm hover:shadow-md transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
+                                    className={`w-full py-3.5 rounded-xl text-grey-dark font-bold text-sm flex items-center justify-center gap-2 shadow-sm hover:shadow-md transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
+                                        session?.user ? 'bg-primary hover:bg-primary/90' : 'bg-amber-400 hover:bg-amber-500'
+                                    }`}
                                 >
                                     {isSubmitting ? (
                                         <>
                                             <div className='w-4 h-4 border-2 border-grey-dark border-t-transparent rounded-full animate-spin' />
                                             <span>Processing Order...</span>
+                                        </>
+                                    ) : !session?.user ? (
+                                        <>
+                                            <Icon icon='solar:lock-bold' className='text-base' />
+                                            <span>Sign In to Place Order</span>
                                         </>
                                     ) : (
                                         <>

@@ -17,12 +17,14 @@ type Order = {
     paymentStatus: string
     createdAt: string
     startDate: string
-    totalDays: number
+    totalDays?: number
     activeDates: string[]
+    servedDates?: string[]
     selectionsJson: any
     selectedMenus: {
         id: string
-        date: string
+        name?: string
+        date?: string
         foodItems: {
             id: string
             name: string
@@ -160,8 +162,15 @@ export default function MyOrdersPage() {
                         >
                             {orders.map((order) => {
                                 const activeDates = (order.activeDates || []) as string[]
+                                const servedDates = (order.servedDates || []) as string[]
                                 const today = new Date(new Date().setHours(0,0,0,0))
-                                const remainingDays = activeDates.filter(d => new Date(d) >= today).length
+                                const weekdayPlan = order.selectionsJson?.weekdayPlan
+                                const sundayPlan = order.selectionsJson?.sundayPlan
+                                const chosenSlots = order.selectionsJson?.chosenMealSlots || []
+                                const totalDays = activeDates.length || (weekdayPlan?.days || 26) + (sundayPlan?.days || ((order as any).includeSundays ? 4 : 0))
+                                const servedCount = servedDates.length
+                                const servedPercent = Math.min(100, Math.round((servedCount / (totalDays || 1)) * 100))
+                                const remainingDays = activeDates.filter(d => new Date(d) >= today && !servedDates.includes(d)).length
                                 
                                 return (
                                     <div
@@ -170,49 +179,109 @@ export default function MyOrdersPage() {
                                     >
                                         {/* Order Status Accent */}
                                         <div className={`absolute left-0 top-0 bottom-0 w-2 ${
-                                            order.status === 'COMPLETED' ? 'bg-green-500' : 'bg-primary'
+                                            order.status === 'COMPLETED' ? 'bg-emerald-500' : order.status === 'ACTIVE' ? 'bg-emerald-600' : order.status === 'CONFIRMED' || order.status === 'ACCEPTED' ? 'bg-blue-500' : 'bg-primary'
                                         }`} />
                                         
                                         <div className="p-8 md:p-10 flex flex-col lg:flex-row gap-10">
-                                            <div className="lg:w-1/3 space-y-8">
+                                            <div className="lg:w-1/3 space-y-6">
                                                 <div className="flex items-center justify-between">
                                                     <div className="flex flex-col">
                                                         <span className="text-[10px] font-black text-grey/30 uppercase tracking-widest mb-1">Order ID</span>
-                                                        <span className="text-sm font-black text-grey/60 uppercase">{order.id.substring(0, 10)}</span>
+                                                        <span className="text-sm font-black text-grey/60 uppercase">#{order.id.slice(-6).toUpperCase()}</span>
                                                     </div>
-                                                    <div className={`px-5 py-2 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-sm ${
-                                                        order.status === 'COMPLETED' ? 'bg-green-50 text-green-600' : 'bg-primary/10 text-primary'
+                                                    <div className={`px-4 py-1.5 rounded-xl font-extrabold text-[11px] uppercase tracking-wider shadow-xs ${
+                                                        order.status === 'COMPLETED'
+                                                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                                            : order.status === 'ACTIVE'
+                                                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                                            : order.status === 'CONFIRMED' || order.status === 'ACCEPTED'
+                                                            ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                                                            : 'bg-amber-50 text-amber-700 border border-amber-200'
                                                     }`}>
-                                                        {order.status}
+                                                        {order.status === 'CONFIRMED' || order.status === 'ACCEPTED'
+                                                            ? 'Order Accepted'
+                                                            : order.status === 'ACTIVE'
+                                                            ? 'Active Delivering'
+                                                            : order.status === 'PENDING'
+                                                            ? 'Pending Review'
+                                                            : order.status}
                                                     </div>
                                                 </div>
 
-                                                <div>
-                                                    <h3 className="text-4xl font-black text-grey uppercase tracking-tight italic leading-none">{activeDates.length} Days</h3>
-                                                    <p className="text-[10px] font-bold text-grey/40 uppercase tracking-widest mt-2 flex items-center gap-2">
-                                                        <Icon icon="solar:calendar-bold-duotone" className="text-primary text-sm" />
-                                                        {remainingDays} Days remaining
+                                                {/* Plan Titles */}
+                                                <div className="space-y-2">
+                                                    <div className="flex flex-wrap gap-1.5">
+                                                        {weekdayPlan ? (
+                                                            <span className="px-2.5 py-1 bg-amber-50 border border-amber-200 text-amber-900 rounded-lg text-xs font-extrabold">
+                                                                {weekdayPlan.name}
+                                                            </span>
+                                                        ) : order.selectedMenus && order.selectedMenus.length > 0 ? (
+                                                            order.selectedMenus.map(m => (
+                                                                <span key={m.id} className="px-2.5 py-1 bg-grey/5 border border-grey/10 text-grey-dark rounded-lg text-xs font-bold">
+                                                                    {m.name || 'Meal Plan'}
+                                                                </span>
+                                                            ))
+                                                        ) : (
+                                                            <span className="text-xs font-bold text-grey-dark">Standard Plan</span>
+                                                        )}
+                                                        {sundayPlan && (
+                                                            <span className="px-2.5 py-1 bg-purple-50 border border-purple-200 text-purple-900 rounded-lg text-xs font-extrabold">
+                                                                + Sunday Feast
+                                                            </span>
+                                                        )}
+                                                    </div>
+
+                                                    {chosenSlots.length > 0 && (
+                                                        <p className="text-[11px] text-grey-muted font-semibold flex items-center gap-1">
+                                                            <span>Slots:</span>
+                                                            <span className="uppercase text-grey-dark font-bold">{chosenSlots.join(' + ')}</span>
+                                                        </p>
+                                                    )}
+                                                </div>
+
+                                                {/* Delivery Progress Bar */}
+                                                <div className="p-4 bg-grey/5 rounded-2xl border border-grey/10 space-y-2">
+                                                    <div className="flex items-center justify-between text-xs font-bold">
+                                                        <span className="text-grey-dark flex items-center gap-1">
+                                                            <Icon icon="solar:box-minimalistic-bold-duotone" className="text-primary text-sm" />
+                                                            <span>Delivery Progress</span>
+                                                        </span>
+                                                        <span className="text-emerald-700">{servedCount}/{totalDays} Days ({servedPercent}%)</span>
+                                                    </div>
+                                                    <div className="w-full bg-grey/15 h-2 rounded-full overflow-hidden">
+                                                        <div
+                                                            className="bg-primary h-full rounded-full transition-all duration-300"
+                                                            style={{ width: `${servedPercent}%` }}
+                                                        />
+                                                    </div>
+                                                    <p className="text-[10px] text-grey-muted font-medium">
+                                                        {remainingDays > 0 ? `${remainingDays} upcoming delivery days remaining` : 'All scheduled meals delivered!'}
                                                     </p>
                                                 </div>
 
-                                                <div className="grid grid-cols-2 gap-4">
-                                                    <div className="p-5 bg-grey/5 rounded-3xl border border-grey/5">
-                                                        <p className="text-[10px] font-black text-grey/20 uppercase tracking-widest mb-1">Payment</p>
-                                                        <p className="text-xs font-black text-grey uppercase flex items-center gap-1">
-                                                            <span className={`w-1.5 h-1.5 rounded-full ${order.paymentStatus === 'PAID' ? 'bg-green-500' : 'bg-orange-500'}`} />
-                                                            {order.paymentStatus}
+                                                <div className="grid grid-cols-2 gap-3">
+                                                    <div className="p-3.5 bg-grey/5 rounded-2xl border border-grey/5">
+                                                        <p className="text-[10px] font-bold text-grey-muted uppercase tracking-wider mb-0.5">Payment</p>
+                                                        <p className="text-xs font-extrabold text-grey-dark uppercase flex items-center gap-1">
+                                                            <span className={`w-1.5 h-1.5 rounded-full ${order.paymentStatus === 'PAID' ? 'bg-emerald-500' : 'bg-amber-500'}`} />
+                                                            {order.paymentStatus || 'PENDING'}
                                                         </p>
                                                     </div>
-                                                    <div className="p-5 bg-primary/5 rounded-3xl border border-primary/5">
-                                                        <p className="text-[10px] font-black text-primary/30 uppercase tracking-widest mb-1">Invested</p>
-                                                        <p className="text-sm font-black text-primary uppercase leading-none">AED {order.totalAmount}</p>
+                                                    <div className="p-3.5 bg-primary/10 rounded-2xl border border-primary/20">
+                                                        <p className="text-[10px] font-bold text-grey-dark uppercase tracking-wider mb-0.5">Total Paid</p>
+                                                        <p className="text-xs font-black text-grey-dark uppercase">AED {order.totalAmount}</p>
                                                     </div>
                                                 </div>
                                             </div>
 
                                             <div className="lg:w-2/3 border-t lg:border-t-0 lg:border-l border-grey/5 pt-10 lg:pt-0 lg:pl-10">
-                                                <div className="flex items-center justify-between mb-8">
-                                                    <p className="text-[10px] font-black text-grey/30 uppercase tracking-[0.2em]">Food Schedule Snapshot</p>
+                                                <div className="flex items-center justify-between mb-6">
+                                                    <div>
+                                                        <p className="text-[11px] font-extrabold text-grey-dark uppercase tracking-wider flex items-center gap-1.5">
+                                                            <Icon icon="solar:calendar-mark-bold-duotone" className="text-primary text-base" />
+                                                            <span>Upcoming &amp; Served Meals Schedule</span>
+                                                        </p>
+                                                    </div>
                                                     <div className="flex items-center gap-4">
                                                         <button 
                                                             onClick={() => downloadInvoice(order.id)}
@@ -226,43 +295,69 @@ export default function MyOrdersPage() {
                                                                 <Icon icon="solar:download-square-bold" className="text-base" />
                                                             )}
                                                         </button>
-                                                        <Link href={`/my-orders/${order.id}`} className="text-[10px] font-black text-primary uppercase tracking-widest hover:underline flex items-center gap-1 group/link">
-                                                            View Full details
-                                                            <Icon icon="solar:arrow-right-up-bold" className="group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform" />
+                                                        <Link href={`/my-orders/${order.id}`} className="text-[11px] font-extrabold text-primary hover:underline flex items-center gap-1 group/link">
+                                                            <span>View Full Calendar</span>
+                                                            <Icon icon="solar:arrow-right-up-bold" className="text-xs group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform" />
                                                         </Link>
                                                     </div>
                                                 </div>
 
-                                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                                                     {activeDates.slice(0, 6).map((dateStr, dIdx) => {
                                                         const date = new Date(dateStr)
+                                                        const isValid = !isNaN(date.getTime())
                                                         const items = getItemsForDate(order, dateStr)
+                                                        const isServed = servedDates.includes(dateStr)
                                                         
                                                         return (
-                                                            <div key={dIdx} className="p-5 bg-white border border-grey/5 shadow-sm rounded-2xl group/item hover:bg-primary/5 hover:border-primary/10 transition-all">
-                                                                <div className="flex items-center justify-between mb-3">
-                                                                    <p className="text-[10px] font-black text-primary uppercase underline underline-offset-4 decoration-primary/20">
-                                                                        {date.toLocaleDateString('en-US', { weekday: 'short' })}
-                                                                    </p>
-                                                                    <p className="text-[10px] font-bold text-grey/30 uppercase">
-                                                                        {date.toLocaleDateString('en-US', { day: 'numeric', month: 'short' })}
-                                                                    </p>
+                                                            <div key={dIdx} className={`p-4 border rounded-2xl transition-all ${
+                                                                isServed
+                                                                    ? 'bg-emerald-50/70 border-emerald-200'
+                                                                    : 'bg-white border-grey/10 hover:border-primary/30'
+                                                            }`}>
+                                                                <div className="flex items-center justify-between mb-2">
+                                                                    <div>
+                                                                        <span className="text-[10px] font-black text-primary uppercase block">
+                                                                            {isValid ? date.toLocaleDateString('en-US', { weekday: 'short' }) : 'Day'}
+                                                                        </span>
+                                                                        <span className="text-xs font-bold text-grey-dark">
+                                                                            {isValid ? date.toLocaleDateString('en-US', { day: 'numeric', month: 'short' }) : dateStr}
+                                                                        </span>
+                                                                    </div>
+                                                                    <span className={`px-2 py-0.5 rounded-full text-[9px] font-extrabold flex items-center gap-1 ${
+                                                                        isServed
+                                                                            ? 'bg-emerald-600 text-white'
+                                                                            : 'bg-grey/10 text-grey-muted'
+                                                                    }`}>
+                                                                        {isServed ? (
+                                                                            <>
+                                                                                <Icon icon="solar:check-read-bold" className="text-[10px]" />
+                                                                                <span>Served</span>
+                                                                            </>
+                                                                        ) : (
+                                                                            <span>Scheduled</span>
+                                                                        )}
+                                                                    </span>
                                                                 </div>
-                                                                <div className="space-y-2">
-                                                                    {items.map((item, fIdx) => (
-                                                                        <p key={fIdx} className="text-[10px] font-bold text-grey/60 line-clamp-1 flex items-center gap-2">
-                                                                            <div className="w-1.5 h-1.5 rounded-full bg-primary/20 shrink-0" />
-                                                                            {item.name}
-                                                                        </p>
-                                                                    ))}
+                                                                <div className="space-y-1 pt-1 border-t border-grey/10">
+                                                                    {items.length > 0 ? (
+                                                                        items.map((item, fIdx) => (
+                                                                            <p key={fIdx} className="text-[10px] font-medium text-grey-dark truncate flex items-center gap-1.5">
+                                                                                <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                                                                                <span>{item.name}</span>
+                                                                            </p>
+                                                                        ))
+                                                                    ) : (
+                                                                        <p className="text-[10px] text-grey-muted italic">Chef Daily Selection</p>
+                                                                    )}
                                                                 </div>
                                                             </div>
                                                         )
                                                     })}
                                                     {activeDates.length > 6 && (
-                                                        <Link href={`/my-orders/${order.id}`} className="p-5 bg-grey/5 rounded-2xl flex flex-col items-center justify-center gap-2 text-[10px] font-black text-grey/30 uppercase tracking-widest border border-dashed border-grey/20 hover:bg-grey/10 transition-all hover:text-grey/50">
-                                                            <Icon icon="solar:add-circle-bold-duotone" className="text-xl" />
-                                                            +{activeDates.length - 6} Days More
+                                                        <Link href={`/my-orders/${order.id}`} className="p-4 bg-grey/5 rounded-2xl flex flex-col items-center justify-center gap-1.5 text-[10px] font-extrabold text-grey-dark uppercase tracking-wider border border-dashed border-grey/20 hover:bg-white hover:border-primary/40 transition-all">
+                                                            <Icon icon="solar:calendar-add-bold-duotone" className="text-xl text-primary" />
+                                                            <span>+{activeDates.length - 6} More Days</span>
                                                         </Link>
                                                     )}
                                                 </div>

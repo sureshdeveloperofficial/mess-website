@@ -116,6 +116,7 @@ model Order {
   brunchLunchLocation String?
   dinnerLocation      String?
   activeDates         String[]   @default([])
+  servedDates         String[]   @default([])
   customerId          String
   includeSundays      Boolean    @default(true)
   sundaysCount        Int        @default(0)

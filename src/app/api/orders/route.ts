@@ -29,6 +29,11 @@ export async function GET() {
 export async function POST(req: Request) {
     try {
         const session = await getServerSession(authOptions)
+        
+        if (!session?.user?.email) {
+            return NextResponse.json({ error: 'Please sign in or create an account to place an order' }, { status: 401 })
+        }
+
         const body = await req.json()
         const {
             customerName,
@@ -56,7 +61,65 @@ export async function POST(req: Request) {
         }
 
         const orderRemarks = body.orderRemarks || body.specialNotes || null
-        const cleanEmail = customerEmail && customerEmail.trim() !== '' ? customerEmail.trim() : null
+        const cleanEmail = session.user.email || (customerEmail && customerEmail.trim() !== '' ? customerEmail.trim() : null)
+
+        // Dynamic target serving days calculation from selected FoodMenu records in DB
+        let targetDaysCount = 0
+        let effectiveServingDays: string[] = []
+
+        if (Array.isArray(menuIds) && menuIds.length > 0) {
+            const selectedMenuRecords = await prisma.foodMenu.findMany({
+                where: { id: { in: menuIds } }
+            })
+            
+            selectedMenuRecords.forEach((m) => {
+                targetDaysCount += (m.days || 26)
+                if (Array.isArray(m.availableDays) && m.availableDays.length > 0) {
+                    effectiveServingDays = Array.from(new Set([...effectiveServingDays, ...m.availableDays]))
+                }
+            })
+        }
+
+        // Fallback targetDaysCount if menu records didn't provide days
+        if (targetDaysCount <= 0) {
+            const isSundayOnly = Array.isArray(activeDates) && activeDates.length === 1 && activeDates[0] === 'Sunday'
+            if (isSundayOnly) {
+                targetDaysCount = 4
+            } else if (includeSundays) {
+                targetDaysCount = 30 // 26 weekdays + 4 sundays
+            } else {
+                targetDaysCount = 26 // Mon-Sat 26 days
+            }
+        }
+
+        const dayNameMap = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+        if (effectiveServingDays.length === 0) {
+            effectiveServingDays = Array.isArray(activeDates) && activeDates.length > 0 && activeDates.some((d: string) => dayNameMap.includes(d))
+                ? activeDates
+                : ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', ...(includeSundays ? ['Sunday'] : [])]
+        }
+
+        // Generate dynamic calendar dates (YYYY-MM-DD) from startDate matching plan serving days
+        const rawStartDate = startDate ? new Date(startDate) : new Date()
+        const generatedCalendarDates: string[] = []
+        const currentCal = new Date(rawStartDate.getFullYear(), rawStartDate.getMonth(), rawStartDate.getDate())
+        let loopLimit = 0
+
+        while (generatedCalendarDates.length < targetDaysCount && loopLimit < 120) {
+            const dayOfWeek = dayNameMap[currentCal.getDay()]
+            if (effectiveServingDays.includes(dayOfWeek)) {
+                const y = currentCal.getFullYear()
+                const m = String(currentCal.getMonth() + 1).padStart(2, '0')
+                const d = String(currentCal.getDate()).padStart(2, '0')
+                generatedCalendarDates.push(`${y}-${m}-${d}`)
+            }
+            currentCal.setDate(currentCal.getDate() + 1)
+            loopLimit++
+        }
+
+        const finalActiveDates = Array.isArray(activeDates) && activeDates.length > 0 && activeDates[0].includes('-')
+            ? activeDates
+            : generatedCalendarDates
 
         const order = await prisma.$transaction(async (tx) => {
             let customer;
@@ -93,13 +156,13 @@ export async function POST(req: Request) {
                 })
             }
 
-            return tx.order.create({
+            return (tx.order as any).create({
                 data: {
                     customerId: customer.id,
                     address: address || `${buildingName || ''} ${flatRoomNumber || ''}`.trim() || 'Dubai, UAE',
                     buildingName: buildingName || null,
                     flatRoomNumber: flatRoomNumber || null,
-                    startDate: new Date(startDate || new Date()),
+                    startDate: rawStartDate,
                     deliveryLocation: deliveryLocation || 'Inside my room',
                     brunchLunchLocation: brunchLunchLocation || null,
                     dinnerLocation: dinnerLocation || null,
@@ -109,11 +172,11 @@ export async function POST(req: Request) {
                     selectionsJson: selectionsJson || {},
                     includeSundays: includeSundays ?? true,
                     sundaysCount: sundaysCount || 0,
-                    activeDates: activeDates || [],
+                    activeDates: finalActiveDates,
                     selectedMenus: {
                         connect: (menuIds || []).map((id: string) => ({ id }))
                     }
-                },
+                } as any,
                 include: {
                     customer: true,
                     selectedMenus: true

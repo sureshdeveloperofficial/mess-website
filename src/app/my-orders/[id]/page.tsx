@@ -30,7 +30,8 @@ type Order = {
     createdAt: string
     startDate: string
     activeDates: string[]
-    selectionsJson: Record<string, Record<string, string>>
+    servedDates?: string[]
+    selectionsJson: any
     selectedMenus: FoodMenu[]
     address: string
     buildingName: string | null
@@ -75,10 +76,13 @@ export default function OrderDetailsPage() {
     }
 
     const activeDates = order.activeDates || []
+    const servedDates = order.servedDates || []
     const startDate = activeDates.length > 0 ? new Date(activeDates[0]) : null
     const endDate = activeDates.length > 0 ? new Date(activeDates[activeDates.length - 1]) : null
     const today = new Date(new Date().setHours(0,0,0,0))
-    const remainingDays = activeDates.filter(d => new Date(d) >= today).length
+    const servedCount = servedDates.length
+    const totalDays = activeDates.length || (order.selectionsJson?.weekdayPlan?.days || 26) + (order.selectionsJson?.sundayPlan?.days || ((order as any).includeSundays ? 4 : 0))
+    const remainingDays = activeDates.filter(d => new Date(d) >= today && !servedDates.includes(d)).length
 
     const formatDate = (date: Date | null) => {
         if (!date) return 'N/A'
@@ -88,11 +92,11 @@ export default function OrderDetailsPage() {
     const getItemsForDate = (dateStr: string) => {
         const date = new Date(dateStr)
         const dayName = date.toLocaleDateString('en-US', { weekday: 'long' })
-        const selections = order.selectionsJson || {}
+        const selections = order.selectionsJson?.dailyDishes || order.selectionsJson || {}
         const items: FoodItem[] = []
 
         Object.keys(selections).forEach(menuId => {
-            const itemId = selections[menuId][dayName]
+            const itemId = selections[menuId]?.[dayName]
             if (itemId) {
                 const menu = order.selectedMenus.find(m => m.id === menuId)
                 const foodItem = menu?.foodItems.find(fi => fi.id === itemId)
@@ -122,13 +126,25 @@ export default function OrderDetailsPage() {
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div>
                         <h1 className="text-4xl lg:text-5xl font-black text-grey uppercase tracking-tight italic mb-2">Order Details</h1>
-                        <p className="text-[10px] font-black text-grey/40 uppercase tracking-[0.2em]">Full Schedule & Food Items</p>
+                        <p className="text-[10px] font-black text-grey/40 uppercase tracking-[0.2em]">Live Meal Delivery &amp; Schedule Breakdown</p>
                     </div>
                     <div className="flex items-center gap-4">
-                        <div className={`px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest ${
-                            order.status === 'COMPLETED' ? 'bg-green-50 text-green-600' : 'bg-primary/10 text-primary'
+                        <div className={`px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xs ${
+                            order.status === 'COMPLETED'
+                                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                : order.status === 'ACTIVE'
+                                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                : order.status === 'CONFIRMED' || order.status === 'ACCEPTED'
+                                ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                                : 'bg-primary/10 text-primary'
                         }`}>
-                            {order.status}
+                            {order.status === 'CONFIRMED' || order.status === 'ACCEPTED'
+                                ? 'Order Accepted'
+                                : order.status === 'ACTIVE'
+                                ? 'Active Delivering'
+                                : order.status === 'PENDING'
+                                ? 'Pending Review'
+                                : order.status}
                         </div>
                     </div>
                 </div>
@@ -141,15 +157,15 @@ export default function OrderDetailsPage() {
                     <p className="text-lg font-black text-grey uppercase italic">{formatDate(startDate)}</p>
                 </div>
                 <div className="bg-white p-6 rounded-[2rem] border border-grey/5 shadow-sm">
-                    <p className="text-[10px] font-black text-red-400/50 uppercase tracking-widest mb-2">Expired Date</p>
-                    <p className="text-lg font-black text-grey uppercase italic">{formatDate(endDate)}</p>
+                    <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-2">Delivered</p>
+                    <p className="text-lg font-black text-emerald-700 uppercase italic">{servedCount} of {totalDays} Days</p>
                 </div>
                 <div className="bg-white p-6 rounded-[2rem] border border-grey/5 shadow-sm border-l-4 border-l-primary">
-                    <p className="text-[10px] font-black text-primary/50 uppercase tracking-widest mb-2">How Many Left</p>
+                    <p className="text-[10px] font-black text-primary/50 uppercase tracking-widest mb-2">Remaining Meals</p>
                     <p className="text-2xl font-black text-primary uppercase italic">{remainingDays} Days</p>
                 </div>
                 <div className="bg-grey p-6 rounded-[2rem] text-white">
-                    <p className="text-[10px] font-black text-white/30 uppercase tracking-widest mb-2">Total Invested</p>
+                    <p className="text-[10px] font-black text-white/30 uppercase tracking-widest mb-2">Total Paid</p>
                     <p className="text-xl font-black text-primary italic leading-none">AED {order.totalAmount}</p>
                 </div>
             </div>
@@ -159,35 +175,57 @@ export default function OrderDetailsPage() {
                 <div className="bg-grey/2 p-6 border-b border-grey/5 flex items-center justify-between">
                     <h2 className="text-lg font-black text-grey uppercase tracking-wider flex items-center gap-3">
                         <Icon icon="solar:calendar-date-bold-duotone" className="text-primary text-xl" />
-                        Complete Food Schedule
+                        Complete Delivery &amp; Food Schedule
                     </h2>
-                    <span className="text-[10px] font-black text-grey/30 uppercase tracking-widest">{activeDates.length} Days Plan</span>
+                    <span className="text-xs font-extrabold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-xl">
+                        {servedCount} Served • {remainingDays} Pending
+                    </span>
                 </div>
                 <div className="overflow-x-auto">
                     <table className="w-full text-left">
                         <thead>
                             <tr className="bg-grey/1">
-                                <th className="px-8 py-5 text-[10px] font-black text-grey/30 uppercase tracking-[0.2em] w-40">Date / Day</th>
-                                <th className="px-8 py-5 text-[10px] font-black text-grey/30 uppercase tracking-[0.2em]">Menu Items & Selections</th>
+                                <th className="px-8 py-5 text-[10px] font-black text-grey/30 uppercase tracking-[0.2em] w-48">Date / Day</th>
+                                <th className="px-8 py-5 text-[10px] font-black text-grey/30 uppercase tracking-[0.2em]">Delivery Status</th>
+                                <th className="px-8 py-5 text-[10px] font-black text-grey/30 uppercase tracking-[0.2em]">Menu Items &amp; Selections</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-grey/5">
                             {activeDates.map((dateStr, idx) => {
                                 const date = new Date(dateStr)
+                                const isValid = !isNaN(date.getTime())
                                 const items = getItemsForDate(dateStr)
-                                const isPast = date < today
+                                const isServed = servedDates.includes(dateStr)
                                 
                                 return (
-                                    <tr key={idx} className={`group hover:bg-primary/[0.02] transition-colors ${isPast ? 'opacity-40 grayscale' : ''}`}>
+                                    <tr key={idx} className={`group hover:bg-primary/[0.02] transition-colors ${isServed ? 'bg-emerald-50/20' : ''}`}>
                                         <td className="px-8 py-5">
                                             <div className="flex flex-col">
                                                 <span className="text-base font-black text-grey uppercase tracking-tight leading-none mb-1">
-                                                    {date.toLocaleDateString('en-US', { day: 'numeric', month: 'short' })}
+                                                    {isValid ? date.toLocaleDateString('en-US', { day: 'numeric', month: 'short' }) : dateStr}
                                                 </span>
                                                 <span className="text-[9px] font-bold text-primary uppercase tracking-widest">
-                                                    {date.toLocaleDateString('en-US', { weekday: 'long' })}
+                                                    {isValid ? date.toLocaleDateString('en-US', { weekday: 'long' }) : `Day ${idx + 1}`}
                                                 </span>
                                             </div>
+                                        </td>
+                                        <td className="px-8 py-5">
+                                            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-extrabold ${
+                                                isServed
+                                                    ? 'bg-emerald-600 text-white shadow-2xs'
+                                                    : 'bg-grey/10 text-grey-muted'
+                                            }`}>
+                                                {isServed ? (
+                                                    <>
+                                                        <Icon icon="solar:check-read-bold" className="text-xs" />
+                                                        <span>Delivered &amp; Served</span>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <span>Scheduled / Upcoming</span>
+                                                    </>
+                                                )}
+                                            </span>
                                         </td>
                                         <td className="px-8 py-5">
                                             <div className="flex flex-wrap gap-2">
@@ -201,9 +239,9 @@ export default function OrderDetailsPage() {
                                                     </div>
                                                 ))}
                                                 {items.length === 0 && (
-                                                    <div className="flex items-center gap-2 text-grey/20">
-                                                        <Icon icon="solar:info-circle-bold" className="text-xs" />
-                                                        <span className="text-[10px] font-bold uppercase italic">No items selected</span>
+                                                    <div className="flex items-center gap-2 text-grey/40">
+                                                        <Icon icon="solar:chef-hat-bold-duotone" className="text-xs text-primary" />
+                                                        <span className="text-[10px] font-bold uppercase italic">Chef Daily Selection</span>
                                                     </div>
                                                 )}
                                             </div>
