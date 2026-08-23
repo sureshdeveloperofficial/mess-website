@@ -650,12 +650,17 @@ function GetStartedContent() {
                                         {/* SECTION 1: Weekday Base Plans (Mon - Sat) */}
                                         <div className='space-y-3'>
                                             <div className='flex items-center justify-between'>
-                                                <span className='text-xs font-bold uppercase tracking-wider text-grey-dark flex items-center gap-1.5'>
-                                                    <span>1. Base Weekday Plan (Monday – Saturday)</span>
-                                                    <span className='px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 text-[10px] font-semibold border border-blue-200'>
-                                                        6 Days/Wk
+                                                <div>
+                                                    <span className='text-xs font-bold uppercase tracking-wider text-grey-dark flex items-center gap-1.5'>
+                                                        <span>1. Base Weekday Plan (Monday – Saturday)</span>
+                                                        <span className='px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 text-[10px] font-semibold border border-blue-200'>
+                                                            6 Days/Wk
+                                                        </span>
                                                     </span>
-                                                </span>
+                                                    <p className='text-[11px] text-grey-muted mt-0.5'>
+                                                        Your chosen plan is selected below. Click any card to upgrade or switch anytime:
+                                                    </p>
+                                                </div>
                                             </div>
 
                                             <div className='grid grid-cols-1 sm:grid-cols-3 gap-4'>
@@ -670,19 +675,20 @@ function GetStartedContent() {
                                                             onClick={() => setSelectedWeekdayPlanId(plan.id)}
                                                             className={`p-5 rounded-2xl text-left transition-all duration-200 relative cursor-pointer flex flex-col justify-between border ${
                                                                 isSelected
-                                                                    ? 'bg-primary/10 border-2 border-primary shadow-sm scale-[1.01]'
+                                                                    ? 'bg-primary/10 border-2 border-primary ring-2 ring-primary/20 shadow-md scale-[1.01]'
                                                                     : 'bg-grey/5 border-grey/10 hover:border-primary/40 hover:bg-white'
                                                             }`}
                                                         >
                                                             {isSelected && (
-                                                                <div className='absolute top-3 right-3 w-5 h-5 rounded-full bg-primary text-grey-dark flex items-center justify-center shadow-xs'>
+                                                                <div className='absolute top-3 right-3 flex items-center gap-1 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-primary text-grey-dark shadow-xs'>
                                                                     <Icon icon='solar:check-read-bold' className='text-xs font-bold' />
+                                                                    <span>Active Choice</span>
                                                                 </div>
                                                             )}
 
                                                             <div>
-                                                                <div className='flex items-center gap-1.5 flex-wrap mb-2'>
-                                                                    <span className='text-[11px] font-semibold px-2 py-0.5 rounded-md bg-white border border-grey/10 text-grey-dark inline-block'>
+                                                                <div className='flex items-center gap-1.5 flex-wrap mb-2.5'>
+                                                                    <span className={`text-[11px] font-bold px-2 py-0.5 rounded-md border inline-block ${isSelected ? 'bg-primary/20 border-primary/30 text-grey-dark' : 'bg-white border-grey/10 text-grey-dark'}`}>
                                                                         {planServing} Time Daily
                                                                     </span>
                                                                     {planServing === 2 && (
@@ -695,15 +701,15 @@ function GetStartedContent() {
                                                                     {plan.name}
                                                                 </h3>
                                                                 <p className='text-xs text-grey-muted font-normal mb-4 line-clamp-2'>
-                                                                    {plan.description || `${planServing === 1 ? '1 Daily Meal' : planServing === 2 ? '2 Daily Meals' : 'Full Day 3 Meals'}`}
+                                                                    {plan.description || `${planServing === 1 ? '1 Daily Meal' : planServing === 2 ? '2 Daily Meals (e.g. Lunch + Dinner)' : 'Full Day 3 Meals (Breakfast, Lunch, Dinner)'}`}
                                                                 </p>
                                                             </div>
 
                                                             <div className='border-t border-grey/10 pt-3 flex items-baseline justify-between'>
-                                                                <span className='text-lg font-bold text-grey-dark'>
+                                                                <span className='text-xl font-extrabold text-grey-dark'>
                                                                     AED {plan.price.toFixed(0)}
                                                                 </span>
-                                                                <span className='text-xs font-normal text-grey-muted'>
+                                                                <span className='text-xs font-medium text-grey-muted'>
                                                                     / month
                                                                 </span>
                                                             </div>
@@ -827,19 +833,20 @@ function GetStartedContent() {
                                                         onClick={() => setSelectedSundayPlanId(plan.id)}
                                                         className={`p-5 rounded-2xl text-left transition-all duration-200 relative cursor-pointer flex flex-col justify-between border ${
                                                             isSelected
-                                                                ? 'bg-primary/10 border-2 border-primary shadow-sm scale-[1.01]'
+                                                                ? 'bg-primary/10 border-2 border-primary ring-2 ring-primary/20 shadow-md scale-[1.01]'
                                                                 : 'bg-grey/5 border-grey/10 hover:border-primary/40 hover:bg-white'
                                                         }`}
                                                     >
                                                         {isSelected && (
-                                                            <div className='absolute top-3 right-3 w-5 h-5 rounded-full bg-primary text-grey-dark flex items-center justify-center shadow-xs'>
+                                                            <div className='absolute top-3 right-3 flex items-center gap-1 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-primary text-grey-dark shadow-xs'>
                                                                 <Icon icon='solar:check-read-bold' className='text-xs font-bold' />
+                                                                <span>Active Choice</span>
                                                             </div>
                                                         )}
 
                                                         <div>
-                                                            <div className='flex items-center gap-1.5 flex-wrap mb-2'>
-                                                                <span className='text-[11px] font-semibold px-2 py-0.5 rounded-md bg-white border border-grey/10 text-grey-dark inline-block'>
+                                                            <div className='flex items-center gap-1.5 flex-wrap mb-2.5'>
+                                                                <span className={`text-[11px] font-bold px-2 py-0.5 rounded-md border inline-block ${isSelected ? 'bg-primary/20 border-primary/30 text-grey-dark' : 'bg-white border-grey/10 text-grey-dark'}`}>
                                                                     {planServing} Meal{planServing > 1 ? 's' : ''} / Sunday
                                                                 </span>
                                                                 <span className='text-[11px] font-semibold px-2 py-0.5 rounded-md bg-purple-100 text-purple-900 inline-block'>
@@ -850,15 +857,15 @@ function GetStartedContent() {
                                                                 {plan.name}
                                                             </h3>
                                                             <p className='text-xs text-grey-muted font-normal mb-4 line-clamp-2'>
-                                                                {plan.description}
+                                                                {plan.description || `${planServing === 1 ? '1 Sunday Feast Meal' : planServing === 2 ? '2 Sunday Meals' : 'Full Day 3 Sunday Meals'}`}
                                                             </p>
                                                         </div>
 
                                                         <div className='border-t border-grey/10 pt-3 flex items-baseline justify-between'>
-                                                            <span className='text-lg font-bold text-grey-dark'>
+                                                            <span className='text-xl font-extrabold text-grey-dark'>
                                                                 AED {plan.price.toFixed(0)}
                                                             </span>
-                                                            <span className='text-xs font-normal text-grey-muted'>
+                                                            <span className='text-xs font-medium text-grey-muted'>
                                                                 / 4 Sundays
                                                             </span>
                                                         </div>
