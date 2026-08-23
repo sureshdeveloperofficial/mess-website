@@ -556,6 +556,10 @@ export default function FoodPlansPage() {
         setFormData((prev) => {
             const current = [...prev.availableDays]
             if (current.includes(day)) {
+                if (current.length === 1) {
+                    toast.error('Plan must have at least 1 active serving day')
+                    return prev
+                }
                 const nextDays = current.filter((d) => d !== day)
                 return { ...prev, availableDays: nextDays }
             } else {
@@ -765,7 +769,17 @@ export default function FoodPlansPage() {
                                     {row.servingCount || 1} Time Plan
                                 </span>
                                 <span className='px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-700 text-[10px] font-extrabold border border-blue-500/20'>
-                                    {row.days || 30} Days
+                                    {row.days || 30} Days Plan
+                                </span>
+                                <span className='px-2 py-0.5 rounded-md bg-purple-500/10 text-purple-700 text-[10px] font-extrabold border border-purple-500/20 flex items-center gap-1'>
+                                    <Icon icon='solar:calendar-date-bold' className='text-xs' />
+                                    <span>
+                                        {row.availableDays && row.availableDays.length < 7
+                                            ? row.availableDays.length === 1 && row.availableDays[0] === 'Sunday'
+                                                ? 'Sunday Only'
+                                                : `${row.availableDays.length} Days/Wk`
+                                            : '7 Days/Wk'}
+                                    </span>
                                 </span>
                                 {(row.isPopular || row.scheduleJson?.isPopular) && (
                                     <span className='px-2 py-0.5 rounded-md bg-amber-400 text-grey-dark text-[10px] font-extrabold flex items-center gap-1 shadow-xs'>
@@ -1225,29 +1239,53 @@ export default function FoodPlansPage() {
                                     <div className='lg:col-span-7 xl:col-span-8 space-y-3 flex flex-col'>
                                         {/* Level 1: Day Tabs Bar */}
                                         <div className='space-y-2'>
-                                            <div className='flex items-center justify-between'>
-                                                <div className='flex items-center gap-2'>
+                                            <div className='flex flex-wrap items-center justify-between gap-2'>
+                                                <div className='flex items-center gap-2.5 flex-wrap'>
                                                     <label className='admin-label mb-0 text-sm font-extrabold flex items-center gap-2'>
                                                         <span>1. Serving Days ({formData.availableDays.length}/7 Active)</span>
                                                     </label>
+
+                                                    {/* Centralized Active / Inactive Status Toggle for Current Day Tab */}
+                                                    {!isViewOnly && currentDayTab && (
+                                                        <button
+                                                            type='button'
+                                                            onClick={() => toggleActiveDay(currentDayTab)}
+                                                            className={`px-3 py-1 rounded-xl text-xs font-black border transition-all cursor-pointer flex items-center gap-1.5 shadow-xs ${
+                                                                formData.availableDays.includes(currentDayTab)
+                                                                    ? 'bg-emerald-600 text-white border-emerald-700 hover:bg-emerald-700'
+                                                                    : 'bg-grey/10 border-grey/25 text-grey-dark hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300'
+                                                            }`}
+                                                            title={`Click to mark ${currentDayTab} ${formData.availableDays.includes(currentDayTab) ? 'Inactive' : 'Active'}`}
+                                                        >
+                                                            {formData.availableDays.includes(currentDayTab) ? (
+                                                                <>
+                                                                    <Icon icon='solar:check-circle-bold' className='text-sm' />
+                                                                    <span>{currentDayTab}: Active</span>
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    <Icon icon='solar:close-circle-bold' className='text-sm text-grey-muted' />
+                                                                    <span>{currentDayTab}: Inactive (Click to Activate)</span>
+                                                                </>
+                                                            )}
+                                                        </button>
+                                                    )}
                                                 </div>
 
                                                 {/* Action Buttons */}
                                                 {!isViewOnly && currentSlotSelectedIds.length > 0 && (
-                                                    <div className='flex items-center gap-1.5'>
-                                                        <button
-                                                            type='button'
-                                                            onClick={clearCurrentSlot}
-                                                            className='px-2 py-1 text-[11px] font-bold rounded-lg text-grey-muted hover:text-red-500 hover:bg-red-50 transition-all cursor-pointer'
-                                                            title='Clear current meal dishes'
-                                                        >
-                                                            Clear
-                                                        </button>
-                                                    </div>
+                                                    <button
+                                                        type='button'
+                                                        onClick={clearCurrentSlot}
+                                                        className='px-2.5 py-1 text-[11px] font-bold rounded-lg text-grey-muted hover:text-red-500 hover:bg-red-50 transition-all cursor-pointer'
+                                                        title='Clear dishes in current slot'
+                                                    >
+                                                        Clear Dishes
+                                                    </button>
                                                 )}
                                             </div>
 
-                                            {/* Day Tabs - 7 Col Grid for Instant Visibility on all Screen Sizes */}
+                                            {/* Day Tabs - 7 Col Grid with Manual Active / Inactive Toggle on Each Day */}
                                             <div className='grid grid-cols-7 gap-1 sm:gap-1.5'>
                                                 {ALL_DAYS.map((day) => {
                                                     const isDayActive = formData.availableDays.includes(day)
@@ -1264,26 +1302,49 @@ export default function FoodPlansPage() {
                                                             key={day}
                                                             type='button'
                                                             onClick={() => setCurrentDayTab(day)}
-                                                            className={`w-full py-2 px-0.5 sm:px-1 rounded-xl text-xs font-extrabold flex flex-col items-center justify-center gap-0.5 border transition-all cursor-pointer select-none ${
+                                                            className={`w-full py-2 px-0.5 sm:px-1 rounded-xl text-xs font-extrabold flex flex-col items-center justify-center gap-0.5 border transition-all cursor-pointer select-none relative ${
                                                                 isSelectedTab
-                                                                    ? 'bg-primary border-primary text-white shadow-sm shadow-primary/20 scale-[1.02]'
+                                                                    ? isDayActive
+                                                                        ? 'bg-primary border-primary text-white shadow-sm shadow-primary/25 scale-[1.02]'
+                                                                        : 'bg-grey-dark border-grey-dark text-white shadow-sm scale-[1.02]'
                                                                     : isDayActive
-                                                                    ? 'bg-primary/5 border-primary/20 text-primary hover:border-primary/40'
-                                                                    : 'bg-grey/5 border-grey/15 text-grey-muted/60 opacity-60 hover:opacity-100'
+                                                                    ? 'bg-emerald-50/60 border-emerald-500/30 text-emerald-800 hover:border-emerald-500/60 hover:bg-emerald-50'
+                                                                    : 'bg-grey/5 border-grey/15 text-grey-muted/60 opacity-60 hover:opacity-100 hover:bg-grey/10'
                                                             }`}
                                                         >
-                                                            <div className='flex items-center gap-1 max-w-full px-0.5'>
+                                                            <div className='flex items-center justify-between w-full px-1'>
                                                                 <span className='truncate text-[11px] sm:text-xs tracking-tight font-extrabold'>{day}</span>
-                                                                {isDayActive && (
+                                                                {!isViewOnly ? (
+                                                                    <span
+                                                                        onClick={(e) => {
+                                                                            e.stopPropagation()
+                                                                            toggleActiveDay(day)
+                                                                        }}
+                                                                        title={`Click to toggle ${day} ${isDayActive ? 'Off' : 'Active'}`}
+                                                                        className={`w-3.5 h-3.5 rounded-full flex items-center justify-center transition-all cursor-pointer shrink-0 ${
+                                                                            isDayActive
+                                                                                ? 'bg-emerald-400 text-white hover:scale-125'
+                                                                                : 'bg-grey/30 hover:bg-emerald-300'
+                                                                        }`}
+                                                                    >
+                                                                        {isDayActive && (
+                                                                            <Icon icon='solar:check-read-bold' className='text-[8px] text-white' />
+                                                                        )}
+                                                                    </span>
+                                                                ) : isDayActive ? (
                                                                     <span className='w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0' title='Active Day' />
+                                                                ) : (
+                                                                    <span className='w-1.5 h-1.5 rounded-full bg-grey/40 shrink-0' title='Inactive Day' />
                                                                 )}
                                                             </div>
                                                             <span
                                                                 className={`text-[10px] min-w-[20px] h-[18px] px-1.5 rounded-full font-black flex items-center justify-center ${
                                                                     isSelectedTab
                                                                         ? 'bg-white/25 text-white'
-                                                                        : dayDishCount > 0
-                                                                        ? 'bg-primary/20 text-primary'
+                                                                        : isDayActive
+                                                                        ? dayDishCount > 0
+                                                                            ? 'bg-emerald-100 text-emerald-900'
+                                                                            : 'bg-emerald-50 text-emerald-700'
                                                                         : 'bg-grey/20 text-grey-muted'
                                                                 }`}
                                                             >

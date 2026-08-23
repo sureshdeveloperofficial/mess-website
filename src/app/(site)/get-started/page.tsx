@@ -494,9 +494,21 @@ function GetStartedContent() {
                                                 )}
 
                                                 <div>
-                                                    <span className='text-[11px] font-semibold px-2 py-0.5 rounded-md bg-white border border-grey/10 text-grey-dark inline-block mb-2'>
-                                                        {planServing} Time Meal Plan
-                                                    </span>
+                                                    <div className='flex items-center gap-1.5 flex-wrap mb-2'>
+                                                        <span className='text-[11px] font-semibold px-2 py-0.5 rounded-md bg-white border border-grey/10 text-grey-dark inline-block'>
+                                                            {planServing} Time Meal Plan
+                                                        </span>
+                                                        <span className='text-[11px] font-semibold px-2 py-0.5 rounded-md bg-purple-50 border border-purple-200 text-purple-800 inline-flex items-center gap-1'>
+                                                            <Icon icon='solar:calendar-date-bold' className='text-[10px]' />
+                                                            <span>
+                                                                {plan.availableDays && plan.availableDays.length < 7
+                                                                    ? plan.availableDays.length === 1 && plan.availableDays[0] === 'Sunday'
+                                                                        ? 'Sunday Only'
+                                                                        : `${plan.availableDays.length} Days/Wk`
+                                                                    : '7 Days/Wk'}
+                                                            </span>
+                                                        </span>
+                                                    </div>
                                                     <h3 className='font-bold text-base text-grey-dark capitalize mb-1 line-clamp-1'>
                                                         {plan.name}
                                                     </h3>
@@ -1044,7 +1056,15 @@ function GetStartedContent() {
                                             </div>
                                             <div className='flex items-center justify-between text-grey-muted'>
                                                 <span className='font-normal'>Serving Days:</span>
-                                                <strong className='text-grey-dark font-semibold'>{planServingDays.length} Days / Week</strong>
+                                                <strong className='text-grey-dark font-semibold text-right text-xs'>
+                                                    {planServingDays.length === 7
+                                                        ? '7 Days / Wk (Everyday)'
+                                                        : planServingDays.length === 6 && !planServingDays.includes('Sunday')
+                                                        ? '6 Days / Wk (Mon – Sat)'
+                                                        : planServingDays.length === 1 && planServingDays.includes('Sunday')
+                                                        ? 'Sunday Special Only'
+                                                        : `${planServingDays.length} Days / Wk`}
+                                                </strong>
                                             </div>
                                             <div className='flex items-center justify-between text-grey-muted'>
                                                 <span className='font-normal'>Meals Per Day:</span>

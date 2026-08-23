@@ -83,15 +83,27 @@ const MealPlanCard = ({ menu, index, isPopular }: { menu: FoodMenu; index: numbe
             )}
 
             <div>
-                {/* Header: Plan Name & Meal Tag */}
-                <div className='flex items-center justify-between gap-3 mb-4'>
+                {/* Header: Plan Name & Meal Tag & Serving Days */}
+                <div className='flex items-center justify-between gap-2 flex-wrap mb-4'>
                     <span className='px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 bg-primary/15 text-grey-dark border border-primary/30'>
                         <Icon icon='solar:clock-circle-bold' className='text-sm text-grey-dark' />
                         {servingCount} Time Meal Plan
                     </span>
-                    <span className='text-xs font-semibold text-grey-muted bg-grey/5 px-3 py-1 rounded-full border border-grey/10'>
-                        {days} Days Pass
-                    </span>
+                    <div className='flex items-center gap-1.5'>
+                        <span className='text-xs font-semibold text-purple-800 bg-purple-50 px-2.5 py-1 rounded-full border border-purple-200 flex items-center gap-1'>
+                            <Icon icon='solar:calendar-date-bold' className='text-xs' />
+                            <span>
+                                {menu.availableDays && menu.availableDays.length < 7
+                                    ? menu.availableDays.length === 1 && menu.availableDays[0] === 'Sunday'
+                                        ? 'Sunday Only'
+                                        : `${menu.availableDays.length} Days/Wk`
+                                    : '7 Days/Wk'}
+                            </span>
+                        </span>
+                        <span className='text-xs font-semibold text-grey-muted bg-grey/5 px-2.5 py-1 rounded-full border border-grey/10'>
+                            {days} Days Pass
+                        </span>
+                    </div>
                 </div>
 
                 <h3 className='text-2xl sm:text-3xl font-bold text-grey-dark tracking-tight capitalize mb-2'>

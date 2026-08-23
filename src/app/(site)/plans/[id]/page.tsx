@@ -93,7 +93,7 @@ export default function MealPlanDetailPage({ params }: { params: Promise<{ id: s
                         <div className='inline-flex items-center gap-2 px-4 py-1.5 bg-primary/20 text-grey-dark rounded-full mb-6 border border-primary/30'>
                             <div className='w-2 h-2 bg-primary rounded-full animate-pulse' />
                             <span className='text-[10px] font-black uppercase tracking-[0.2em]'>
-                                {menu.mealType?.name || 'Daily'} Subscription Pass • {days} Days
+                                {menu.mealType?.name || 'Daily'} Subscription Pass • {days} Days ({menu.availableDays && menu.availableDays.length < 7 ? `${menu.availableDays.length} Days/Wk` : '7 Days/Wk'})
                             </span>
                         </div>
 
@@ -115,7 +115,7 @@ export default function MealPlanDetailPage({ params }: { params: Promise<{ id: s
                     {/* Secondary Header / Quick Stats */}
                     <div className='p-6 sm:p-10 border-b border-grey/10 bg-grey/5'>
                         <div className='flex flex-wrap items-center justify-between gap-6'>
-                            <div className='flex flex-wrap items-center gap-8'>
+                            <div className='flex flex-wrap items-center gap-6 sm:gap-8'>
                                 <div className='flex items-center gap-4'>
                                     <div className='w-14 h-14 rounded-2xl bg-primary/15 border border-primary/30 flex items-center justify-center text-grey-dark text-2xl'>
                                         <Icon icon='solar:chef-hat-heart-bold-duotone' />
@@ -123,6 +123,22 @@ export default function MealPlanDetailPage({ params }: { params: Promise<{ id: s
                                     <div className='flex flex-col'>
                                         <span className='text-xs font-bold text-grey-muted uppercase tracking-wider'>Included Variety</span>
                                         <span className='text-xl sm:text-2xl font-black text-grey-dark'>{menu.foodItems.length} Signature Dishes</span>
+                                    </div>
+                                </div>
+
+                                <div className='flex items-center gap-4'>
+                                    <div className='w-14 h-14 rounded-2xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-800 text-2xl'>
+                                        <Icon icon='solar:calendar-date-bold-duotone' />
+                                    </div>
+                                    <div className='flex flex-col'>
+                                        <span className='text-xs font-bold text-grey-muted uppercase tracking-wider'>Serving Days</span>
+                                        <span className='text-xl sm:text-2xl font-black text-grey-dark'>
+                                            {menu.availableDays && menu.availableDays.length < 7
+                                                ? menu.availableDays.length === 1 && menu.availableDays[0] === 'Sunday'
+                                                    ? 'Sunday Special'
+                                                    : `${menu.availableDays.length} Days / Wk`
+                                                : '7 Days / Wk'}
+                                        </span>
                                     </div>
                                 </div>
 
