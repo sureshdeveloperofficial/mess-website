@@ -53,7 +53,7 @@ const Cook = () => {
               Crafted with <span className='text-primary'>Passion</span>, Served with Pride
             </motion.h2>
 
-            <div className='space-y-6 text-base font-normal text-grey-dark/75 leading-relaxed mb-12'>
+            <div className='space-y-6 text-base font-normal text-grey-dark/75 leading-relaxed'>
               <p>
                 At <span className='text-grey-dark font-extrabold'>AL SHAMIL MESS</span>, every dish tells a story. Our team blends
                 tradition with quality to deliver a hearty home-style dining experience that
@@ -63,22 +63,6 @@ const Cook = () => {
                 From handpicked farm-fresh ingredients to generous servings, we’re here to make every meal feel like home. Whether you’re stopping
                 by for a reliable daily meal plan or just for a nostalgic taste of home, we promise something truly satisfying.
               </p>
-            </div>
-
-            <div className='flex items-center gap-8'>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className='text-base font-extrabold rounded-4xl text-white py-6 px-12 bg-[#2D2A26] shadow-2xl transition-all duration-300 hover:bg-[#FACB15]'
-              >
-                Our Story
-              </motion.button>
-              <div className='flex items-center gap-3'>
-                <div className='w-12 h-12 rounded-full bg-[#FACB15]/10 flex items-center justify-center'>
-                  <Icon icon='ion:play' className='text-[#FACB15]' />
-                </div>
-                <span className='font-extrabold text-grey-dark uppercase tracking-wider text-xs'>Watch Video</span>
-              </div>
             </div>
           </div>
         </div>
