@@ -65,12 +65,12 @@ const Expert = () => {
       <div className='absolute top-0 right-0 w-[500px] h-[500px] bg-[#FACB15]/2 rounded-full blur-[150px] -translate-y-1/2 translate-x-1/2'></div>
 
       <div className='container relative z-10'>
-        <div className='text-center mb-16'>
+        <div className='text-center mb-10'>
           <motion.p
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className='text-[#FACB15] text-sm font-black mb-4 tracking-[0.5em] uppercase'
+            className='text-primary text-xs font-semibold mb-4 tracking-wider uppercase'
           >
             Crowd Favorites
           </motion.p>
@@ -79,9 +79,9 @@ const Expert = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className='text-5xl md:text-7xl font-black text-[#2D2A26] tracking-tighter leading-none'
+            className='text-4xl md:text-6xl font-extrabold text-grey-dark tracking-tight leading-none'
           >
-            Legendary Mess <span className='text-[#FACB15] italic underline decoration-[#2D2A26]/5 underline-offset-8 transition-all hover:decoration-[#FACB15]/20 duration-500'>Secrets</span>
+            Legendary Mess <span className='text-primary italic underline decoration-grey-dark/5 underline-offset-8 transition-all hover:decoration-primary/20 duration-500'>Secrets</span>
           </motion.h2>
         </div>
 
@@ -113,11 +113,11 @@ const Expert = () => {
                     />
                     <div className='absolute inset-0 bg-linear-to-t from-[#2D2A26]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
                   </div>
-                  <div className='space-y-3'>
-                    <h3 className='text-2xl font-black text-[#2D2A26] tracking-tight group-hover:text-[#FACB15] transition-colors line-clamp-1 capitalize'>
+                  <div className='space-y-2'>
+                    <h3 className='text-xl font-extrabold text-grey-dark tracking-tight group-hover:text-primary transition-colors line-clamp-1 capitalize'>
                       {item.name}
                     </h3>
-                    <p className='text-sm font-black uppercase tracking-[0.2em] text-[#FACB15]/40'>
+                    <p className='text-xs font-semibold uppercase tracking-wider text-primary'>
                       {item.category?.name || 'Mess Special'}
                     </p>
                   </div>

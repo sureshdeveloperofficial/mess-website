@@ -4,7 +4,7 @@ import { Icon } from '@iconify/react'
 
 const PremiumBanner = () => {
     return (
-        <section className='relative py-24 bg-[#FFF9F5] overflow-hidden'>
+        <section className='relative py-16 bg-[#FFF9F5] overflow-hidden'>
             {/* Background elements */}
             <div className='absolute top-0 left-0 w-full h-full opacity-[0.03] pointer-events-none'>
                 <div className='absolute top-10 left-10 text-9xl rotate-12'>
@@ -21,10 +21,10 @@ const PremiumBanner = () => {
                         initial={{ opacity: 0, scale: 0.8 }}
                         whileInView={{ opacity: 1, scale: 1 }}
                         viewport={{ once: true }}
-                        className='inline-flex items-center gap-2 px-6 py-2 bg-[#FACB15]/10 rounded-full mb-8'
+                        className='inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 rounded-full mb-6'
                     >
-                        <Icon icon='ion:star' className='text-[#FACB15]' />
-                        <span className='text-[10px] font-black uppercase tracking-[0.3em] text-[#FACB15]'>The Ultimate Mess Experience</span>
+                        <Icon icon='ion:star' className='text-primary' />
+                        <span className='text-[10px] font-semibold uppercase tracking-wider text-primary'>The Ultimate Mess Experience</span>
                     </motion.div>
 
                     <motion.h2
@@ -32,9 +32,9 @@ const PremiumBanner = () => {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ delay: 0.1 }}
-                        className='text-5xl md:text-7xl font-black text-[#2D2A26] tracking-tighter leading-none mb-10'
+                        className='text-4xl md:text-6xl font-extrabold text-grey-dark tracking-tight leading-none mb-8'
                     >
-                        Where Every Grain Tells a Story of <span className='text-[#FACB15] italic'>Tradition.</span>
+                        Where Every Grain Tells a Story of <span className='text-primary italic'>Tradition.</span>
                     </motion.h2>
 
                     <motion.p
@@ -42,7 +42,7 @@ const PremiumBanner = () => {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ delay: 0.2 }}
-                        className='text-xl md:text-2xl font-medium text-[#2D2A26]/60 leading-relaxed italic border-l-4 border-l-[#FACB15]/20 pl-8 mb-12'
+                        className='text-base md:text-lg font-normal text-grey-dark/75 leading-relaxed italic border-l-4 border-l-primary/30 pl-6 mb-8 max-w-3xl mx-auto text-left'
                     >
                         "Join the hundreds of satisfied food lovers who enjoy our meticulously crafted, home-style daily meals. From farm-fresh ingredients to your plate, we bring the premium mess experience you deserve."
                     </motion.p>
@@ -52,19 +52,19 @@ const PremiumBanner = () => {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ delay: 0.3 }}
-                        className='flex flex-wrap justify-center gap-10 opacity-40'
+                        className='flex flex-wrap justify-center gap-8'
                     >
-                        <div className='flex items-center gap-3'>
-                            <Icon icon='ion:checkmark-circle' className='text-2xl text-[#FACB15]' />
-                            <span className='font-black uppercase tracking-widest text-xs'>Zero Preservatives</span>
+                        <div className='flex items-center gap-2.5'>
+                            <Icon icon='ion:checkmark-circle' className='text-xl text-primary' />
+                            <span className='font-semibold uppercase tracking-wider text-xs text-grey-dark'>Zero Preservatives</span>
                         </div>
-                        <div className='flex items-center gap-3'>
-                            <Icon icon='ion:checkmark-circle' className='text-2xl text-[#FACB15]' />
-                            <span className='font-black uppercase tracking-widest text-xs'>Farm Fresh Sourced</span>
+                        <div className='flex items-center gap-2.5'>
+                            <Icon icon='ion:checkmark-circle' className='text-xl text-primary' />
+                            <span className='font-semibold uppercase tracking-wider text-xs text-grey-dark'>Farm Fresh Sourced</span>
                         </div>
-                        <div className='flex items-center gap-3'>
-                            <Icon icon='ion:checkmark-circle' className='text-2xl text-[#FACB15]' />
-                            <span className='font-black uppercase tracking-widest text-xs'>Hygiene First</span>
+                        <div className='flex items-center gap-2.5'>
+                            <Icon icon='ion:checkmark-circle' className='text-xl text-primary' />
+                            <span className='font-semibold uppercase tracking-wider text-xs text-grey-dark'>Hygiene First</span>
                         </div>
                     </motion.div>
                 </div>
