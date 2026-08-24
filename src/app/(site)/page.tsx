@@ -13,7 +13,7 @@ import { Metadata } from 'next'
 
 
 export const metadata: Metadata = {
-  title: 'AL SHAMIL MESS | Authentic Home-Style Daily Meals',
+  title: 'PREMIUM MESS | Authentic Home-Style Daily Meals',
 }
 
 export default function Home() {
@@ -23,10 +23,10 @@ export default function Home() {
       <Features />
       <MenuPreview />
       <HowItWorks />
-      <Expert />
+      {/* <Expert /> */}
       <Cook />
       <Gallery />
-      <PremiumBanner />
+      {/* <PremiumBanner /> */}
       {/* <AppDownload /> */}
       <Newsletter />
     </main>

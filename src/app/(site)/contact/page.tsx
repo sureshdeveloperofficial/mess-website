@@ -53,7 +53,7 @@ export default function ContactPage() {
                 >
                     <div className='inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/20 text-grey-dark text-xs font-semibold mb-4 border border-primary/30'>
                         <Icon icon='solar:chat-round-line-bold-duotone' className='text-sm' />
-                        Al Shamil Mess — Customer Support
+                        Premium Mess — Customer Support
                     </div>
 
                     <h1 className='text-3xl sm:text-5xl lg:text-6xl font-extrabold text-grey-dark tracking-tight mb-4'>

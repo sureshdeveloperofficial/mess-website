@@ -63,7 +63,7 @@ export const PremiumInvoiceTemplate: React.FC<PremiumInvoiceTemplateProps> = ({ 
                             </div>
                             <div>
                                 <div style={{ fontSize: '22px', fontWeight: 800, letterSpacing: '-0.5px', color: '#1a1a2e', lineHeight: 1 }}>
-                                    Al Shamil
+                                    Premium Mess
                                 </div>
                                 <div style={{ fontSize: '10px', fontWeight: 600, letterSpacing: '0.15em', color: '#e8b84b', textTransform: 'uppercase', marginTop: '4px' }}>
                                     Premium Kitchen Services
@@ -322,10 +322,10 @@ export const PremiumInvoiceTemplate: React.FC<PremiumInvoiceTemplateProps> = ({ 
                 }}>
                     <div>
                         <div style={{ fontSize: '11px', fontWeight: 700, color: '#1a1a2e', marginBottom: '4px' }}>
-                            Al Shamil Mess Services
+                            Premium Mess Services
                         </div>
                         <div style={{ fontSize: '10px', color: '#9ca3af' }}>
-                            alshamilmess.com · +971 4 264 2613
+                            premiummess.com · +971 4 264 2613
                         </div>
                     </div>
                     <div style={{ textAlign: 'right' }}>

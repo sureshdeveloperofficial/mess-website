@@ -52,7 +52,7 @@ const AppDownload = () => {
                             Order Mess Food <span className='text-[#FF7A3D] italic underline decoration-white/10 underline-offset-8'>Anytime</span>
                         </h2>
                         <p className='text-white/60 text-xl font-medium mb-12 max-w-xl leading-relaxed'>
-                            Download the Al Shamil Mess app to manage your subscriptions, view daily menus, and track your deliveries in real-time.
+                            Download the Premium Mess app to manage your subscriptions, view daily menus, and track your deliveries in real-time.
                         </p>
 
                         <div className='flex flex-wrap gap-6'>

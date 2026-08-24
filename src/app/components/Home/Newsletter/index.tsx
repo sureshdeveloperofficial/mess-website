@@ -75,7 +75,7 @@ const Newsletter = () => {
               </h2>
 
               <p className='text-white/60 text-base font-normal mb-12 max-w-xl leading-relaxed italic'>
-                "Never miss a favorite. Join the Al Shamil Mess daily list for fresh menu updates, regional specialties, and exclusive tasting notes."
+                "Never miss a favorite. Join the Premium Mess daily list for fresh menu updates, regional specialties, and exclusive tasting notes."
               </p>
 
               <div className='relative max-w-lg group'>
@@ -99,7 +99,7 @@ const Newsletter = () => {
 
               <div className='mt-8 flex items-center gap-4 text-white/20'>
                 <Icon icon='ion:shield-checkmark' className='text-xl' />
-                <p className='text-[10px] font-semibold uppercase tracking-wider'>Pure Taste. 100% Privacy. Al Shamil Mess Quality.</p>
+                <p className='text-[10px] font-semibold uppercase tracking-wider'>Pure Taste. 100% Privacy. Premium Mess Quality.</p>
               </div>
             </div>
 

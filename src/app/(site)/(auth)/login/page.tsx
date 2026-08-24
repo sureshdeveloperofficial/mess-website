@@ -3,7 +3,7 @@ import { Metadata } from 'next'
 import React, { Suspense } from 'react'
 
 export const metadata: Metadata = {
-  title: 'Sign In | Al Shamil Mess',
+  title: 'Sign In | Premium Mess',
   description: 'Sign in to access your meal subscription and dashboard',
 }
 

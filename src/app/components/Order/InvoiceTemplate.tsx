@@ -52,7 +52,7 @@ export const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ order, invoice
                                 <Icon icon="solar:chef-hat-heart-bold-duotone" className="text-3xl" style={{ color: COLORS.PRIMARY }} />
                             </div>
                             <div className="space-y-0.5">
-                                <h1 className="text-2xl font-black uppercase tracking-tighter" style={{ color: COLORS.GREY }}>AL SHAMIL</h1>
+                                <h1 className="text-2xl font-black uppercase tracking-tighter" style={{ color: COLORS.GREY }}>PREMIUM MESS</h1>
                                 <p className="text-[9px] font-black uppercase tracking-[0.4em]" style={{ color: COLORS.PRIMARY }}>Culinary Services</p>
                             </div>
                         </div>
@@ -68,7 +68,7 @@ export const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ order, invoice
                             </div>
                             <div className="flex items-center gap-2">
                                 <Icon icon="solar:letter-bold" className="text-xs opacity-30" />
-                                <span>contact@alshamilmess.com</span>
+                                <span>contact@premiummess.com</span>
                             </div>
                         </div>
                     </div>
@@ -188,7 +188,7 @@ export const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({ order, invoice
                 {/* Footer Policy */}
                 <div className="mt-20 pt-10 border-t flex flex-col items-center space-y-4" style={{ borderColor: COLORS.SLATE_100 }}>
                     <div className="flex justify-center gap-10 text-[9px] font-black uppercase tracking-[0.2em] opacity-30" style={{ color: COLORS.GREY }}>
-                        <span>alshamilmess.com</span>
+                        <span>premiummess.com</span>
                         <span>+971 4 264 2613</span>
                         <span>Enterprise Culinary Log</span>
                     </div>

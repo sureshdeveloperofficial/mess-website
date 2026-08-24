@@ -67,7 +67,7 @@ const PrivacyPage = () => {
             Your <span className='text-primary'>Privacy</span> Matters
           </h1>
           <p className='text-grey-muted text-sm sm:text-base font-normal leading-relaxed max-w-xl mx-auto'>
-            At AL SHAMIL MESS, we value your privacy. This policy outlines how we handle your data with transparency and care.
+            At PREMIUM MESS, we value your privacy. This policy outlines how we handle your data with transparency and care.
           </p>
         </motion.div>
 
@@ -122,7 +122,7 @@ const PrivacyPage = () => {
                 </p>
               </div>
               <a
-                href='mailto:privacy@alshamilmess.com'
+                href='mailto:privacy@premiummess.com'
                 className='shrink-0 px-7 py-3 bg-grey-dark text-white font-extrabold text-sm rounded-2xl hover:bg-grey-dark/90 transition-all shadow-md hover:shadow-lg'
               >
                 Contact Privacy Team

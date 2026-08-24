@@ -22,7 +22,7 @@ export default function BankSettingsPage() {
 
     const [formData, setFormData] = useState<BankSettingsState>({
         bank_name: 'Emirates NBD',
-        account_name: 'Al Shamil Mess Services LLC',
+        account_name: 'Premium Mess Services LLC',
         account_number: '101234567890',
         swift_code: 'EBILAEADXXX',
         iban_number: 'AE12 0310 0000 1012 3456 7890',
@@ -41,7 +41,7 @@ export default function BankSettingsPage() {
         if (settings) {
             setFormData({
                 bank_name: settings.bank_name || 'Emirates NBD',
-                account_name: settings.account_name || 'Al Shamil Mess Services LLC',
+                account_name: settings.account_name || 'Premium Mess Services LLC',
                 account_number: settings.account_number || '101234567890',
                 swift_code: settings.swift_code || 'EBILAEADXXX',
                 iban_number: settings.iban_number || 'AE12 0310 0000 1012 3456 7890',
@@ -136,7 +136,7 @@ export default function BankSettingsPage() {
                                 required
                                 value={formData.account_name}
                                 onChange={(e) => setFormData({ ...formData, account_name: e.target.value })}
-                                placeholder='e.g. Al Shamil Mess Services LLC'
+                                placeholder='e.g. Premium Mess Services LLC'
                                 className='admin-input'
                             />
                         </div>

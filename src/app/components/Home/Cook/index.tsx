@@ -55,7 +55,7 @@ const Cook = () => {
 
             <div className='space-y-6 text-base font-normal text-grey-dark/75 leading-relaxed'>
               <p>
-                At <span className='text-grey-dark font-extrabold'>AL SHAMIL MESS</span>, every dish tells a story. Our team blends
+                At <span className='text-grey-dark font-extrabold'>PREMIUM MESS</span>, every dish tells a story. Our team blends
                 tradition with quality to deliver a hearty home-style dining experience that
                 delights the senses.
               </p>

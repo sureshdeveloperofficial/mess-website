@@ -34,7 +34,7 @@ export default function WebsiteSettingsPage() {
     const [justSaved, setJustSaved] = useState(false)
 
     const [formData, setFormData] = useState<WebsiteSettingsState>({
-        restaurant_name: 'AL SHAMIL MESS',
+        restaurant_name: 'PREMIUM MESS',
         site_tagline: 'Authentic Home-Style Meals Served Daily with Love',
         site_bio: 'Authentic home-style meals served daily with love. High quality, hygienic, and nutritious dining for every guest since 2015.',
         site_logo: '',
@@ -65,7 +65,7 @@ export default function WebsiteSettingsPage() {
     useEffect(() => {
         if (settings) {
             setFormData({
-                restaurant_name: settings.restaurant_name || settings.site_name || 'AL SHAMIL MESS',
+                restaurant_name: settings.restaurant_name || settings.site_name || 'PREMIUM MESS',
                 site_tagline: settings.site_tagline || 'Authentic Home-Style Meals Served Daily with Love',
                 site_bio: settings.site_bio || 'Authentic home-style meals served daily with love. High quality, hygienic, and nutritious dining for every guest since 2015.',
                 site_logo: settings.site_logo || '',
@@ -268,7 +268,7 @@ export default function WebsiteSettingsPage() {
                                     required
                                     value={formData.restaurant_name}
                                     onChange={(e) => setFormData({ ...formData, restaurant_name: e.target.value })}
-                                    placeholder='AL SHAMIL MESS'
+                                    placeholder='PREMIUM MESS'
                                     className='w-full px-4 py-3 bg-grey/5 border border-grey/15 rounded-xl text-sm font-semibold focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all'
                                 />
                             </div>

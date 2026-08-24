@@ -112,7 +112,7 @@ const SignUp = () => {
           </div>
 
           <div className="absolute bottom-8 left-12 right-12 flex justify-between items-center text-white/40 text-[10px] font-black uppercase tracking-[0.2em]">
-            <span>© 2026 Al Shamil Mess</span>
+            <span>© 2026 Premium Mess</span>
             <span>Premium Taste Guaranteed</span>
           </div>
         </div>

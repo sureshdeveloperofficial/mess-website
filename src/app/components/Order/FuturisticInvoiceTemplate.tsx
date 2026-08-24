@@ -50,7 +50,7 @@ export const FuturisticInvoiceTemplate: React.FC<FuturisticInvoiceTemplateProps>
                                 <Icon icon="solar:chef-hat-heart-bold" className="text-3xl text-black" />
                             </div>
                             <div className="space-y-1">
-                                <h1 className="text-3xl font-black tracking-tighter uppercase italic">Al Shamil</h1>
+                                <h1 className="text-3xl font-black tracking-tighter uppercase italic">Premium Mess</h1>
                                 <div className="flex items-center gap-2">
                                     <div className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
                                     <p className="text-[10px] font-black uppercase tracking-[0.4em] text-amber-400/80">Premium Kitchen OS</p>
@@ -175,7 +175,7 @@ export const FuturisticInvoiceTemplate: React.FC<FuturisticInvoiceTemplateProps>
                                         <Icon icon="solar:shield-check-bold" className="text-amber-400/40 text-xl" />
                                     </div>
                                     <p className="text-[8px] font-black uppercase tracking-[0.3em] text-white/30 leading-relaxed">
-                                        This document is cryptographically verified by Al Shamil Systems
+                                        This document is cryptographically verified by Premium Mess Systems
                                     </p>
                                 </div>
                             </div>
@@ -204,7 +204,7 @@ export const FuturisticInvoiceTemplate: React.FC<FuturisticInvoiceTemplateProps>
                 {/* Digital Footer */}
                 <div className="mt-32 pt-12 border-t border-white/5 flex flex-col items-center gap-8">
                     <div className="flex gap-16 text-[10px] font-black uppercase tracking-[0.3em] text-white/10">
-                        <span>ALSHAMILMESS.COM</span>
+                        <span>PREMIUMMESS.COM</span>
                         <span>TERMINAL: +971 4 264 2613</span>
                         <span>EST. 2024</span>
                     </div>

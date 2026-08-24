@@ -149,8 +149,8 @@ export default function DeliveryAreasPage() {
   const whatsappNumber = '+97142642613'
   const whatsappUrl = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(
     searchResult?.areaName
-      ? `Hello AL SHAMIL MESS! I want to check meal delivery for ${searchResult.areaName}.`
-      : 'Hello AL SHAMIL MESS! I would like to inquire about your meal delivery service.'
+      ? `Hello PREMIUM MESS! I want to check meal delivery for ${searchResult.areaName}.`
+      : 'Hello PREMIUM MESS! I would like to inquire about your meal delivery service.'
   )}`
 
   return (
@@ -423,7 +423,7 @@ export default function DeliveryAreasPage() {
         </div>
       </section>
 
-      {/* Section 3: Why AL SHAMIL MESS */}
+      {/* Section 3: Why PREMIUM MESS */}
       <section className='py-16 bg-[#FFF9F5] relative overflow-hidden'>
         <div className='container max-w-6xl mx-auto px-4'>
           <div className='text-center mb-12'>
@@ -433,7 +433,7 @@ export default function DeliveryAreasPage() {
               viewport={{ once: true }}
               className='text-primary text-xs font-semibold mb-3 tracking-wider uppercase'
             >
-              WHY AL SHAMIL MESS
+              WHY PREMIUM MESS
             </motion.p>
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
@@ -523,7 +523,7 @@ export default function DeliveryAreasPage() {
         target='_blank'
         rel='noopener noreferrer'
         className='fixed bottom-6 right-6 z-40 w-14 h-14 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all duration-300 border-2 border-white'
-        title='Chat with AL SHAMIL MESS on WhatsApp'
+        title='Chat with PREMIUM MESS on WhatsApp'
       >
         <Icon icon='solar:chat-round-dots-bold' className='text-2xl' />
       </a>

@@ -16,7 +16,7 @@ const Logo: React.FC = () => {
     staleTime: 60000,
   })
 
-  const restaurantName = settings?.restaurant_name || settings?.site_name || 'AL SHAMIL MESS.'
+  const restaurantName = settings?.restaurant_name || settings?.site_name || 'PREMIUM MESS'
   const logoUrl = settings?.site_logo || ''
 
   return (

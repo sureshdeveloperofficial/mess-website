@@ -253,12 +253,12 @@ const Hero = () => {
       </div>
 
       {/* Auto Scrolling Marquee Section */}
-      <div className='mt-16 pb-8 border-t border-[#2D2A26]/5'>
+      {/* <div className='mt-16 pb-8 border-t border-[#2D2A26]/5'>
         <div className='py-6 bg-[#2D2A26]/2'>
           <MarqueeRow images={PREMIUM_IMAGES} speed={40} />
           <MarqueeRow images={[...PREMIUM_IMAGES].reverse()} direction='right' speed={50} />
         </div>
-      </div>
+      </div> */}
     </section>
   )
 }

@@ -1580,7 +1580,7 @@ function GetStartedContent() {
                                                                     Beneficiary Name
                                                                 </span>
                                                                 <span className='text-xs font-semibold text-white/95 block'>
-                                                                    {siteSettings?.account_name || 'Al Shamil Mess Services LLC'}
+                                                                    {siteSettings?.account_name || 'Premium Mess Services LLC'}
                                                                 </span>
                                                             </div>
 

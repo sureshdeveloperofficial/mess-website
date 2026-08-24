@@ -71,7 +71,7 @@ const Features = () => {
             transition={{ delay: 0.1 }}
             className='text-4xl md:text-6xl font-extrabold text-grey-dark tracking-tight leading-none'
           >
-            Why Choose Al Shamil <span className='text-primary italic underline decoration-grey-dark/5 underline-offset-8 transform hover:skew-x-3 transition-transform duration-500'>Mess?</span>
+            Why Choose Premium <span className='text-primary italic underline decoration-grey-dark/5 underline-offset-8 transform hover:skew-x-3 transition-transform duration-500'>Mess?</span>
           </motion.h2>
         </div>
 

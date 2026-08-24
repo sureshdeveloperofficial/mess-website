@@ -572,7 +572,7 @@ export default function CheckoutForm({ selectedMenuIds, selectionsJson, totalPri
                                                 </div>
                                                 <div className="space-y-1">
                                                     <p className="font-bold text-grey/40 uppercase text-[10px] tracking-wider">Account Name</p>
-                                                    <p className="font-bold text-grey">{dynamicSettings?.account_name || 'Al Shamil Mess Services LLC'}</p>
+                                                    <p className="font-bold text-grey">{dynamicSettings?.account_name || 'Premium Mess Services LLC'}</p>
                                                 </div>
                                                 <div className="space-y-1">
                                                     <p className="font-bold text-grey/40 uppercase text-[10px] tracking-wider">Account Number</p>

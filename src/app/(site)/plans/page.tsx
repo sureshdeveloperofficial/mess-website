@@ -3,7 +3,7 @@ import FoodMenu from '@/app/components/Home/FoodMenu'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-    title: 'Monthly Meal Plans - AL SHAMIL MESS',
+    title: 'Monthly Meal Plans - PREMIUM MESS',
     description: 'Explore our authentic South Indian home-cooked monthly meal subscriptions and flexible mess plans.',
 }
 

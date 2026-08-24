@@ -10,13 +10,13 @@ const TermsPage = () => {
       icon: 'solar:document-text-bold-duotone',
       title: '1. Acceptance of Terms',
       content:
-        'By accessing and using AL SHAMIL MESS website and services, you agree to be bound by these Terms and Conditions. If you do not agree with any part of these terms, you must not use our services.',
+        'By accessing and using PREMIUM MESS website and services, you agree to be bound by these Terms and Conditions. If you do not agree with any part of these terms, you must not use our services.',
     },
     {
       icon: 'solar:cup-star-bold-duotone',
       title: '2. Services Provided',
       content:
-        'AL SHAMIL MESS provides home-style meal subscription services, including daily meals, event catering, and corporate lunch solutions. We reserve the right to modify or discontinue any service at our discretion.',
+        'PREMIUM MESS provides home-style meal subscription services, including daily meals, event catering, and corporate lunch solutions. We reserve the right to modify or discontinue any service at our discretion.',
     },
     {
       icon: 'solar:cart-check-bold-duotone',
@@ -34,13 +34,13 @@ const TermsPage = () => {
       icon: 'solar:heart-pulse-bold-duotone',
       title: '5. Food Safety and Allergies',
       content:
-        'While we maintain high standards of hygiene and quality, users are responsible for notifying us of any food allergies or dietary restrictions during the ordering process. AL SHAMIL MESS is not liable for adverse reactions to ingredients not disclosed.',
+        'While we maintain high standards of hygiene and quality, users are responsible for notifying us of any food allergies or dietary restrictions during the ordering process. PREMIUM MESS is not liable for adverse reactions to ingredients not disclosed.',
     },
     {
       icon: 'solar:shield-warning-bold-duotone',
       title: '6. Limitation of Liability',
       content:
-        'AL SHAMIL MESS shall not be liable for any indirect, incidental, or consequential damages arising from the use of our services or the inability to use our website.',
+        'PREMIUM MESS shall not be liable for any indirect, incidental, or consequential damages arising from the use of our services or the inability to use our website.',
     },
     {
       icon: 'solar:buildings-bold-duotone',
@@ -72,7 +72,7 @@ const TermsPage = () => {
             Our <span className='text-primary'>Terms</span> of Service
           </h1>
           <p className='text-grey-muted text-sm sm:text-base font-normal leading-relaxed max-w-xl mx-auto'>
-            Please read these terms carefully before using our services. By using AL SHAMIL MESS, you agree to these conditions.
+            Please read these terms carefully before using our services. By using PREMIUM MESS, you agree to these conditions.
           </p>
         </motion.div>
       </div>
@@ -118,8 +118,8 @@ const TermsPage = () => {
             <Icon icon='solar:letter-bold-duotone' className='text-xl text-primary shrink-0' />
             <p className='text-sm font-medium text-grey-dark/75'>
               If you have any questions regarding these terms, please contact us at{' '}
-              <a href='mailto:support@alshamilmess.com' className='text-primary font-extrabold hover:underline'>
-                support@alshamilmess.com
+              <a href='mailto:support@premiummess.com' className='text-primary font-extrabold hover:underline'>
+                support@premiummess.com
               </a>
             </p>
           </motion.div>

@@ -53,7 +53,7 @@ function OrderSuccessContent() {
     const isBankTransfer = order?.paymentMethod === 'BANK_TRANSFER'
     const cleanWhatsAppNumber = (siteSettings?.whatsapp_number || siteSettings?.contact_phone || '+971501234567').replace(/[^0-9]/g, '')
     const orderRefCode = order?.id ? order.id.slice(-6).toUpperCase() : ''
-    const shareMessage = `Hello Al Shamil Mess, I have placed Order #${orderRefCode} for AED ${order?.totalAmount || ''} via Bank Transfer. Here is my payment transfer receipt:`
+    const shareMessage = `Hello Premium Mess, I have placed Order #${orderRefCode} for AED ${order?.totalAmount || ''} via Bank Transfer. Here is my payment transfer receipt:`
     const whatsappShareUrl = `https://wa.me/${cleanWhatsAppNumber}?text=${encodeURIComponent(shareMessage)}`
 
     return (
@@ -130,7 +130,7 @@ function OrderSuccessContent() {
                                         Beneficiary / Account Name
                                     </span>
                                     <span className='font-semibold text-white/95'>
-                                        {siteSettings?.account_name || 'Al Shamil Mess Services LLC'}
+                                        {siteSettings?.account_name || 'Premium Mess Services LLC'}
                                     </span>
                                 </div>
                                 <div>
