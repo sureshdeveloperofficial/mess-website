@@ -176,12 +176,19 @@ const Footer: FC = () => {
 
             {/* Contact Details Integration */}
             <div className='pt-3 space-y-2.5'>
-              <div className='flex items-start gap-2.5'>
-                <Icon icon='solar:point-on-map-perspective-bold' className='text-primary text-lg mt-0.5 shrink-0' />
-                <p className='text-grey/70 text-xs leading-relaxed'>
-                  {contactAddress}
-                </p>
-              </div>
+              <a
+                href='https://www.google.com/maps/place/PREMIUM+CHEFFS+RESTAURANT/@25.2912692,55.4030596,594m/data=!3m2!1e3!4b1!4m6!3m5!1s0x3e5f5ff265ef9e23:0x969e78034608b30d!8m2!3d25.2912692!4d55.4030596!16s%2Fg%2F11x36px11g?entry=ttu&g_ep=EgoyMDI2MDgyMy4wIKXMDSoASAFQAw%3D%3D'
+                target='_blank'
+                rel='noopener noreferrer'
+                className='flex items-center gap-2.5 group hover:text-primary transition-colors cursor-pointer'
+                title='Open PREMIUM CHEFFS RESTAURANT on Google Maps'
+              >
+                <Icon icon='solar:map-point-bold' className='text-primary text-lg shrink-0 group-hover:scale-110 group-hover:text-primary transition-all' />
+                <span className='text-grey/80 group-hover:text-primary text-xs leading-relaxed transition-colors font-semibold flex items-center gap-1.5'>
+                  PREMIUM CHEFFS RESTAURANT
+                  <Icon icon='solar:arrow-right-up-linear' className='text-xs opacity-60 group-hover:opacity-100 transition-opacity' />
+                </span>
+              </a>
               <div className='flex items-center gap-2.5'>
                 <Icon icon='solar:phone-bold' className='text-primary text-lg shrink-0' />
                 <a href={`tel:${contactPhone.replace(/\s+/g, '')}`} className='text-grey/70 hover:text-primary transition-colors text-xs font-medium'>

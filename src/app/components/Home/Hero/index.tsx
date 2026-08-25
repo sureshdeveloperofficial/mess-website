@@ -138,21 +138,21 @@ const Hero = () => {
                 custom={3}
                 className='flex flex-col sm:flex-row gap-6 items-center justify-center lg:justify-start w-full sm:w-auto'
               >
-                <Link href='/#plans'>
+                <Link href='/plans'>
                   <motion.button
                     whileHover={{ scale: 1.05, boxShadow: '0 20px 40px -10px rgba(255,122,61,0.3)' }}
                     whileTap={{ scale: 0.95 }}
-                    className='text-base font-extrabold rounded-4xl text-white py-6 px-12 bg-[#FACB15] shadow-2xl shadow-[#FACB15]/20 transition-all duration-300 flex items-center gap-3 group'
+                    className='text-base font-extrabold rounded-4xl text-white py-6 px-12 bg-[#FACB15] shadow-2xl shadow-[#FACB15]/20 transition-all duration-300 flex items-center gap-3 group cursor-pointer'
                   >
                     Explore Food Plans
                     <Icon icon='ion:calendar-outline' className='group-hover:translate-x-2 transition-transform' />
                   </motion.button>
                 </Link>
-                <Link href='/#menu'>
+                <Link href='/menu'>
                   <motion.button
                     whileHover={{ scale: 1.02, backgroundColor: 'rgba(45,42,38,0.05)' }}
                     whileTap={{ scale: 0.98 }}
-                    className='text-base border-4 border-grey-dark/5 rounded-4xl font-extrabold py-6 px-12 text-grey-dark transition-all duration-300 flex items-center gap-3 bg-transparent'
+                    className='text-base border-4 border-grey-dark/5 rounded-4xl font-extrabold py-6 px-12 text-grey-dark transition-all duration-300 flex items-center gap-3 bg-transparent cursor-pointer'
                   >
                     View Today's Menu
                     <Icon icon='ion:restaurant-outline' />
