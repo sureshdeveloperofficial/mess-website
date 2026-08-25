@@ -165,18 +165,19 @@ const Hero = () => {
                 initial="hidden"
                 animate="visible"
                 custom={4}
-                className='mt-16 flex items-center gap-8 justify-center lg:justify-start opacity-60'
+                className='mt-10 inline-flex items-center gap-4 bg-white/80 backdrop-blur-xl p-4 sm:p-5 rounded-3xl border border-white/60 shadow-xl shadow-grey-dark/5 group hover:shadow-2xl hover:scale-[1.01] transition-all duration-300'
               >
-                <div className='flex -space-x-3'>
-                  {AVATARS.map((src, i) => (
-                    <div key={i} className='w-12 h-12 rounded-full border-4 border-white bg-grey/10 overflow-hidden relative shadow-sm'>
-                      <Image src={src} alt='User' fill className='object-cover' />
-                    </div>
-                  ))}
+                <div className='w-11 h-11 bg-linear-to-br from-[#FACB15] to-[#FF9D6E] rounded-2xl flex items-center justify-center text-white text-xl shadow-md shadow-[#FACB15]/25 shrink-0 group-hover:scale-105 transition-transform'>
+                  <Icon icon='solar:scooter-bold' />
                 </div>
-                <p className='text-sm font-medium text-grey-dark capitalize'>
-                  <span className='font-extrabold'>2,000+</span> Happy Diners This Month
-                </p>
+                <div>
+                  <h3 className='text-sm sm:text-base font-extrabold text-grey-dark leading-tight'>
+                    Daily Meals, Delivered Fresh
+                  </h3>
+                  <p className='text-xs font-medium text-grey-muted mt-0.5'>
+                    Serving homes, offices &amp; accommodations
+                  </p>
+                </div>
               </motion.div>
             </div>
           </div>

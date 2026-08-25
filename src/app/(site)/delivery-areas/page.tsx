@@ -1,27 +1,31 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Icon } from '@iconify/react'
 import Link from 'next/link'
+import { useQuery } from '@tanstack/react-query'
+import axios from 'axios'
 
 interface DeliveryZone {
+  id?: string
   name: string
-  status: 'active' | 'coming_soon'
+  status: 'active' | 'coming_soon' | 'inactive'
   timing: string
+  isPopular?: boolean
   notes?: string
 }
 
-const COVERED_ZONES: DeliveryZone[] = [
-  { name: 'Al Quoz', status: 'active', timing: 'Lunch & Dinner' },
-  { name: 'Al Khail Gate', status: 'active', timing: 'Breakfast, Lunch & Dinner' },
-  { name: 'International City', status: 'active', timing: 'Breakfast, Lunch & Dinner' },
-  { name: 'Al Warqa', status: 'active', timing: 'Lunch & Dinner' },
-  { name: 'Al Warsan', status: 'active', timing: 'Lunch & Dinner' },
-  { name: 'DIP (Dubai Investment Park)', status: 'active', timing: 'Lunch & Dinner' },
-  { name: 'Jebel Ali', status: 'active', timing: 'Lunch & Dinner' },
-  { name: 'Deira', status: 'active', timing: 'Breakfast, Lunch & Dinner' },
-  { name: 'Al Nahda', status: 'active', timing: 'Breakfast, Lunch & Dinner' },
+const FALLBACK_COVERED_ZONES: DeliveryZone[] = [
+  { name: 'Al Quoz', status: 'active', timing: 'Lunch & Dinner', isPopular: true },
+  { name: 'Al Khail Gate', status: 'active', timing: 'Breakfast, Lunch & Dinner', isPopular: true },
+  { name: 'International City', status: 'active', timing: 'Breakfast, Lunch & Dinner', isPopular: true },
+  { name: 'Al Warqa', status: 'active', timing: 'Lunch & Dinner', isPopular: true },
+  { name: 'Al Warsan', status: 'active', timing: 'Lunch & Dinner', isPopular: true },
+  { name: 'DIP (Dubai Investment Park)', status: 'active', timing: 'Lunch & Dinner', isPopular: true },
+  { name: 'Jebel Ali', status: 'active', timing: 'Lunch & Dinner', isPopular: true },
+  { name: 'Deira', status: 'active', timing: 'Breakfast, Lunch & Dinner', isPopular: true },
+  { name: 'Al Nahda', status: 'active', timing: 'Breakfast, Lunch & Dinner', isPopular: true },
   { name: 'Al Karama', status: 'active', timing: 'Lunch & Dinner' },
   { name: 'Bur Dubai', status: 'active', timing: 'Lunch & Dinner' },
   { name: 'Business Bay', status: 'active', timing: 'Lunch & Dinner' },
@@ -29,18 +33,6 @@ const COVERED_ZONES: DeliveryZone[] = [
   { name: 'Silicon Oasis', status: 'active', timing: 'Lunch & Dinner' },
   { name: 'Discovery Gardens', status: 'active', timing: 'Lunch & Dinner' },
   { name: 'Muhaisnah', status: 'active', timing: 'Breakfast, Lunch & Dinner' },
-]
-
-const POPULAR_TAGS = [
-  'Al Quoz',
-  'Al Khail Gate',
-  'International City',
-  'Al Warqa',
-  'Al Warsan',
-  'DIP',
-  'Jebel Ali',
-  'Deira',
-  'Al Nahda',
 ]
 
 const HOW_IT_WORKS_STEPS = [
@@ -72,7 +64,7 @@ const HOW_IT_WORKS_STEPS = [
 
 const WHY_CHOOSE_ITEMS = [
   {
-    title: 'Authentic Kerala flavours',
+    title: 'Authentic flavours',
     description: 'Recipes that taste like home, every single day.',
     icon: 'solar:chef-hat-bold-duotone',
   },
@@ -108,9 +100,45 @@ export default function DeliveryAreasPage() {
   const [searchResult, setSearchResult] = useState<{
     searched: boolean
     isCovered: boolean
+    isComingSoon?: boolean
     areaName: string
     timing?: string
   } | null>(null)
+
+  const { data: dynamicAreas = [] } = useQuery<DeliveryZone[]>({
+    queryKey: ['delivery-areas'],
+    queryFn: async () => {
+      const res = await axios.get('/api/delivery-areas')
+      return res.data
+    },
+    staleTime: 60000,
+  })
+
+  const { data: settings } = useQuery({
+    queryKey: ['settings'],
+    queryFn: async () => {
+      const res = await axios.get('/api/settings')
+      return res.data
+    },
+    staleTime: 60000,
+  })
+
+  const restaurantName = settings?.restaurant_name || settings?.site_name || 'PREMIUM MESS'
+  const contactAddress = settings?.contact_address || 'Al Quoz 1, Phase 2, Dubai, United Arab Emirates'
+  const whatsappNumber = (settings?.contact_whatsapp || settings?.contact_phone || '+97142642613').replace(/[^0-9]/g, '')
+
+  const activeZones = useMemo(() => {
+    if (dynamicAreas.length > 0) {
+      return dynamicAreas.filter(z => z.status !== 'inactive')
+    }
+    return FALLBACK_COVERED_ZONES
+  }, [dynamicAreas])
+
+  const popularTags = useMemo(() => {
+    const popular = activeZones.filter(z => z.isPopular).map(z => z.name)
+    if (popular.length > 0) return popular
+    return activeZones.slice(0, 9).map(z => z.name)
+  }, [activeZones])
 
   const handleCheckArea = (areaToTest?: string) => {
     const query = (areaToTest !== undefined ? areaToTest : searchQuery).trim()
@@ -119,19 +147,29 @@ export default function DeliveryAreasPage() {
       return
     }
 
-    const matched = COVERED_ZONES.find(
+    const matched = activeZones.find(
       (z) =>
         z.name.toLowerCase().includes(query.toLowerCase()) ||
         query.toLowerCase().includes(z.name.toLowerCase())
     )
 
     if (matched) {
-      setSearchResult({
-        searched: true,
-        isCovered: true,
-        areaName: matched.name,
-        timing: matched.timing,
-      })
+      if (matched.status === 'coming_soon') {
+        setSearchResult({
+          searched: true,
+          isCovered: false,
+          isComingSoon: true,
+          areaName: matched.name,
+          timing: matched.timing,
+        })
+      } else {
+        setSearchResult({
+          searched: true,
+          isCovered: true,
+          areaName: matched.name,
+          timing: matched.timing,
+        })
+      }
     } else {
       setSearchResult({
         searched: true,
@@ -146,11 +184,10 @@ export default function DeliveryAreasPage() {
     handleCheckArea(tag)
   }
 
-  const whatsappNumber = '+97142642613'
-  const whatsappUrl = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(
+  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
     searchResult?.areaName
-      ? `Hello PREMIUM MESS! I want to check meal delivery for ${searchResult.areaName}.`
-      : 'Hello PREMIUM MESS! I would like to inquire about your meal delivery service.'
+      ? `Hello ${restaurantName}! I want to check meal delivery for ${searchResult.areaName}.`
+      : `Hello ${restaurantName}! I would like to inquire about your meal delivery service.`
   )}`
 
   return (
@@ -222,6 +259,8 @@ export default function DeliveryAreasPage() {
                       className={`p-5 rounded-2xl border mb-6 ${
                         searchResult.isCovered
                           ? 'bg-emerald-50/80 border-emerald-200 text-emerald-950'
+                          : searchResult.isComingSoon
+                          ? 'bg-blue-50/80 border-blue-200 text-blue-950'
                           : 'bg-amber-50/80 border-amber-200 text-amber-950'
                       }`}
                     >
@@ -231,21 +270,31 @@ export default function DeliveryAreasPage() {
                             icon={
                               searchResult.isCovered
                                 ? 'solar:check-circle-bold'
+                                : searchResult.isComingSoon
+                                ? 'solar:hourglass-bold'
                                 : 'solar:info-circle-bold'
                             }
                             className={`text-2xl shrink-0 mt-0.5 ${
-                              searchResult.isCovered ? 'text-emerald-600' : 'text-amber-600'
+                              searchResult.isCovered
+                                ? 'text-emerald-600'
+                                : searchResult.isComingSoon
+                                ? 'text-blue-600'
+                                : 'text-amber-600'
                             }`}
                           />
                           <div>
                             <h4 className='text-base font-extrabold mb-1'>
                               {searchResult.isCovered
                                 ? `Great news! We deliver to ${searchResult.areaName}`
+                                : searchResult.isComingSoon
+                                ? `Coming Soon to ${searchResult.areaName}!`
                                 : `Custom delivery for ${searchResult.areaName}`}
                             </h4>
                             <p className='text-xs sm:text-sm font-medium leading-relaxed opacity-90'>
                               {searchResult.isCovered
                                 ? `Free daily doorstep delivery is available (${searchResult.timing}). Start your monthly subscription now!`
+                                : searchResult.isComingSoon
+                                ? `We are currently expanding our daily meal delivery routes to ${searchResult.areaName} (${searchResult.timing || 'Lunch & Dinner'}). Join our waitlist on WhatsApp!`
                                 : `We may already deliver to your building or can arrange dedicated cluster drops for ${searchResult.areaName}. Chat with us directly on WhatsApp.`}
                             </p>
                           </div>
@@ -257,11 +306,13 @@ export default function DeliveryAreasPage() {
                           className={`px-4 py-2 rounded-xl text-xs font-extrabold shrink-0 flex items-center gap-1.5 transition-all shadow-xs ${
                             searchResult.isCovered
                               ? 'bg-emerald-600 text-white hover:bg-emerald-700'
+                              : searchResult.isComingSoon
+                              ? 'bg-blue-600 text-white hover:bg-blue-700'
                               : 'bg-amber-600 text-white hover:bg-amber-700'
                           }`}
                         >
                           <Icon icon='solar:chat-round-dots-bold' className='text-base' />
-                          Order on WhatsApp
+                          {searchResult.isComingSoon ? 'WhatsApp Waitlist' : 'Order on WhatsApp'}
                         </a>
                       </div>
                     </motion.div>
@@ -270,7 +321,7 @@ export default function DeliveryAreasPage() {
 
                 {/* Popular Clickable Tags */}
                 <div className='flex flex-wrap items-center gap-2 mb-4'>
-                  {POPULAR_TAGS.map((tag, idx) => (
+                  {popularTags.map((tag, idx) => (
                     <button
                       key={idx}
                       onClick={() => handleTagClick(tag)}
@@ -310,7 +361,7 @@ export default function DeliveryAreasPage() {
                   </div>
 
                   <h3 className='text-2xl font-extrabold text-grey-dark mb-2'>
-                    Al Quoz 1, Phase 2
+                    Al Quoz, Dubai
                   </h3>
                   <p className='text-xs sm:text-sm font-normal text-grey-dark/70 leading-relaxed mb-6'>
                     Visit us or call to plan your monthly subscription. Fresh meals dispatched hot every morning and evening.

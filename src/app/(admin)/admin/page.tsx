@@ -21,14 +21,22 @@ export default function AdminDashboard() {
         },
     })
 
+    const { data: deliveryAreas = [] } = useQuery({
+        queryKey: ['delivery-areas'],
+        queryFn: async () => {
+            const resp = await axios.get('/api/delivery-areas')
+            return resp.data
+        },
+    })
+
     const foodItems = foodData?.data || []
     const totalFoodItems = foodData?.total || 0
-
+    const activeAreasCount = Array.isArray(deliveryAreas) ? deliveryAreas.filter((a: any) => a.status === 'active').length : 0
 
     const stats = [
         { label: 'Food Categories', value: categories.length, icon: 'solar:list-bold-duotone', color: 'bg-blue-500' },
         { label: 'Total Food Items', value: totalFoodItems, icon: 'solar:hamburger-menu-bold-duotone', color: 'bg-primary' },
-        { label: 'Pending Orders', value: 0, icon: 'solar:receipt-bold-duotone', color: 'bg-amber-500' },
+        { label: 'Delivery Zones', value: `${activeAreasCount} Active`, icon: 'solar:map-point-wave-bold-duotone', color: 'bg-purple-500' },
         { label: 'Total Revenue', value: '0.00 AED', icon: 'solar:wallet-money-bold-duotone', color: 'bg-emerald-500' },
     ]
 

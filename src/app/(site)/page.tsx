@@ -27,8 +27,7 @@ export default function Home() {
       <Cook />
       <Gallery />
       {/* <PremiumBanner /> */}
-      {/* <AppDownload /> */}
-      <Newsletter />
+      {/* <Newsletter /> */}
     </main>
   )
 }

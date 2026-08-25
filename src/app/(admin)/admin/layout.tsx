@@ -16,6 +16,7 @@ const navItems = [
     { label: 'Food Items', icon: 'solar:hamburger-menu-bold-duotone', href: '/admin/food-items' },
     { label: 'Meal Types', icon: 'solar:clock-circle-bold-duotone', href: '/admin/meal-types' },
     { label: 'Food Plans', icon: 'solar:calendar-bold-duotone', href: '/admin/food-menu' },
+    { label: 'Delivery Areas', icon: 'solar:map-point-wave-bold-duotone', href: '/admin/delivery-areas' },
     { label: 'Orders', icon: 'solar:cart-large-bold', href: '/admin/orders' },
     { label: 'Customers', icon: 'solar:users-group-two-rounded-bold-duotone', href: '/admin/customers' },
     { label: 'Website Settings', icon: 'solar:settings-bold-duotone', href: '/admin/website-settings' },
