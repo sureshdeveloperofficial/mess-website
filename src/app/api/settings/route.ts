@@ -16,6 +16,14 @@ export async function GET() {
             acc[curr.key] = curr.value
             return acc
         }, {})
+
+        if (!settingsObject.restaurant_name || String(settingsObject.restaurant_name).toLowerCase().includes('shamil')) {
+            settingsObject.restaurant_name = 'PREMIUM MESS'
+        }
+        if (settingsObject.site_name && String(settingsObject.site_name).toLowerCase().includes('shamil')) {
+            settingsObject.site_name = 'PREMIUM MESS'
+        }
+
         return NextResponse.json(settingsObject)
     } catch (error) {
         console.error('Settings fetch error:', error)

@@ -37,7 +37,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         staleTime: 60000,
     })
 
-    const restaurantName = settings?.restaurant_name || settings?.site_name || 'PREMIUM MESS'
+    let restaurantName = settings?.restaurant_name || settings?.site_name || 'PREMIUM MESS'
+    if (!restaurantName || restaurantName.toLowerCase().includes('shamil')) {
+        restaurantName = 'PREMIUM MESS'
+    }
     const logoUrl = settings?.site_logo || ''
 
     useEffect(() => {

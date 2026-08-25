@@ -64,8 +64,10 @@ export default function WebsiteSettingsPage() {
 
     useEffect(() => {
         if (settings) {
+            const rawName = settings.restaurant_name || settings.site_name || 'PREMIUM MESS'
+            const cleanName = rawName.toLowerCase().includes('shamil') ? 'PREMIUM MESS' : rawName
             setFormData({
-                restaurant_name: settings.restaurant_name || settings.site_name || 'PREMIUM MESS',
+                restaurant_name: cleanName,
                 site_tagline: settings.site_tagline || 'Authentic Home-Style Meals Served Daily with Love',
                 site_bio: settings.site_bio || 'Authentic home-style meals served daily with love. High quality, hygienic, and nutritious dining for every guest since 2015.',
                 site_logo: settings.site_logo || '',

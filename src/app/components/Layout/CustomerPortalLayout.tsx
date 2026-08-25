@@ -29,7 +29,10 @@ export default function CustomerPortalLayout({ children }: { children: React.Rea
         staleTime: 60000,
     })
 
-    const restaurantName = settings?.restaurant_name || settings?.site_name || 'PREMIUM MESS'
+    let restaurantName = settings?.restaurant_name || settings?.site_name || 'PREMIUM MESS'
+    if (!restaurantName || restaurantName.toLowerCase().includes('shamil')) {
+        restaurantName = 'PREMIUM MESS'
+    }
     const logoUrl = settings?.site_logo || ''
     const contactPhone = settings?.contact_phone || '+971 4 264 2613'
 

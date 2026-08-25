@@ -48,7 +48,10 @@ export async function getMailConfig(): Promise<MailConfig> {
     const secure = settingsMap['smtp_secure'] ? settingsMap['smtp_secure'] === 'true' : (port === 465)
     const user = settingsMap['smtp_user'] || process.env.SMTP_USER || ''
     const pass = settingsMap['smtp_pass'] || process.env.SMTP_PASS || ''
-    const fromName = settingsMap['smtp_from_name'] || settingsMap['restaurant_name'] || process.env.SMTP_FROM_NAME || "Chef's Kitchen"
+    let fromName = settingsMap['smtp_from_name'] || settingsMap['restaurant_name'] || process.env.SMTP_FROM_NAME || 'PREMIUM MESS'
+    if (fromName.toLowerCase().includes('shamil')) {
+        fromName = 'PREMIUM MESS'
+    }
     const fromEmail = settingsMap['smtp_from_email'] || settingsMap['contact_email'] || process.env.SMTP_FROM_EMAIL || user || 'contact@chefs-kitchen.com'
     const adminEmail = settingsMap['admin_notification_email'] || settingsMap['contact_email'] || process.env.ADMIN_NOTIFICATION_EMAIL || 'contact@chefs-kitchen.com'
 

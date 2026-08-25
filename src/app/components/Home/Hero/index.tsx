@@ -115,9 +115,10 @@ const Hero = () => {
                 initial="hidden"
                 animate="visible"
                 custom={1}
-                className='text-5xl md:text-7xl font-extrabold text-grey-dark lg:text-start text-center leading-[0.9] tracking-tight mb-8'
+                className='text-5xl md:text-7xl font-extrabold text-grey-dark lg:text-start text-center leading-[1.05] tracking-tight mb-8'
               >
-                Deliciously <span className='text-primary italic'>Home-Made.</span> Daily Delivered.
+                Authentic Taste. <br />
+                <span className='text-primary italic'>Everyday Comfort.</span>
               </motion.h1>
 
               <motion.p
@@ -125,9 +126,9 @@ const Hero = () => {
                 initial="hidden"
                 animate="visible"
                 custom={2}
-                className='text-grey-dark/75 text-base font-normal mb-12 lg:text-start text-center max-w-2xl leading-relaxed'
+                className='text-grey-dark/75 text-base md:text-lg font-normal mb-12 lg:text-start text-center max-w-2xl leading-relaxed'
               >
-                Experience the authentic taste of tradition every day. Wholesome mess meals crafted with fresh ingredients, slow-cooked spices, and a generous dash of home-style love.
+                Traditional flavours, freshly prepared meals, and the comforting taste of home — served fresh every day.
               </motion.p>
 
               <motion.div
