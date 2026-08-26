@@ -3,26 +3,52 @@
 import Link from 'next/link'
 import React, { useEffect, useRef, useState } from 'react'
 import { useSession, signOut } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import { toast } from 'react-hot-toast'
 import Logo from './Logo'
 import HeaderLink from './Navigation/HeaderLink'
 import MobileHeaderLink from './Navigation/MobileHeaderLink'
-import Signin from '@/app/components/Auth/SignIn'
-import SignUp from '@/app/components/Auth/SignUp'
+import AuthModal from '@/app/components/Auth/AuthModal'
 import { Icon } from '@iconify/react/dist/iconify.js'
 import { HeaderItem } from '@/app/types/menu'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const Header: React.FC = () => {
+  const router = useRouter()
   const { data: session, status } = useSession()
   const [headerLink, setHeaderLink] = useState<HeaderItem[]>([])
 
   const [navbarOpen, setNavbarOpen] = useState(false)
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [sticky, setSticky] = useState(false)
+  const [authModalOpen, setAuthModalOpen] = useState(false)
+  const [authModalMode, setAuthModalMode] = useState<'signin' | 'signup'>('signin')
+
   const contactPhone = '+971 4 264 2613'
   const navbarRef = useRef<HTMLDivElement>(null)
   const mobileMenuRef = useRef<HTMLDivElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
+
+  const openSignIn = () => {
+    setAuthModalMode('signin')
+    setAuthModalOpen(true)
+    setNavbarOpen(false)
+  }
+
+  const openSignUp = () => {
+    setAuthModalMode('signup')
+    setAuthModalOpen(true)
+    setNavbarOpen(false)
+  }
+
+  const handleSignOut = async () => {
+    setDropdownOpen(false)
+    setNavbarOpen(false)
+    await signOut({ redirect: false })
+    toast.success('Signed out successfully')
+    router.push('/')
+    router.refresh()
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -41,6 +67,7 @@ const Header: React.FC = () => {
   const handleScroll = () => {
     setSticky(window.scrollY >= 20)
   }
+
   const handleClickOutside = (event: MouseEvent) => {
     if (
       mobileMenuRef.current &&
@@ -77,94 +104,101 @@ const Header: React.FC = () => {
 
   return (
     <header
-      className={`fixed top-0 z-40 py-3.5 w-full transition-all duration-300 ${
+      className={`fixed top-0 z-40 w-full transition-all duration-300 ${
         sticky
-          ? 'shadow-md shadow-[#FFD54F]/10 bg-[#FFFDF5]/98 backdrop-blur-lg border-b border-[#FFD54F]/30'
-          : 'bg-[#FFFDF5]/90 backdrop-blur-md border-b border-[#FFD54F]/20 shadow-xs'
+          ? 'shadow-md shadow-[#FFD54F]/10 bg-[#FFFDF5]/95 backdrop-blur-md py-3'
+          : 'shadow-none py-4 sm:py-5 bg-transparent'
       }`}>
-      <div>
-        <div className='container flex items-center justify-between'>
-          <div className='shrink-0 mr-4 xl:mr-8'>
+      <div className='container mx-auto max-w-c-1390 px-4 sm:px-6 xl:px-8'>
+        <div className='flex items-center justify-between'>
+          {/* Brand Logo with Clean Spacing */}
+          <div className='flex-shrink-0 pr-3 sm:pr-6 lg:pr-8 relative z-10'>
             <Logo />
           </div>
-          <nav className='hidden lg:flex grow items-center gap-5 xl:gap-8 justify-center px-4'>
+
+          {/* Desktop Navigation */}
+          <nav className='hidden lg:flex items-center gap-5 xl:gap-7 2xl:gap-8 mx-auto px-4 xl:px-8'>
             {headerLink.map((item, index) => (
               <HeaderLink key={index} item={item} />
             ))}
           </nav>
 
-          <div className='flex items-center gap-2 lg:gap-4'>
+          {/* Contact Phone & Auth Section */}
+          <div className='flex items-center gap-3 xl:gap-4 shrink-0 pl-2 sm:pl-4'>
+            {/* Phone Button (visible on wide screens without wrapping) */}
             <a
               href={`tel:${contactPhone.replace(/\s+/g, '')}`}
-              className='text-sm xl:text-base font-extrabold text-grey-dark hover:text-amber-600 hidden xl:flex items-center whitespace-nowrap mr-2 transition-colors'>
-              <Icon
-                icon='solar:phone-bold'
-                className='text-amber-600 text-2xl inline-block me-1.5'
-              />
-              {contactPhone}
+              className='hidden 2xl:flex items-center gap-2 px-4 py-2 rounded-full bg-[#FFD54F]/20 text-grey-dark hover:bg-[#FFD54F]/35 transition-all text-xs font-bold whitespace-nowrap shrink-0 border border-[#FFD54F]/30'
+              title='Call Our Support'>
+              <Icon icon='solar:phone-calling-bold-duotone' className='text-base text-amber-600 shrink-0' />
+              <span className='whitespace-nowrap'>{contactPhone}</span>
             </a>
 
             {status === 'authenticated' ? (
-              <div className="flex items-center gap-3 relative" ref={dropdownRef}>
-                <button 
-                  onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="hidden xl:flex flex-col items-end cursor-pointer group"
-                >
-                  <span className="text-[10px] font-black text-amber-600 uppercase tracking-widest leading-none whitespace-nowrap pb-1">Welcome back</span>
-                  <span className="text-sm font-extrabold text-grey-dark flex items-center gap-1 group-hover:text-amber-600 transition-colors whitespace-nowrap">
-                    {session?.user?.name || 'Customer'}
-                    <Icon icon="solar:alt-arrow-down-bold" className={`text-xs transition-transform duration-300 text-grey-dark ${dropdownOpen ? 'rotate-180 text-amber-600' : ''}`} />
-                  </span>
-                </button>
-                
+              <div className='relative' ref={dropdownRef}>
                 <button
                   onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="bg-[#FFD54F]/20 border border-[#FFD54F]/40 hover:bg-[#FFD54F]/40 text-grey-dark p-2.5 rounded-2xl transition-all duration-300 group cursor-pointer shadow-sm shadow-[#FFD54F]/10"
-                  title="Open user profile menu"
-                >
-                  <Icon icon="solar:user-circle-bold-duotone" className="text-2xl text-grey-dark group-hover:scale-105 transition-transform" />
+                  className='flex items-center gap-2.5 p-1.5 pr-3 rounded-full bg-[#FFD54F]/20 hover:bg-[#FFD54F]/30 border border-[#FFD54F]/30 transition-all text-left group cursor-pointer'
+                  aria-expanded={dropdownOpen}>
+                  <div className='w-8 h-8 rounded-full bg-[#FFD54F] flex items-center justify-center text-grey-dark font-extrabold text-xs shadow-xs'>
+                    {session?.user?.name ? session.user.name.charAt(0).toUpperCase() : 'U'}
+                  </div>
+                  <div className='hidden sm:block text-left'>
+                    <p className='text-xs font-black text-grey-dark leading-tight line-clamp-1'>
+                      {session?.user?.name?.split(' ')[0] || 'User'}
+                    </p>
+                    <p className='text-[10px] text-grey-dark/70 font-semibold leading-tight'>
+                      Subscriber
+                    </p>
+                  </div>
+                  <Icon
+                    icon='solar:alt-arrow-down-linear'
+                    className={`text-grey-dark text-xs transition-transform duration-200 ${
+                      dropdownOpen ? 'rotate-180' : ''
+                    }`}
+                  />
                 </button>
 
-                {/* Desktop Dropdown */}
+                {/* Dropdown Menu */}
                 <AnimatePresence>
                   {dropdownOpen && (
                     <motion.div
-                      initial={{ opacity: 0, y: 8, scale: 0.96 }}
+                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 8, scale: 0.96 }}
-                      className="absolute top-full right-0 mt-3 w-64 bg-[#FFFDF5] rounded-3xl shadow-xl shadow-[#FFD54F]/15 border border-[#FFD54F]/30 overflow-hidden z-50 p-2.5"
-                    >
-                      <div className="p-3.5 bg-[#FFD54F]/15 rounded-2xl border border-[#FFD54F]/25 mb-2">
-                        <p className="text-[10px] font-black text-amber-600 uppercase tracking-wider mb-1">Authenticated Account</p>
-                        <p className="text-xs font-extrabold text-grey-dark truncate">{session?.user?.name || 'Customer'}</p>
-                        <p className="text-[11px] font-medium text-grey-dark/75 truncate mt-0.5">{session.user?.email}</p>
+                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                      transition={{ duration: 0.15 }}
+                      className='absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl shadow-[#FFD54F]/15 border border-[#FFD54F]/30 py-2 z-50 overflow-hidden'>
+                      <div className='px-4 py-2.5 border-b border-[#FFD54F]/20 bg-[#FFFDF5]'>
+                        <p className='text-xs font-black text-grey-dark truncate'>
+                          {session?.user?.name || 'Customer'}
+                        </p>
+                        <p className='text-[10px] text-grey-dark/70 font-medium truncate mt-0.5'>
+                          {session?.user?.email}
+                        </p>
                       </div>
-                      
-                      <div className="space-y-1">
-                        <Link 
-                          href="/profile" 
+
+                      <div className='py-1.5'>
+                        <Link
+                          href='/profile'
                           onClick={() => setDropdownOpen(false)}
-                          className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-grey-dark hover:bg-[#FFD54F]/20 font-bold text-xs transition-all"
-                        >
-                          <Icon icon="solar:user-bold-duotone" className="text-lg text-amber-600 shrink-0" />
-                          <span>My Profile</span>
+                          className='flex items-center gap-2.5 px-4 py-2 text-xs font-bold text-grey-dark hover:bg-[#FFD54F]/15 transition-colors'>
+                          <Icon icon='solar:user-bold-duotone' className='text-base text-amber-600' />
+                          <span>Edit Profile</span>
                         </Link>
-                        <Link 
-                          href="/my-orders" 
+                        <Link
+                          href='/my-orders'
                           onClick={() => setDropdownOpen(false)}
-                          className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-grey-dark hover:bg-[#FFD54F]/20 font-bold text-xs transition-all"
-                        >
-                          <Icon icon="solar:bag-check-bold-duotone" className="text-lg text-amber-600 shrink-0" />
+                          className='flex items-center gap-2.5 px-4 py-2 text-xs font-bold text-grey-dark hover:bg-[#FFD54F]/15 transition-colors'>
+                          <Icon icon='solar:bag-check-bold-duotone' className='text-base text-amber-600' />
                           <span>My Orders</span>
                         </Link>
-                        
-                        <hr className="border-[#FFD54F]/20 my-1.5" />
-                        
+                      </div>
+
+                      <div className='pt-1.5 border-t border-[#FFD54F]/20 px-2'>
                         <button
-                          onClick={() => signOut({ callbackUrl: '/' })}
-                          className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-red-600 hover:bg-red-50 font-bold text-xs transition-all w-full text-left cursor-pointer"
-                        >
-                          <Icon icon="solar:logout-2-bold-duotone" className="text-lg shrink-0" />
+                          onClick={handleSignOut}
+                          className='w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50 rounded-xl transition-colors cursor-pointer'>
+                          <Icon icon='solar:logout-2-bold-duotone' className='text-base' />
                           <span>Sign Out</span>
                         </button>
                       </div>
@@ -174,22 +208,24 @@ const Header: React.FC = () => {
               </div>
             ) : (
               <>
-                <Link
-                  href='/signin'
-                  className='hidden lg:block text-grey-dark duration-300 bg-[#FFD54F]/25 hover:bg-[#FFD54F] border border-[#FFD54F]/40 font-extrabold text-sm xl:text-base py-2 px-4 xl:px-6 rounded-full whitespace-nowrap transition-all'>
+                <button
+                  type='button'
+                  onClick={openSignIn}
+                  className='hidden lg:block text-grey-dark duration-300 bg-[#FFD54F]/25 hover:bg-[#FFD54F] border border-[#FFD54F]/40 font-extrabold text-sm xl:text-base py-2.5 px-5 xl:px-6 rounded-full whitespace-nowrap transition-all cursor-pointer'>
                   Sign In
-                </Link>
-                <Link
-                  href='/signup'
-                  className='hidden lg:block bg-[#FFD54F] duration-300 text-grey-dark hover:bg-[#F59E0B] font-extrabold text-sm xl:text-base py-2 px-4 xl:px-6 rounded-full whitespace-nowrap shadow-md shadow-[#FFD54F]/30 transition-all'>
+                </button>
+                <button
+                  type='button'
+                  onClick={openSignUp}
+                  className='hidden lg:block bg-[#FFD54F] duration-300 text-grey-dark hover:bg-[#F59E0B] font-extrabold text-sm xl:text-base py-2.5 px-5 xl:px-6 rounded-full whitespace-nowrap shadow-md shadow-[#FFD54F]/30 transition-all cursor-pointer'>
                   Sign Up
-                </Link>
+                </button>
               </>
             )}
 
             <button
               onClick={() => setNavbarOpen(!navbarOpen)}
-              className='block lg:hidden p-2 rounded-xl bg-[#FFD54F]/20 border border-[#FFD54F]/40 text-grey-dark'
+              className='block lg:hidden p-2 rounded-xl bg-[#FFD54F]/20 border border-[#FFD54F]/40 text-grey-dark cursor-pointer'
               aria-label='Toggle mobile menu'>
               <span className='block w-6 h-0.5 bg-grey-dark'></span>
               <span className='block w-6 h-0.5 bg-grey-dark mt-1.5'></span>
@@ -210,7 +246,7 @@ const Header: React.FC = () => {
             <span className='text-sm font-extrabold text-grey-dark'>Navigation Menu</span>
             <button
               onClick={() => setNavbarOpen(false)}
-              className='p-1.5 rounded-lg text-grey-dark hover:bg-[#FFD54F]/20'>
+              className='p-1.5 rounded-lg text-grey-dark hover:bg-[#FFD54F]/20 cursor-pointer'>
               <Icon icon='solar:close-circle-bold' className='text-2xl text-grey-dark' />
             </button>
           </div>
@@ -248,7 +284,7 @@ const Header: React.FC = () => {
                   </div>
 
                   <button
-                    onClick={() => signOut({ callbackUrl: '/' })}
+                    onClick={handleSignOut}
                     className="flex items-center justify-center gap-2 bg-red-50 text-red-600 px-4 py-3 rounded-xl font-bold text-xs hover:bg-red-100 transition-all border border-red-200 cursor-pointer"
                   >
                     <Icon icon="solar:logout-2-bold-duotone" className="text-lg" />
@@ -257,24 +293,31 @@ const Header: React.FC = () => {
                 </>
               ) : (
                 <>
-                  <Link
-                    href='/signin'
-                    className='bg-[#FFD54F]/25 text-grey-dark font-bold px-4 py-2.5 rounded-xl border border-[#FFD54F]/40 hover:bg-[#FFD54F] text-center transition duration-300 ease-in-out'
-                    onClick={() => setNavbarOpen(false)}>
+                  <button
+                    type='button'
+                    onClick={openSignIn}
+                    className='bg-[#FFD54F]/25 text-grey-dark font-bold px-4 py-2.5 rounded-xl border border-[#FFD54F]/40 hover:bg-[#FFD54F] text-center transition duration-300 ease-in-out cursor-pointer'>
                     Sign In
-                  </Link>
-                  <Link
-                    href='/signup'
-                    className='bg-[#FFD54F] text-grey-dark font-extrabold px-4 py-2.5 rounded-xl shadow-md shadow-[#FFD54F]/30 hover:bg-[#F59E0B] text-center transition duration-300 ease-in-out'
-                    onClick={() => setNavbarOpen(false)}>
+                  </button>
+                  <button
+                    type='button'
+                    onClick={openSignUp}
+                    className='bg-[#FFD54F] text-grey-dark font-extrabold px-4 py-2.5 rounded-xl shadow-md shadow-[#FFD54F]/30 hover:bg-[#F59E0B] text-center transition duration-300 ease-in-out cursor-pointer'>
                     Sign Up
-                  </Link>
+                  </button>
                 </>
               )}
             </div>
           </nav>
         </div>
       </div>
+
+      {/* Global Auth Modal Dialog */}
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        initialMode={authModalMode}
+      />
     </header>
   )
 }

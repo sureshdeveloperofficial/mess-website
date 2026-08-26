@@ -1,4 +1,5 @@
-'use client';
+'use client'
+
 import React, { useState, useMemo } from 'react'
 import Link from 'next/link'
 import Logo from '@/app/components/Layout/Header/Logo'
@@ -8,6 +9,7 @@ import { signIn } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useMutation } from '@tanstack/react-query'
 import { Icon } from '@iconify/react'
+import { motion } from 'framer-motion'
 
 const SignUp = () => {
   const router = useRouter()
@@ -39,7 +41,7 @@ const SignUp = () => {
       return response.data
     },
     onSuccess: async () => {
-      toast.success('Gourmet account created! Signing you in...')
+      toast.success('Account created successfully! Signing you in...')
       
       const result = await signIn('credentials', {
         email: formData.email,
@@ -51,198 +53,225 @@ const SignUp = () => {
         toast.error('Sign-in failed. Please login manually.')
         router.push('/signin')
       } else {
-        toast.success('Welcome aboard!')
+        toast.success('Welcome to Premium Mess!')
         router.refresh()
-        // Small delay to ensure session is initialized before redirection
         setTimeout(() => {
           router.push(callbackUrl)
-        }, 100)
+        }, 150)
       }
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.error || 'Registration failed')
+      toast.error(error.response?.data?.error || 'Registration failed. Please try again.')
     }
   })
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!isPasswordValid) {
-      toast.error('Please meet all password security requirements')
+      toast.error('Please meet all password requirements')
       return
     }
     registerMutation.mutate(formData)
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50/50">
-      <div className="w-full max-w-[1400px] h-full lg:h-[900px] lg:min-h-[800px] mx-auto bg-white lg:rounded-[3rem] shadow-2xl overflow-hidden border border-gray-100 grid lg:grid-cols-2">
-        
-        {/* Left Side: Branding/Visuals */}
-        <div className="hidden lg:flex relative bg-primary overflow-hidden items-center justify-center p-12">
-          {/* Background Image with Overlay */}
-          <div 
-            className="absolute inset-0 bg-cover bg-center transition-transform duration-[20s] hover:scale-110"
-            style={{ backgroundImage: "url('/images/auth-bg.png')" }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/80 via-primary/60 to-transparent" />
-          
-          <div className="relative z-10 text-white max-w-md">
-            <div className="mb-8">
-              <Logo />
-            </div>
-            <h1 className="text-5xl font-black mb-6 leading-tight uppercase tracking-tight italic">
-              Join the <span className="text-secondary">Taste Revolution</span>
-            </h1>
-            <p className="text-lg font-bold text-white/80 leading-relaxed uppercase tracking-widest text-[12px]">
-              Ready to elevate your meal experience? Create your account today and explore gourmet mess services tailored for you.
-            </p>
-            
-            <div className="mt-12 flex items-center gap-4">
-              <div className="flex -space-x-4">
-                {[1, 2, 3, 4].map(i => (
-                  <div key={i} className="w-12 h-12 rounded-full border-4 border-primary bg-grey/10 flex items-center justify-center overflow-hidden">
-                    <Icon icon="ion:person-circle-outline" className="text-4xl text-white/50" />
-                  </div>
-                ))}
-              </div>
-              <p className="text-sm font-black uppercase tracking-widest">
-                <span className="text-secondary">10,000+</span> DELIGHTED USERS
-              </p>
-            </div>
-          </div>
+    <div className='min-h-screen flex items-center justify-center bg-[#FFFDF5] py-12 sm:py-20 px-4 sm:px-6 relative overflow-hidden'>
+      {/* Decorative Ambient Honey Yellow Glows */}
+      <div className='absolute -top-24 -left-24 w-96 h-96 bg-[#FFD54F]/20 rounded-full blur-3xl pointer-events-none' />
+      <div className='absolute -bottom-24 -right-24 w-96 h-96 bg-[#FFD54F]/15 rounded-full blur-3xl pointer-events-none' />
+      <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#FFD54F]/10 rounded-full blur-[140px] pointer-events-none' />
 
-          <div className="absolute bottom-8 left-12 right-12 flex justify-between items-center text-white/40 text-[10px] font-black uppercase tracking-[0.2em]">
-            <span>© 2026 Premium Mess</span>
-            <span>Premium Taste Guaranteed</span>
-          </div>
+      {/* Main Centered Card */}
+      <motion.div
+        initial={{ opacity: 0, y: 25 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: 'easeOut' }}
+        className='w-full max-w-[620px] bg-white rounded-3xl sm:rounded-[2.5rem] p-7 sm:p-11 shadow-2xl shadow-[#FFD54F]/15 border border-[#FFD54F]/35 relative z-10'
+      >
+        {/* Back to Home Link */}
+        <div className='mb-6'>
+          <Link
+            href='/'
+            className='inline-flex items-center gap-1.5 text-xs font-bold text-grey-dark/60 hover:text-amber-600 transition-colors group'
+          >
+            <Icon icon='solar:arrow-left-linear' className='text-base group-hover:-translate-x-0.5 transition-transform' />
+            <span>Back to Home</span>
+          </Link>
         </div>
 
-        {/* Right Side: Form area */}
-        <div className="p-8 md:p-14 lg:p-16 flex flex-col justify-center bg-white overflow-y-auto custom-scrollbar">
-          <div className="w-full max-w-[550px] mx-auto">
-            <div className='mb-8 lg:hidden text-center'>
-              <Logo />
-            </div>
-            
-            <div className="mb-8">
-              <h2 className="text-4xl font-black text-grey tracking-tight italic uppercase">Create Account</h2>
-              <p className="text-[10px] text-grey/40 font-black uppercase tracking-[0.2em] mt-2">Start your gourmet journey today</p>
-            </div>
+        {/* Brand Header */}
+        <div className='text-center mb-8'>
+          <div className='inline-block mb-3'>
+            <Logo />
+          </div>
+          <div className='inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFD54F]/20 text-grey-dark text-[10px] font-black uppercase tracking-wider border border-[#FFD54F]/40 mb-3'>
+            <Icon icon='solar:shield-star-bold-duotone' className='text-xs text-amber-600' />
+            Authentic Meal Plans
+          </div>
+          <h1 className='text-2.5xl sm:text-3.5xl font-extrabold text-grey-dark tracking-tight leading-tight'>
+            Create Your <span className='text-amber-500'>Account</span>
+          </h1>
+          <p className='text-xs sm:text-sm font-medium text-grey-dark/65 mt-1.5'>
+            Sign up in seconds to start ordering your daily meals
+          </p>
+        </div>
 
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-grey/40 uppercase tracking-widest ml-4">Full Name</label>
-                  <input
-                    type='text'
-                    placeholder='Enter your name'
-                    name='name'
-                    required
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className='w-full rounded-2xl border-2 border-grey/5 bg-grey/5 px-6 py-3.5 text-base outline-none transition focus:border-primary focus:bg-white text-grey font-bold placeholder:text-grey/20'
-                  />
+        {/* Form */}
+        <form onSubmit={handleSubmit} className='space-y-4 sm:space-y-5'>
+          <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5'>
+            {/* Full Name */}
+            <div className='space-y-1.5'>
+              <label className='text-[11px] font-extrabold text-grey-dark uppercase tracking-wider block'>
+                Full Name <span className='text-red-500'>*</span>
+              </label>
+              <div className='relative'>
+                <div className='absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-grey-dark/40'>
+                  <Icon icon='solar:user-bold-duotone' className='text-lg' />
                 </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-grey/40 uppercase tracking-widest ml-4">Email Address</label>
-                  <input
-                    type='email'
-                    placeholder='name@example.com'
-                    name='email'
-                    required
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className='w-full rounded-2xl border-2 border-grey/5 bg-grey/5 px-6 py-3.5 text-base outline-none transition focus:border-primary focus:bg-white text-grey font-bold placeholder:text-grey/20'
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-grey/40 uppercase tracking-widest ml-4">Phone Number</label>
-                  <input
-                    type='text'
-                    placeholder='+971 XX XXX XXXX'
-                    name='phone'
-                    required
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className='w-full rounded-2xl border-2 border-grey/5 bg-grey/5 px-6 py-3.5 text-base outline-none transition focus:border-primary focus:bg-white text-grey font-bold placeholder:text-grey/20'
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-grey/40 uppercase tracking-widest ml-4">Password</label>
-                  <div className="relative">
-                    <input
-                      type={showPassword ? 'text' : 'password'}
-                      placeholder='••••••••'
-                      name='password'
-                      required
-                      value={formData.password}
-                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                      className='w-full rounded-2xl border-2 border-grey/5 bg-grey/5 px-6 py-3.5 text-base outline-none transition focus:border-primary focus:bg-white text-grey font-bold pr-14 placeholder:text-grey/20 line-clamp-1'
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-5 top-1/2 -translate-y-1/2 text-grey/20 hover:text-primary transition-colors"
-                    >
-                      <Icon icon={showPassword ? "ion:eye-off-outline" : "ion:eye-outline"} className="text-xl" />
-                    </button>
-                  </div>
-                </div>
+                <input
+                  type='text'
+                  placeholder='Full Name'
+                  name='name'
+                  required
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className='w-full bg-[#FFFDF5] border border-[#FFD54F]/35 focus:bg-white focus:border-[#FFD54F] px-4 py-3 pl-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[#FFD54F]/20 transition-all placeholder:text-grey-dark/30'
+                />
               </div>
+            </div>
 
-              {/* Password Security Checklist */}
-              {formData.password.length > 0 && (
-                <div className="my-4 grid grid-cols-2 md:grid-cols-4 gap-2 p-3 bg-grey/5 rounded-2xl border border-grey/5">
-                  <CheckItem label="8+ Characters" isValid={passwordCriteria.minLength} />
-                  <CheckItem label="Uppercase" isValid={passwordCriteria.hasUpper} />
-                  <CheckItem label="A Number" isValid={passwordCriteria.hasNumber} />
-                  <CheckItem label="Special Char" isValid={passwordCriteria.hasSpecial} />
+            {/* Email Address */}
+            <div className='space-y-1.5'>
+              <label className='text-[11px] font-extrabold text-grey-dark uppercase tracking-wider block'>
+                Email Address <span className='text-red-500'>*</span>
+              </label>
+              <div className='relative'>
+                <div className='absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-grey-dark/40'>
+                  <Icon icon='solar:letter-bold-duotone' className='text-lg' />
                 </div>
-              )}
+                <input
+                  type='email'
+                  placeholder='name@example.com'
+                  name='email'
+                  required
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  className='w-full bg-[#FFFDF5] border border-[#FFD54F]/35 focus:bg-white focus:border-[#FFD54F] px-4 py-3 pl-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[#FFD54F]/20 transition-all placeholder:text-grey-dark/30'
+                />
+              </div>
+            </div>
 
-              <div className='pt-4'>
+            {/* Phone Number */}
+            <div className='space-y-1.5'>
+              <label className='text-[11px] font-extrabold text-grey-dark uppercase tracking-wider block'>
+                Phone Number <span className='text-red-500'>*</span>
+              </label>
+              <div className='relative'>
+                <div className='absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-grey-dark/40'>
+                  <Icon icon='solar:phone-bold-duotone' className='text-lg' />
+                </div>
+                <input
+                  type='tel'
+                  placeholder='+971 XX XXX XXXX'
+                  name='phone'
+                  required
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  className='w-full bg-[#FFFDF5] border border-[#FFD54F]/35 focus:bg-white focus:border-[#FFD54F] px-4 py-3 pl-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[#FFD54F]/20 transition-all placeholder:text-grey-dark/30'
+                />
+              </div>
+            </div>
+
+            {/* Password */}
+            <div className='space-y-1.5'>
+              <label className='text-[11px] font-extrabold text-grey-dark uppercase tracking-wider block'>
+                Password <span className='text-red-500'>*</span>
+              </label>
+              <div className='relative'>
+                <div className='absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-grey-dark/40'>
+                  <Icon icon='solar:lock-password-bold-duotone' className='text-lg' />
+                </div>
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder='••••••••'
+                  name='password'
+                  required
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  className='w-full bg-[#FFFDF5] border border-[#FFD54F]/35 focus:bg-white focus:border-[#FFD54F] px-4 py-3 pl-11 pr-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[#FFD54F]/20 transition-all placeholder:text-grey-dark/30'
+                />
                 <button
-                  disabled={registerMutation.isPending}
-                  type='submit'
-                  className='flex w-full items-center text-sm font-black text-grey justify-center rounded-2xl bg-primary px-8 py-5 transition duration-300 ease-in-out hover:scale-[1.02] active:scale-95 shadow-xl shadow-primary/20 disabled:opacity-50 uppercase tracking-widest'>
-                  {registerMutation.isPending ? (
-                    <Icon icon="line-md:loading-loop" className="text-xl mr-3" />
-                  ) : null}
-                  {registerMutation.isPending ? 'Syncing...' : 'Create My Account'}
+                  type='button'
+                  onClick={() => setShowPassword(!showPassword)}
+                  className='absolute right-3.5 top-1/2 -translate-y-1/2 text-grey-dark/40 hover:text-grey-dark transition-colors cursor-pointer p-1'
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  <Icon icon={showPassword ? 'solar:eye-closed-bold-duotone' : 'solar:eye-bold-duotone'} className='text-base' />
                 </button>
               </div>
-            </form>
-
-            <div className="mt-8 text-center space-y-4">
-              <p className='text-[10px] text-grey/30 font-black uppercase tracking-widest leading-relaxed'>
-                By joining you agree with our{' '}
-                <Link href='/privacy' className='text-primary hover:underline font-bold'>Privacy</Link>{' '}
-                &{' '}
-                <Link href='/policy' className='text-primary hover:underline font-bold'>Terms</Link>
-              </p>
-
-              <p className='text-[10px] text-grey/40 font-black uppercase tracking-widest'>
-                Already a member?{' '}
-                <Link href={`/signin?callbackUrl=${encodeURIComponent(callbackUrl)}`} className='text-primary hover:underline ml-2'>
-                  Sign In to Account
-                </Link>
-              </p>
             </div>
           </div>
+
+          {/* Password Security Checklist */}
+          {formData.password.length > 0 && (
+            <div className='my-3 grid grid-cols-2 sm:grid-cols-4 gap-2 p-3 bg-[#FFFDF5] rounded-2xl border border-[#FFD54F]/35'>
+              <CheckItem label='8+ Chars' isValid={passwordCriteria.minLength} />
+              <CheckItem label='Uppercase' isValid={passwordCriteria.hasUpper} />
+              <CheckItem label='Number' isValid={passwordCriteria.hasNumber} />
+              <CheckItem label='Symbol' isValid={passwordCriteria.hasSpecial} />
+            </div>
+          )}
+
+          {/* Submit CTA Button */}
+          <div className='pt-2'>
+            <button
+              disabled={registerMutation.isPending}
+              type='submit'
+              className='w-full bg-[#FFD54F] hover:bg-[#F59E0B] text-grey-dark px-8 py-4 rounded-2xl font-extrabold text-sm sm:text-base flex justify-center items-center gap-2.5 shadow-lg shadow-[#FFD54F]/25 hover:shadow-xl hover:shadow-[#FFD54F]/35 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer'
+            >
+              {registerMutation.isPending ? (
+                <>
+                  <Icon icon='line-md:loading-loop' className='text-xl' />
+                  <span>Creating Account...</span>
+                </>
+              ) : (
+                <>
+                  <span>Create My Account</span>
+                  <Icon icon='solar:arrow-right-bold' className='text-base' />
+                </>
+              )}
+            </button>
+          </div>
+        </form>
+
+        {/* Bottom Terms & Sign In Switch */}
+        <div className='mt-6 text-center space-y-3 pt-4 border-t border-grey-dark/5'>
+          <p className='text-[11px] text-grey-dark/50 font-medium'>
+            By creating an account, you agree to our{' '}
+            <Link href='/terms' className='text-amber-600 hover:underline font-bold'>Terms of Service</Link>{' '}
+            &{' '}
+            <Link href='/privacy' className='text-amber-600 hover:underline font-bold'>Privacy Policy</Link>.
+          </p>
+
+          <p className='text-xs font-medium text-grey-dark/70'>
+            Already have an account?{' '}
+            <Link
+              href={`/signin?callbackUrl=${encodeURIComponent(callbackUrl)}`}
+              className='text-amber-600 hover:text-amber-700 font-extrabold ml-1 hover:underline'
+            >
+              Sign In to Account
+            </Link>
+          </p>
         </div>
-      </div>
+      </motion.div>
     </div>
   )
 }
 
 const CheckItem = ({ label, isValid }: { label: string; isValid: boolean }) => (
-  <div className={`flex items-center gap-2 ${isValid ? 'text-green-500' : 'text-grey/30'}`}>
-    <Icon icon={isValid ? "ion:checkmark-circle" : "ion:ellipse-outline"} className="text-xs" />
-    <span className="text-[9px] font-black uppercase tracking-tighter">{label}</span>
+  <div className={`flex items-center gap-1.5 ${isValid ? 'text-green-600' : 'text-grey-dark/30'}`}>
+    <Icon icon={isValid ? 'solar:check-circle-bold' : 'solar:close-circle-linear'} className='text-sm shrink-0' />
+    <span className='text-[10px] font-extrabold uppercase tracking-wider'>{label}</span>
   </div>
 )
 

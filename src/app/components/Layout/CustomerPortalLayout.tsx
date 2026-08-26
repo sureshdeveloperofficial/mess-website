@@ -162,7 +162,11 @@ export default function CustomerPortalLayout({ children }: { children: React.Rea
 
                     <button
                         type='button'
-                        onClick={() => signOut({ callbackUrl: '/' })}
+                        onClick={async () => {
+                            await signOut({ redirect: false })
+                            router.push('/')
+                            router.refresh()
+                        }}
                         className='flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-red-600 hover:bg-red-50 font-bold transition-all w-full text-xs cursor-pointer'
                     >
                         <Icon icon='solar:logout-2-bold-duotone' className='text-lg shrink-0' />
