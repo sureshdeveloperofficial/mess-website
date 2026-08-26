@@ -6,7 +6,6 @@ import Expert from '@/app/components/Home/Expert'
 import Gallery from '@/app/components/Home/Gallery'
 import PremiumBanner from '@/app/components/Home/PremiumBanner'
 import Newsletter from '@/app/components/Home/Newsletter'
-import MenuPreview from '@/app/components/Home/MenuPreview'
 import HowItWorks from '@/app/components/Home/HowItWorks'
 // import AppDownload from '@/app/components/Home/AppDownload'
 import { Metadata } from 'next'
@@ -20,12 +19,11 @@ export default function Home() {
   return (
     <main>
       <Hero />
+      <Cook />
       <Features />
-      <MenuPreview />
+      <Gallery />
       <HowItWorks />
       {/* <Expert /> */}
-      <Cook />
-      <Gallery />
       {/* <PremiumBanner /> */}
       {/* <Newsletter /> */}
     </main>
