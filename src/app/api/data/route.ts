@@ -8,7 +8,8 @@ import { FooterLinkType } from '@/app/types/footerlink'
 import { FullMenuType } from '@/app/types/fullmenu'
 
 const HeaderData: HeaderItem[] = [
-  { label: 'About', href: '/#aboutus' },
+  { label: 'Home', href: '/' },
+  { label: 'About Us', href: '/#aboutus' },
   { label: 'Meal Plans', href: '/plans' },
   { label: 'Delivery Areas', href: '/delivery-areas' },
   { label: 'Corporate', href: '/contact' },
