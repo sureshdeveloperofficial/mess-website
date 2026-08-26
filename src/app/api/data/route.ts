@@ -11,7 +11,7 @@ const HeaderData: HeaderItem[] = [
   { label: 'About', href: '/#aboutus' },
   { label: 'Meal Plans', href: '/plans' },
   { label: 'Delivery Areas', href: '/delivery-areas' },
-  { label: 'Contact', href: '/contact' },
+  { label: 'Corporate', href: '/contact' },
   { label: 'Get Started', href: '/get-started' },
 ]
 
@@ -131,7 +131,7 @@ const FooterLinkData: FooterLinkType[] = [
       { label: 'Home', href: '/' },
       { label: 'About Us', href: '/#aboutus' },
       { label: 'Meal Plans', href: '/plans' },
-      { label: 'Contact Us', href: '/contact' },
+      { label: 'Corporate', href: '/contact' },
     ],
   },
   {

@@ -199,33 +199,47 @@ export async function sendContactInquiryEmail(data: {
     phone?: string
     subject?: string
     message: string
+    companyName?: string
+    location?: string
+    numberOfPeople?: string
+    mealsPerDay?: string
+    startDate?: string
 }) {
     const { isConfigured, config, transporter } = await getMailTransporter()
 
     if (!isConfigured || !transporter) {
-        console.log(`[Dev Simulation] Contact form submission:`, data)
+        console.log(`[Dev Simulation] Contact/Corporate form submission:`, data)
         return { simulated: true }
     }
 
+    const isCorporate = Boolean(data.companyName || data.numberOfPeople || data.mealsPerDay)
+    const inquiryTitle = isCorporate ? '🏢 New Corporate Meal Plan Request' : 'New Contact Form Message'
+
     // 1. Send Notification to Admin
     const adminMailOptions = {
-        from: `"${config.fromName} Contact Form" <${config.fromEmail}>`,
+        from: `"${config.fromName} ${isCorporate ? 'Corporate Inquiry' : 'Contact Form'}" <${config.fromEmail}>`,
         to: config.adminEmail,
         replyTo: data.email,
-        subject: `📬 New Customer Inquiry from ${data.name}`,
+        subject: `📬 ${isCorporate ? `Corporate Plan Request: ${data.companyName || data.name}` : `New Customer Inquiry from ${data.name}`}`,
         html: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; padding: 30px; border-radius: 16px; border: 1px solid #eee;">
-                <h2 style="color: #df6853; margin-top: 0;">New Contact Form Message</h2>
+                <h2 style="color: #df6853; margin-top: 0;">${inquiryTitle}</h2>
                 <div style="background: #f8f9fa; padding: 18px; border-radius: 12px; margin-bottom: 20px; font-size: 14px;">
-                    <p style="margin: 6px 0;"><strong>Name:</strong> ${data.name}</p>
+                    <p style="margin: 6px 0;"><strong>Contact Person:</strong> ${data.name}</p>
+                    ${data.companyName ? `<p style="margin: 6px 0;"><strong>Company Name:</strong> ${data.companyName}</p>` : ''}
                     <p style="margin: 6px 0;"><strong>Email:</strong> <a href="mailto:${data.email}">${data.email}</a></p>
                     <p style="margin: 6px 0;"><strong>Phone:</strong> ${data.phone || 'Not provided'}</p>
-                    <p style="margin: 6px 0;"><strong>Date:</strong> ${new Date().toLocaleString()}</p>
+                    ${data.location ? `<p style="margin: 6px 0;"><strong>Location:</strong> ${data.location}</p>` : ''}
+                    ${data.numberOfPeople ? `<p style="margin: 6px 0;"><strong>Number of People:</strong> ${data.numberOfPeople}</p>` : ''}
+                    ${data.mealsPerDay ? `<p style="margin: 6px 0;"><strong>Meals Per Day:</strong> ${data.mealsPerDay}</p>` : ''}
+                    ${data.startDate ? `<p style="margin: 6px 0;"><strong>Preferred Start Date:</strong> ${data.startDate}</p>` : ''}
+                    <p style="margin: 6px 0;"><strong>Date Submitted:</strong> ${new Date().toLocaleString()}</p>
                 </div>
+                ${data.message ? `
                 <div style="background: #ffffff; border: 1px solid #eee; padding: 18px; border-radius: 12px;">
-                    <p style="margin: 0; font-weight: bold; color: #444; margin-bottom: 8px;">Message:</p>
+                    <p style="margin: 0; font-weight: bold; color: #444; margin-bottom: 8px;">Additional Notes / Message:</p>
                     <p style="margin: 0; color: #333; line-height: 1.6; white-space: pre-wrap;">${data.message}</p>
-                </div>
+                </div>` : ''}
             </div>
         `
     }
@@ -234,18 +248,21 @@ export async function sendContactInquiryEmail(data: {
     const customerMailOptions = {
         from: `"${config.fromName}" <${config.fromEmail}>`,
         to: data.email,
-        subject: `We've received your message — ${config.fromName}`,
+        subject: `We've received your ${isCorporate ? 'corporate meal plan request' : 'message'} — ${config.fromName}`,
         html: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; padding: 30px; border-radius: 16px; border: 1px solid #eee;">
                 <h2 style="color: #df6853; margin-top: 0;">Hi ${data.name},</h2>
                 <p style="color: #555; font-size: 15px; line-height: 1.6;">
-                    Thank you for reaching out to <strong>${config.fromName}</strong>! We have received your inquiry and our team will get back to you as soon as possible.
+                    Thank you for reaching out to <strong>${config.fromName}</strong>! We have received your ${isCorporate ? 'monthly corporate plan request' : 'inquiry'} and our dedicated team will get back to you with a customized proposal within 24 hours.
                 </p>
+                ${data.companyName ? `
                 <div style="background: #fdf2f0; padding: 16px; border-radius: 12px; margin: 20px 0; font-size: 13px; color: #666;">
-                    <p style="margin: 0 0 6px 0; font-weight: bold; color: #df6853;">Your Inquiry Summary:</p>
-                    <p style="margin: 0; font-style: italic;">"${data.message}"</p>
-                </div>
-                <p style="color: #777; font-size: 13px;">If you have urgent questions regarding meals or delivery, please feel free to call us at <strong>+971 4 264 2613</strong>.</p>
+                    <p style="margin: 0 0 6px 0; font-weight: bold; color: #df6853;">Request Overview:</p>
+                    <p style="margin: 3px 0;"><strong>Company:</strong> ${data.companyName}</p>
+                    ${data.numberOfPeople ? `<p style="margin: 3px 0;"><strong>Team Size:</strong> ${data.numberOfPeople} people</p>` : ''}
+                    ${data.location ? `<p style="margin: 3px 0;"><strong>Location:</strong> ${data.location}</p>` : ''}
+                </div>` : ''}
+                <p style="color: #777; font-size: 13px;">If you have urgent questions, please feel free to call us directly at <strong>+971 4 264 2613</strong>.</p>
                 <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
                 <p style="color: #aaa; font-size: 12px; text-align: center; margin: 0;">© ${new Date().getFullYear()} ${config.fromName}</p>
             </div>
