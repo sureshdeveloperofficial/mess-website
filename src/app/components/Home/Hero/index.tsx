@@ -95,20 +95,6 @@ const Hero = () => {
         <div className='grid grid-cols-1 lg:grid-cols-12 items-center gap-16'>
           <div className='lg:col-span-7'>
             <div className='flex flex-col items-center lg:items-start'>
-              <motion.div
-                variants={revealVariants}
-                initial="hidden"
-                animate="visible"
-                custom={0}
-                className='flex items-center gap-3 mb-6'
-              >
-                <span className='px-4 py-1.5 bg-primary/20 text-grey-dark text-[10px] font-bold uppercase tracking-wider rounded-full border border-primary/40'>
-                  Est. 2024 • Authentic Mess Dining
-                </span>
-                <div className='flex gap-0.5 text-amber-500 font-bold'>
-                  {[1, 2, 3, 4, 5].map(i => <Icon key={i} icon='ion:star' className='text-xs' />)}
-                </div>
-              </motion.div>
 
               <motion.h1
                 variants={revealVariants}
