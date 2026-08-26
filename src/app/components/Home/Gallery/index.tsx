@@ -2,46 +2,24 @@
 import Image from 'next/image'
 import Masonry from 'react-masonry-css'
 import Link from 'next/link'
-import { useEffect, useRef } from 'react'
 import { Icon } from '@iconify/react'
-import gsap from 'gsap'
 import { motion } from 'framer-motion'
 
 const GALLERY_DATA = [
   { name: 'Nandan Ghee Rice', price: '14', src: '/images/food/biryani_premium.png' },
-  { name: 'Special Biryani', price: '15', src: '/images/food/biryani_premium.png' },
+  { name: 'Special Biryani', price: '15', src: '/images/food/biryani.png' },
   { name: 'Malabar Parotta', price: '10', src: '/images/food/parotta.png' },
   { name: 'Spicy Fish Curry', price: '14', src: '/images/food/fish_curry.png' },
-  { name: 'Premium Breakfast', price: '10', src: '/images/hero/idli-vada-with-sambar-chutney.jpg' },
+  { name: 'Traditional Kerala Thali', price: '12', src: '/images/food/thali.png' },
   { name: 'Lacy Appam Set', price: '8', src: '/images/food/appetizer.png' },
 ]
 
 const Gallery = () => {
-  const sectionRef = useRef<HTMLElement>(null)
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.from('.gallery-item', {
-        y: 60,
-        opacity: 0,
-        scale: 0.9,
-        stagger: 0.1,
-        duration: 1,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top 75%',
-        }
-      })
-    }, sectionRef)
-
-    return () => ctx.revert()
-  }, [])
-
   return (
-    <section ref={sectionRef} id='gallery' className='py-16 bg-[#FFFDF5] relative overflow-hidden'>
+    <section id='gallery' className='py-16 bg-[#FFFDF5] relative overflow-hidden'>
       {/* Ambient background glow */}
       <div className='absolute top-1/3 right-0 w-80 h-80 bg-[#FFD54F]/10 rounded-full blur-3xl pointer-events-none' />
+      <div className='absolute bottom-10 left-10 w-80 h-80 bg-[#FFD54F]/10 rounded-full blur-3xl pointer-events-none' />
 
       <div className='container relative z-10'>
         <div className='text-center mb-12'>
@@ -49,7 +27,7 @@ const Gallery = () => {
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className='text-amber-600 text-xs font-black mb-4 tracking-widest uppercase inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFD54F]/20 border border-[#FFD54F]/40'
+            className='text-amber-600 text-xs font-black mb-4 tracking-widest uppercase inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#FFD54F]/20 border border-[#FFD54F]/40'
           >
             <Icon icon='solar:gallery-wide-bold-duotone' className='text-amber-600' />
             Visual Feast
@@ -71,11 +49,15 @@ const Gallery = () => {
             columnClassName='masonry-column'
           >
             {GALLERY_DATA.map((item, index) => (
-              <div
+              <motion.div
                 key={index}
+                initial={{ opacity: 0, y: 25 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.1 }}
+                transition={{ duration: 0.5, delay: index * 0.08, ease: 'easeOut' }}
                 className='gallery-item overflow-hidden rounded-3xl sm:rounded-[3rem] mb-6 sm:mb-8 relative group bg-white shadow-xl shadow-[#FFD54F]/10 border border-[#FFD54F]/25 hover:border-[#FFD54F] transition-all duration-300'
               >
-                <div className='relative aspect-square sm:aspect-4/3 overflow-hidden'>
+                <div className='relative aspect-square sm:aspect-4/3 overflow-hidden bg-[#FFFDF5]'>
                   <Image
                     src={item.src}
                     alt={item.name}
@@ -99,7 +81,7 @@ const Gallery = () => {
                     </div>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </Masonry>
         </div>
