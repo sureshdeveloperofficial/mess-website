@@ -154,7 +154,7 @@ const Hero = () => {
                     whileTap={{ scale: 0.98 }}
                     className='text-base border-4 border-grey-dark/5 rounded-4xl font-extrabold py-6 px-12 text-grey-dark transition-all duration-300 flex items-center gap-3 bg-transparent cursor-pointer'
                   >
-                    View Today's Menu
+                    View Special Menu
                     <Icon icon='ion:restaurant-outline' />
                   </motion.button>
                 </Link>
