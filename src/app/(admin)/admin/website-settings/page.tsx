@@ -36,7 +36,7 @@ export default function WebsiteSettingsPage() {
     const [formData, setFormData] = useState<WebsiteSettingsState>({
         restaurant_name: 'PREMIUM MESS',
         site_tagline: 'Authentic Home-Style Meals Served Daily with Love',
-        site_bio: 'Authentic home-style meals served daily with love. High quality, hygienic, and nutritious dining for every guest since 2015.',
+        site_bio: 'Authentic home-style meals served daily with love. High quality, hygienic, and nutritious dining for every guest.',
         site_logo: '',
         site_favicon: '',
         contact_phone: '+971 4 264 2613',
@@ -69,7 +69,7 @@ export default function WebsiteSettingsPage() {
             setFormData({
                 restaurant_name: cleanName,
                 site_tagline: settings.site_tagline || 'Authentic Home-Style Meals Served Daily with Love',
-                site_bio: settings.site_bio || 'Authentic home-style meals served daily with love. High quality, hygienic, and nutritious dining for every guest since 2015.',
+                site_bio: (settings.site_bio || 'Authentic home-style meals served daily with love. High quality, hygienic, and nutritious dining for every guest.').replace(/\s*since\s*2015\.?/gi, '.').replace(/\.\./g, '.'),
                 site_logo: settings.site_logo || '',
                 site_favicon: settings.site_favicon || '',
                 contact_phone: settings.contact_phone || '+971 4 264 2613',

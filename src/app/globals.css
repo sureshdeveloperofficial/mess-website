@@ -3,7 +3,12 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --color-primary: #FACB15;
+  --color-primary: #FFD54F;
+  --color-primary-hover: #F59E0B;
+  --color-honey: #FFD54F;
+  --color-honey-light: #FFF8E7;
+  --color-honey-bg: #FFFDF5;
+  --color-honey-card: #FFF9E6;
   --color-grey: #262626;
   --color-grey-dark: #171717;
   --color-grey-muted: #737373;

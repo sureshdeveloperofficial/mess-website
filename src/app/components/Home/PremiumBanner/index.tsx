@@ -4,7 +4,7 @@ import { Icon } from '@iconify/react'
 
 const PremiumBanner = () => {
     return (
-        <section className='relative py-16 bg-[#FFF9F5] overflow-hidden'>
+        <section className='relative py-16 bg-[#FFFDF5] overflow-hidden'>
             {/* Background elements */}
             <div className='absolute top-0 left-0 w-full h-full opacity-[0.03] pointer-events-none'>
                 <div className='absolute top-10 left-10 text-9xl rotate-12'>

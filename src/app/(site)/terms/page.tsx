@@ -51,11 +51,11 @@ const TermsPage = () => {
   ]
 
   return (
-    <main className='pt-20 bg-[#FFF9F5] min-h-screen'>
+    <main className='pt-20 bg-[#FFFDF5] min-h-screen'>
       {/* Hero Banner */}
-      <div className='pt-16 pb-12 bg-linear-to-b from-primary/10 via-primary/5 to-[#FFF9F5] text-center relative overflow-hidden'>
-        <div className='absolute -top-20 -left-20 w-72 h-72 bg-primary/15 rounded-full blur-3xl pointer-events-none' />
-        <div className='absolute -bottom-10 -right-10 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none' />
+      <div className='pt-16 pb-12 bg-linear-to-b from-primary/15 via-primary/5 to-[#FFFDF5] text-center relative overflow-hidden'>
+        <div className='absolute -top-20 -left-20 w-72 h-72 bg-primary/20 rounded-full blur-3xl pointer-events-none' />
+        <div className='absolute -bottom-10 -right-10 w-96 h-96 bg-primary/15 rounded-full blur-3xl pointer-events-none' />
 
         <motion.div
           initial={{ opacity: 0, y: -20 }}

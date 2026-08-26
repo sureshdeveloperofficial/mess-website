@@ -161,7 +161,7 @@ const FoodMenu = () => {
     const hasAnyConfiguredPopular = activePlans.some(p => p.isPopular === true || p.scheduleJson?.isPopular === true)
 
     return (
-        <section id='plans' className='py-12 sm:py-20 bg-[#FFF9F5] text-grey-dark relative overflow-hidden'>
+        <section id='plans' className='py-12 sm:py-20 bg-[#FFFDF5] text-grey-dark relative overflow-hidden'>
             {/* Ambient Background Accents */}
             <div className='absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[140px] pointer-events-none' />
             <div className='absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[160px] pointer-events-none' />

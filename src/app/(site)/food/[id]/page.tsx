@@ -152,20 +152,20 @@ export default function FoodSelectionPage() {
     }, [currentMonth])
 
     if (isLoading) return (
-        <div className='min-h-screen pt-32 flex items-center justify-center bg-[#FFF9F5]'>
+        <div className='min-h-screen pt-32 flex items-center justify-center bg-[#FFFDF5]'>
             <div className='w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin'></div>
         </div>
     )
 
     if (error || !item) return (
-        <div className='min-h-screen pt-32 flex flex-col items-center justify-center bg-[#FFF9F5]'>
+        <div className='min-h-screen pt-32 flex flex-col items-center justify-center bg-[#FFFDF5]'>
             <h1 className='text-3xl font-black text-grey mb-6'>Dish Not Found</h1>
             <button onClick={() => router.back()} className='px-8 py-3 bg-primary text-white rounded-full font-black'>Back</button>
         </div>
     )
 
     return (
-        <main className='min-h-screen pt-24 pb-32 bg-[#FFF9F5]'>
+        <main className='min-h-screen pt-24 pb-32 bg-[#FFFDF5]'>
             <div className='container max-w-7xl mx-auto px-4'>
                 <div className='grid grid-cols-1 lg:grid-cols-12 gap-12 items-start'>
 

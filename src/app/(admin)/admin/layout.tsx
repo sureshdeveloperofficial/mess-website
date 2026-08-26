@@ -91,7 +91,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                             key={item.href}
                             href={item.href}
                             className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${pathname === item.href
-                                ? 'bg-primary text-white font-bold shadow-md shadow-primary/25'
+                                ? 'bg-primary text-grey-dark font-extrabold shadow-md shadow-primary/25'
                                 : 'text-grey-muted hover:bg-grey/5 hover:text-grey-dark font-semibold'
                                 }`}
                         >

@@ -191,11 +191,11 @@ export default function DeliveryAreasPage() {
   )}`
 
   return (
-    <main className='pt-20 bg-[#FFF9F5] min-h-screen'>
+    <main className='pt-20 bg-[#FFFDF5] min-h-screen'>
       {/* Hero Banner Section */}
-      <section className='pt-16 pb-16 bg-linear-to-b from-primary/10 via-primary/5 to-[#FFF9F5] relative overflow-hidden'>
-        <div className='absolute -top-20 -left-20 w-80 h-80 bg-primary/15 rounded-full blur-3xl pointer-events-none' />
-        <div className='absolute -bottom-10 -right-10 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none' />
+      <section className='pt-16 pb-16 bg-linear-to-b from-primary/15 via-primary/5 to-[#FFFDF5] relative overflow-hidden'>
+        <div className='absolute -top-20 -left-20 w-80 h-80 bg-primary/20 rounded-full blur-3xl pointer-events-none' />
+        <div className='absolute -bottom-10 -right-10 w-96 h-96 bg-primary/15 rounded-full blur-3xl pointer-events-none' />
 
         <div className='container max-w-6xl mx-auto px-4 relative z-10'>
           <div className='grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch'>
@@ -368,7 +368,7 @@ export default function DeliveryAreasPage() {
                   </p>
 
                   {/* Route & Network Visual Illustration */}
-                  <div className='bg-[#FFF9F5] p-5 rounded-2xl border border-grey/10 mb-6 relative overflow-hidden'>
+                  <div className='bg-[#FFF9E6] p-5 rounded-2xl border border-primary/20 mb-6 relative overflow-hidden'>
                     <div className='flex items-center justify-between text-xs font-bold text-grey-dark mb-4'>
                       <span className='flex items-center gap-1.5 text-primary font-extrabold'>
                         <span className='w-2 h-2 rounded-full bg-primary animate-ping inline-block' />
@@ -452,7 +452,7 @@ export default function DeliveryAreasPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.1 }}
                 transition={{ delay: idx * 0.08, duration: 0.5 }}
-                className='bg-[#FFF9F5] p-6 sm:p-7 rounded-3xl border border-grey/10 shadow-xs hover:shadow-md hover:-translate-y-1 transition-all duration-300 group flex flex-col justify-between'
+                className='bg-[#FFF9E6] p-6 sm:p-7 rounded-3xl border border-primary/20 shadow-xs hover:shadow-md hover:-translate-y-1 transition-all duration-300 group flex flex-col justify-between'
               >
                 <div>
                   <div className='w-12 h-12 bg-primary/15 rounded-2xl flex items-center justify-center text-primary mb-6 border border-primary/20 group-hover:scale-105 transition-transform'>
@@ -475,14 +475,14 @@ export default function DeliveryAreasPage() {
       </section>
 
       {/* Section 3: Why PREMIUM MESS */}
-      <section className='py-16 bg-[#FFF9F5] relative overflow-hidden'>
+      <section className='py-16 bg-[#FFFDF5] relative overflow-hidden'>
         <div className='container max-w-6xl mx-auto px-4'>
           <div className='text-center mb-12'>
             <motion.p
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className='text-primary text-xs font-semibold mb-3 tracking-wider uppercase'
+              className='text-amber-600 text-xs font-bold mb-3 tracking-wider uppercase'
             >
               WHY PREMIUM MESS
             </motion.p>
@@ -493,7 +493,7 @@ export default function DeliveryAreasPage() {
               transition={{ delay: 0.1 }}
               className='text-3xl sm:text-5xl font-extrabold text-grey-dark tracking-tight leading-none'
             >
-              A monthly meal plan you'll <span className='text-primary'>actually keep.</span>
+              A monthly meal plan you'll <span className='text-amber-500'>actually keep.</span>
             </motion.h2>
           </div>
 
@@ -507,7 +507,7 @@ export default function DeliveryAreasPage() {
                 transition={{ delay: idx * 0.06, duration: 0.5 }}
                 className='bg-white p-7 rounded-3xl border border-grey/10 shadow-xs hover:shadow-md hover:-translate-y-1 transition-all duration-300 group'
               >
-                <div className='w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-4 border border-primary/20 group-hover:scale-105 transition-transform'>
+                <div className='w-12 h-12 bg-primary/20 rounded-2xl flex items-center justify-center text-amber-600 mb-4 border border-primary/30 group-hover:scale-105 transition-transform'>
                   <Icon icon={item.icon} className='text-2xl' />
                 </div>
                 <h3 className='text-base sm:text-lg font-extrabold text-grey-dark mb-2'>
@@ -523,7 +523,7 @@ export default function DeliveryAreasPage() {
       </section>
 
       {/* Bottom CTA Banner */}
-      <section className='pb-20 bg-[#FFF9F5]'>
+      <section className='pb-20 bg-[#FFFDF5]'>
         <div className='container max-w-6xl mx-auto px-4'>
           <motion.div
             initial={{ opacity: 0, y: 20 }}

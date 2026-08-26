@@ -57,7 +57,7 @@ export default function MealPlanDetailPage({ params }: { params: Promise<{ id: s
 
     if (isLoading) {
         return (
-            <div className='min-h-screen pt-32 flex items-center justify-center bg-[#FFF9F5]'>
+            <div className='min-h-screen pt-32 flex items-center justify-center bg-[#FFFDF5]'>
                 <div className='w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin'></div>
             </div>
         )
@@ -65,7 +65,7 @@ export default function MealPlanDetailPage({ params }: { params: Promise<{ id: s
 
     if (error || !menu) {
         return (
-            <div className='min-h-screen pt-40 pb-20 text-center bg-[#FFF9F5] text-grey-dark'>
+            <div className='min-h-screen pt-40 pb-20 text-center bg-[#FFFDF5] text-grey-dark'>
                 <Icon icon='solar:calendar-broken' className='text-6xl text-primary mx-auto mb-4' />
                 <h2 className='text-3xl font-black text-grey-dark'>Meal Plan Not Found</h2>
                 <button
@@ -81,9 +81,9 @@ export default function MealPlanDetailPage({ params }: { params: Promise<{ id: s
     const days = menu.days || 30
 
     return (
-        <main className='pt-20 bg-[#FFF9F5] text-grey-dark min-h-screen'>
+        <main className='pt-20 bg-[#FFFDF5] text-grey-dark min-h-screen'>
             {/* Hero Section */}
-            <div className='relative pt-24 pb-16 overflow-hidden bg-linear-to-b from-primary/10 via-primary/5 to-[#FFF9F5]'>
+            <div className='relative pt-24 pb-16 overflow-hidden bg-linear-to-b from-primary/15 via-primary/5 to-[#FFFDF5]'>
                 <div className='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10'>
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}

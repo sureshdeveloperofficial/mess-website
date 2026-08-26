@@ -28,7 +28,8 @@ const Footer: FC = () => {
   if (!restaurantName || restaurantName.toLowerCase().includes('shamil')) {
     restaurantName = 'PREMIUM MESS'
   }
-  const siteBio = settings?.site_bio || 'Authentic home-style meals served daily with love. High quality, hygienic, and nutritious dining for every guest since 2015.'
+  let siteBio = settings?.site_bio || 'Authentic home-style meals served daily with love. High quality, hygienic, and nutritious dining for every guest.'
+  siteBio = siteBio.replace(/\s*since\s*2015\.?/gi, '.').replace(/\.\./g, '.')
   const contactPhone = settings?.contact_phone || '+971 4 264 2613'
   const contactAddress = settings?.contact_address || 'Al Nahda & Deira, Dubai, United Arab Emirates'
   const socialFacebook = settings?.social_facebook || 'https://facebook.com'

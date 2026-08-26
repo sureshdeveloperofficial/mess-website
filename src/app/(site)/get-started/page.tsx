@@ -541,7 +541,7 @@ function GetStartedContent() {
 
     if (isMenusLoading) {
         return (
-            <div className='min-h-screen pt-36 pb-20 flex flex-col items-center justify-center bg-[#FFF9F5]'>
+            <div className='min-h-screen pt-36 pb-20 flex flex-col items-center justify-center bg-[#FFFDF5]'>
                 <div className='w-14 h-14 border-3 border-primary border-t-transparent rounded-full animate-spin mb-4' />
                 <p className='text-grey-dark font-bold text-sm tracking-wide'>
                     Loading Meal Plans...
@@ -551,7 +551,7 @@ function GetStartedContent() {
     }
 
     return (
-        <main className='pt-20 bg-[#FFF9F5] min-h-screen text-grey-dark pb-24'>
+        <main className='pt-20 bg-[#FFFDF5] min-h-screen text-grey-dark pb-24'>
             {/* Top Page Header - Clean Admin Dashboard Typography */}
             <div className='pt-14 pb-10 bg-linear-to-b from-primary/15 via-primary/5 to-transparent relative overflow-hidden'>
                 <div className='max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10'>
@@ -1059,7 +1059,7 @@ function GetStartedContent() {
                                                 const selectedDishId = selections[activeDayTab]?.[slotKey] || eligibleDishes[0]?.id
 
                                                 return (
-                                                    <div key={slotKey} className='bg-[#FFF9F5] p-5 rounded-2xl border border-primary/20'>
+                                                    <div key={slotKey} className='bg-[#FFF9E6] p-5 rounded-2xl border border-primary/30'>
                                                         <div className='flex items-center justify-between mb-4'>
                                                             <div className='flex items-center gap-2'>
                                                                 <Icon icon={slotInfo?.icon || 'solar:cup-hot-bold-duotone'} className='text-primary text-base' />
@@ -1401,7 +1401,7 @@ function GetStartedContent() {
                                 {selectedPlan && (
                                     <div className='space-y-4 text-xs'>
                                         {/* Itemized Plan Breakdown */}
-                                        <div className='bg-[#FFF9F5] p-4 rounded-2xl border border-primary/20 space-y-3'>
+                                        <div className='bg-[#FFF9E6] p-4 rounded-2xl border border-primary/30 space-y-3'>
                                             <span className='text-xs font-semibold uppercase tracking-wider text-grey-muted block'>
                                                 Subscription Breakdown
                                             </span>
@@ -1710,7 +1710,7 @@ export default function GetStartedPage() {
     return (
         <Suspense
             fallback={
-                <div className='min-h-screen pt-36 pb-20 flex items-center justify-center bg-[#FFF9F5]'>
+                <div className='min-h-screen pt-36 pb-20 flex items-center justify-center bg-[#FFFDF5]'>
                     <div className='w-14 h-14 border-3 border-primary border-t-transparent rounded-full animate-spin' />
                 </div>
             }

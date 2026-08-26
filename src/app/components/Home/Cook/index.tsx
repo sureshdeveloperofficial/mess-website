@@ -13,7 +13,7 @@ const Cook = () => {
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              className='relative z-20 rounded-[5rem] overflow-hidden border-[1.5rem] border-[#FFF9F5] shadow-2xl'
+              className='relative z-20 rounded-[5rem] overflow-hidden border-[1.5rem] border-[#FFFDF5] shadow-2xl'
             >
               <Image
                 src='/images/Cook/cook.webp'

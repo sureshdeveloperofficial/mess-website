@@ -39,11 +39,11 @@ export default function ContactPage() {
     }
 
     return (
-        <main className='pt-20 bg-[#FFF9F5] min-h-screen'>
+        <main className='pt-20 bg-[#FFFDF5] min-h-screen'>
             {/* Hero Banner */}
-            <div className='pt-16 pb-12 bg-linear-to-b from-primary/10 via-primary/5 to-[#FFF9F5] text-center relative overflow-hidden'>
-                <div className='absolute -top-20 -left-20 w-72 h-72 bg-primary/15 rounded-full blur-3xl pointer-events-none' />
-                <div className='absolute -bottom-10 -right-10 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none' />
+            <div className='pt-16 pb-12 bg-linear-to-b from-primary/15 via-primary/5 to-[#FFFDF5] text-center relative overflow-hidden'>
+                <div className='absolute -top-20 -left-20 w-72 h-72 bg-primary/20 rounded-full blur-3xl pointer-events-none' />
+                <div className='absolute -bottom-10 -right-10 w-96 h-96 bg-primary/15 rounded-full blur-3xl pointer-events-none' />
 
                 <motion.div
                     initial={{ opacity: 0, y: -20 }}
@@ -51,13 +51,13 @@ export default function ContactPage() {
                     transition={{ duration: 0.6 }}
                     className='relative z-10'
                 >
-                    <div className='inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/20 text-grey-dark text-xs font-semibold mb-4 border border-primary/30'>
+                    <div className='inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/20 text-grey-dark text-xs font-bold mb-4 border border-primary/40'>
                         <Icon icon='solar:chat-round-line-bold-duotone' className='text-sm' />
                         Premium Mess — Customer Support
                     </div>
 
                     <h1 className='text-3xl sm:text-5xl lg:text-6xl font-extrabold text-grey-dark tracking-tight mb-4'>
-                        Get in <span className='text-primary'>Touch</span>
+                        Get in <span className='text-amber-500'>Touch</span>
                     </h1>
                     <p className='text-grey-muted text-sm sm:text-base font-normal leading-relaxed max-w-xl mx-auto'>
                         Have a question about your meal plan or delivery? We're here to help — reach out and we'll respond quickly.

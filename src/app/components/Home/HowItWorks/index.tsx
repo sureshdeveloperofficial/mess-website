@@ -72,7 +72,7 @@ const HowItWorks = () => {
                         transition={{ delay: 0.1 }}
                         className='text-4xl md:text-6xl font-extrabold text-grey-dark tracking-tight leading-none'
                     >
-                        How It <span className='text-primary italic'>Works</span>
+                        How It <span className='text-amber-500 italic'>Works</span>
                     </motion.h2>
                 </div>
 
@@ -84,10 +84,10 @@ const HowItWorks = () => {
                     className='relative flex flex-col lg:flex-row justify-between items-start gap-12 lg:gap-8 lg:px-20'
                 >
                     {/* Connector Line (Desktop) */}
-                    <div className='absolute top-24 left-40 right-40 h-1 bg-[#FACB15]/5 hidden lg:block'>
+                    <div className='absolute top-24 left-40 right-40 h-1 bg-[#FFD54F]/10 hidden lg:block'>
                         <motion.div
                             variants={lineVariants}
-                            className='h-full bg-[#FACB15]/20 w-full origin-left'
+                            className='h-full bg-[#FFD54F]/30 w-full origin-left'
                         ></motion.div>
                     </div>
 
@@ -99,12 +99,12 @@ const HowItWorks = () => {
                         >
                             <motion.div
                                 whileHover={{ scale: 1.1, rotate: 5 }}
-                                className='w-48 h-48 rounded-[3rem] bg-[#FFF9F5] border-4 border-white shadow-2xl shadow-[#FACB15]/10 flex items-center justify-center mb-10 group relative transition-all duration-500 hover:bg-[#FACB15]'
+                                className='w-48 h-48 rounded-[3rem] bg-[#FFF9E6] border-4 border-white shadow-2xl shadow-[#FFD54F]/15 flex items-center justify-center mb-10 group relative transition-all duration-500 hover:bg-[#FFD54F]'
                             >
-                                <Icon icon={step.icon} className='text-6xl text-[#FACB15] group-hover:text-white transition-colors duration-500' />
+                                <Icon icon={step.icon} className='text-6xl text-amber-600 group-hover:text-grey-dark transition-colors duration-500' />
 
                                 {/* Step Number */}
-                                <div className='absolute -top-4 -right-4 w-12 h-12 bg-[#2D2A26] text-white rounded-2xl flex items-center justify-center font-extrabold text-base shadow-xl'>
+                                <div className='absolute -top-4 -right-4 w-12 h-12 bg-grey-dark text-white rounded-2xl flex items-center justify-center font-extrabold text-base shadow-xl'>
                                     {i + 1}
                                 </div>
                             </motion.div>

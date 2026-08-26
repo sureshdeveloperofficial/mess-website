@@ -86,10 +86,10 @@ const Hero = () => {
   }, [])
 
   return (
-    <section ref={containerRef} id='home-section' className='relative bg-[#FFF9F5] overflow-hidden pt-20 lg:pt-32'>
+    <section ref={containerRef} id='home-section' className='relative bg-[#FFFDF5] overflow-hidden pt-20 lg:pt-32'>
       {/* Background Decorative Elements */}
-      <div className='absolute top-0 right-0 w-1/2 h-full bg-[#FACB15]/5 -skew-x-12 origin-top-right pointer-events-none'></div>
-      <div className='absolute top-20 left-[10%] w-64 h-64 bg-[#FACB15]/10 rounded-full blur-[120px] pointer-events-none'></div>
+      <div className='absolute top-0 right-0 w-1/2 h-full bg-[#FFD54F]/10 -skew-x-12 origin-top-right pointer-events-none'></div>
+      <div className='absolute top-20 left-[10%] w-64 h-64 bg-[#FFD54F]/15 rounded-full blur-[120px] pointer-events-none'></div>
 
       <div className='container relative z-10'>
         <div className='grid grid-cols-1 lg:grid-cols-12 items-center gap-16'>
@@ -102,10 +102,10 @@ const Hero = () => {
                 custom={0}
                 className='flex items-center gap-3 mb-6'
               >
-                <span className='px-4 py-1.5 bg-primary/10 text-primary text-[10px] font-semibold uppercase tracking-wider rounded-full'>
+                <span className='px-4 py-1.5 bg-primary/20 text-grey-dark text-[10px] font-bold uppercase tracking-wider rounded-full border border-primary/40'>
                   Est. 2024 • Authentic Mess Dining
                 </span>
-                <div className='flex gap-0.5 text-yellow-500 font-bold'>
+                <div className='flex gap-0.5 text-amber-500 font-bold'>
                   {[1, 2, 3, 4, 5].map(i => <Icon key={i} icon='ion:star' className='text-xs' />)}
                 </div>
               </motion.div>
@@ -118,7 +118,7 @@ const Hero = () => {
                 className='text-5xl md:text-7xl font-extrabold text-grey-dark lg:text-start text-center leading-[1.05] tracking-tight mb-8'
               >
                 Authentic Taste. <br />
-                <span className='text-primary italic'>Everyday Comfort.</span>
+                <span className='text-amber-500 italic'>Everyday Comfort.</span>
               </motion.h1>
 
               <motion.p
@@ -140,9 +140,9 @@ const Hero = () => {
               >
                 <Link href='/plans'>
                   <motion.button
-                    whileHover={{ scale: 1.05, boxShadow: '0 20px 40px -10px rgba(255,122,61,0.3)' }}
+                    whileHover={{ scale: 1.05, boxShadow: '0 20px 40px -10px rgba(255, 213, 79, 0.4)' }}
                     whileTap={{ scale: 0.95 }}
-                    className='text-base font-extrabold rounded-4xl text-white py-6 px-12 bg-[#FACB15] shadow-2xl shadow-[#FACB15]/20 transition-all duration-300 flex items-center gap-3 group cursor-pointer'
+                    className='text-base font-extrabold rounded-4xl text-grey-dark py-6 px-12 bg-[#FFD54F] hover:bg-[#F59E0B] shadow-2xl shadow-[#FFD54F]/30 transition-all duration-300 flex items-center gap-3 group cursor-pointer'
                   >
                     Explore Food Plans
                     <Icon icon='ion:calendar-outline' className='group-hover:translate-x-2 transition-transform' />
@@ -165,9 +165,9 @@ const Hero = () => {
                 initial="hidden"
                 animate="visible"
                 custom={4}
-                className='mt-10 inline-flex items-center gap-4 bg-white/80 backdrop-blur-xl p-4 sm:p-5 rounded-3xl border border-white/60 shadow-xl shadow-grey-dark/5 group hover:shadow-2xl hover:scale-[1.01] transition-all duration-300'
+                className='mt-10 inline-flex items-center gap-4 bg-white/90 backdrop-blur-xl p-4 sm:p-5 rounded-3xl border border-white/80 shadow-xl shadow-grey-dark/5 group hover:shadow-2xl hover:scale-[1.01] transition-all duration-300'
               >
-                <div className='w-11 h-11 bg-linear-to-br from-[#FACB15] to-[#FF9D6E] rounded-2xl flex items-center justify-center text-white text-xl shadow-md shadow-[#FACB15]/25 shrink-0 group-hover:scale-105 transition-transform'>
+                <div className='w-11 h-11 bg-linear-to-br from-[#FFD54F] to-[#FFA000] rounded-2xl flex items-center justify-center text-grey-dark text-xl shadow-md shadow-[#FFD54F]/25 shrink-0 group-hover:scale-105 transition-transform'>
                   <Icon icon='solar:scooter-bold' />
                 </div>
                 <div>
@@ -189,13 +189,13 @@ const Hero = () => {
                 initial="hidden"
                 animate="visible"
                 custom={1.5}
-                className='absolute -top-12 -left-8 bg-white/80 backdrop-blur-xl p-5 rounded-[2.5rem] shadow-2xl z-30 flex items-center gap-4 border border-white/20 group'
+                className='absolute -top-12 -left-8 bg-white/90 backdrop-blur-xl p-5 rounded-[2.5rem] shadow-2xl z-30 flex items-center gap-4 border border-white/80 group'
               >
-                <div className='w-12 h-12 bg-linear-to-br from-[#FACB15] to-[#FF9D6E] rounded-2xl flex items-center justify-center shadow-lg shadow-[#FACB15]/20 transition-transform duration-500 group-hover:scale-110'>
-                  <Icon icon='ion:heart' className='text-white text-xl animate-pulse' />
+                <div className='w-12 h-12 bg-linear-to-br from-[#FFD54F] to-[#FFA000] rounded-2xl flex items-center justify-center shadow-lg shadow-[#FFD54F]/20 transition-transform duration-500 group-hover:scale-110 text-grey-dark'>
+                  <Icon icon='ion:heart' className='text-grey-dark text-xl animate-pulse' />
                 </div>
                 <div>
-                  <p className='text-[10px] font-semibold uppercase tracking-wider text-primary'>Our Promise</p>
+                  <p className='text-[10px] font-bold uppercase tracking-wider text-amber-600'>Our Promise</p>
                   <p className='font-extrabold text-grey-dark text-base leading-tight'>Tradition in<br />Every Bite</p>
                 </div>
               </motion.div>
@@ -231,7 +231,7 @@ const Hero = () => {
                   {SLIDER_IMAGES.map((_, i) => (
                     <div
                       key={i}
-                      className={`h-1.5 rounded-full transition-all duration-500 ${i === currentIdx ? 'w-8 bg-[#FF7A3D]' : 'w-2 bg-white/50'}`}
+                      className={`h-1.5 rounded-full transition-all duration-500 ${i === currentIdx ? 'w-8 bg-[#FFD54F]' : 'w-2 bg-white/50'}`}
                     />
                   ))}
                 </div>

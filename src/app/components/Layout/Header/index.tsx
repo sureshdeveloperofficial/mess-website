@@ -173,12 +173,12 @@ const Header: React.FC = () => {
               <>
                 <Link
                   href='/signin'
-                  className='hidden lg:block text-primary duration-300 bg-primary/15 hover:text-white hover:bg-primary font-bold text-sm xl:text-base py-2 px-4 xl:px-6 rounded-full whitespace-nowrap'>
+                  className='hidden lg:block text-grey-dark duration-300 bg-primary/20 hover:bg-primary font-bold text-sm xl:text-base py-2 px-4 xl:px-6 rounded-full whitespace-nowrap'>
                   Sign In
                 </Link>
                 <Link
                   href='/signup'
-                  className='hidden lg:block bg-primary duration-300 text-white hover:bg-primary/15 hover:text-primary font-bold text-sm xl:text-base py-2 px-4 xl:px-6 rounded-full whitespace-nowrap'>
+                  className='hidden lg:block bg-primary duration-300 text-grey-dark hover:bg-[#F59E0B] font-bold text-sm xl:text-base py-2 px-4 xl:px-6 rounded-full whitespace-nowrap shadow-md shadow-primary/20'>
                   Sign Up
                 </Link>
               </>

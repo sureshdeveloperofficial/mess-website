@@ -250,7 +250,7 @@ export default function AdminDeliveryAreasPage() {
         columnHelper.accessor('timing', {
             header: 'Delivery Timing',
             cell: info => (
-                <div className='inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFF9F5] border border-grey/15 text-xs font-bold text-grey-dark'>
+                <div className='inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFF9E6] border border-primary/20 text-xs font-bold text-grey-dark'>
                     <Icon icon='solar:clock-circle-bold-duotone' className='text-primary text-sm shrink-0' />
                     {info.getValue() || 'Lunch & Dinner'}
                 </div>
