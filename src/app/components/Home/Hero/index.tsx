@@ -115,7 +115,7 @@ const Hero = () => {
                 initial="hidden"
                 animate="visible"
                 custom={1}
-                className='text-5xl md:text-7xl font-extrabold text-grey-dark lg:text-start text-center leading-[1.05] tracking-tight mb-8'
+                className='text-3.5xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-grey-dark lg:text-start text-center leading-[1.1] tracking-tight mb-6 sm:mb-8'
               >
                 Authentic Taste. <br />
                 <span className='text-amber-500 italic'>Everyday Comfort.</span>
@@ -126,7 +126,7 @@ const Hero = () => {
                 initial="hidden"
                 animate="visible"
                 custom={2}
-                className='text-grey-dark/75 text-base md:text-lg font-normal mb-12 lg:text-start text-center max-w-2xl leading-relaxed'
+                className='text-grey-dark/75 text-sm sm:text-base md:text-lg font-normal mb-8 sm:mb-12 lg:text-start text-center max-w-2xl leading-relaxed'
               >
                 Traditional flavours, freshly prepared meals, and the comforting taste of home — served fresh every day.
               </motion.p>
@@ -136,23 +136,23 @@ const Hero = () => {
                 initial="hidden"
                 animate="visible"
                 custom={3}
-                className='flex flex-col sm:flex-row gap-6 items-center justify-center lg:justify-start w-full sm:w-auto'
+                className='flex flex-col sm:flex-row gap-4 sm:gap-6 items-center justify-center lg:justify-start w-full sm:w-auto'
               >
-                <Link href='/plans'>
+                <Link href='/plans' className='w-full sm:w-auto'>
                   <motion.button
                     whileHover={{ scale: 1.05, boxShadow: '0 20px 40px -10px rgba(255, 213, 79, 0.4)' }}
                     whileTap={{ scale: 0.95 }}
-                    className='text-base font-extrabold rounded-4xl text-grey-dark py-6 px-12 bg-[#FFD54F] hover:bg-[#F59E0B] shadow-2xl shadow-[#FFD54F]/30 transition-all duration-300 flex items-center gap-3 group cursor-pointer'
+                    className='w-full sm:w-auto text-sm sm:text-base font-extrabold rounded-3xl sm:rounded-4xl text-grey-dark py-4 px-8 sm:py-5 sm:px-10 bg-[#FFD54F] hover:bg-[#F59E0B] shadow-xl shadow-[#FFD54F]/30 transition-all duration-300 flex items-center justify-center gap-3 group cursor-pointer'
                   >
                     Explore Food Plans
-                    <Icon icon='ion:calendar-outline' className='group-hover:translate-x-2 transition-transform' />
+                    <Icon icon='ion:calendar-outline' className='group-hover:translate-x-1.5 transition-transform' />
                   </motion.button>
                 </Link>
-                <Link href='/menu'>
+                <Link href='/menu' className='w-full sm:w-auto'>
                   <motion.button
                     whileHover={{ scale: 1.02, backgroundColor: 'rgba(45,42,38,0.05)' }}
                     whileTap={{ scale: 0.98 }}
-                    className='text-base border-4 border-grey-dark/5 rounded-4xl font-extrabold py-6 px-12 text-grey-dark transition-all duration-300 flex items-center gap-3 bg-transparent cursor-pointer'
+                    className='w-full sm:w-auto text-sm sm:text-base border-2 sm:border-3 border-grey-dark/15 rounded-3xl sm:rounded-4xl font-extrabold py-4 px-8 sm:py-5 sm:px-10 text-grey-dark hover:border-[#FFD54F] hover:bg-[#FFD54F]/10 transition-all duration-300 flex items-center justify-center gap-3 bg-white/60 backdrop-blur-sm cursor-pointer'
                   >
                     View Special Menu
                     <Icon icon='ion:restaurant-outline' />
@@ -165,16 +165,16 @@ const Hero = () => {
                 initial="hidden"
                 animate="visible"
                 custom={4}
-                className='mt-10 inline-flex items-center gap-4 bg-white/90 backdrop-blur-xl p-4 sm:p-5 rounded-3xl border border-white/80 shadow-xl shadow-grey-dark/5 group hover:shadow-2xl hover:scale-[1.01] transition-all duration-300'
+                className='mt-8 sm:mt-10 inline-flex items-center gap-3 sm:gap-4 bg-white/90 backdrop-blur-xl p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl border border-white/80 shadow-xl shadow-grey-dark/5 group hover:shadow-2xl hover:scale-[1.01] transition-all duration-300 max-w-full'
               >
-                <div className='w-11 h-11 bg-linear-to-br from-[#FFD54F] to-[#FFA000] rounded-2xl flex items-center justify-center text-grey-dark text-xl shadow-md shadow-[#FFD54F]/25 shrink-0 group-hover:scale-105 transition-transform'>
+                <div className='w-10 h-10 sm:w-11 sm:h-11 bg-linear-to-br from-[#FFD54F] to-[#FFA000] rounded-xl sm:rounded-2xl flex items-center justify-center text-grey-dark text-lg sm:text-xl shadow-md shadow-[#FFD54F]/25 shrink-0 group-hover:scale-105 transition-transform'>
                   <Icon icon='solar:scooter-bold' />
                 </div>
                 <div>
-                  <h3 className='text-sm sm:text-base font-extrabold text-grey-dark leading-tight'>
+                  <h3 className='text-xs sm:text-base font-extrabold text-grey-dark leading-tight'>
                     Daily Meals, Delivered Fresh
                   </h3>
-                  <p className='text-xs font-medium text-grey-muted mt-0.5'>
+                  <p className='text-[11px] sm:text-xs font-medium text-grey-muted mt-0.5'>
                     Serving homes, offices &amp; accommodations
                   </p>
                 </div>
@@ -182,21 +182,21 @@ const Hero = () => {
             </div>
           </div>
 
-          <div className='lg:col-span-5 relative'>
+          <div className='lg:col-span-5 relative mt-6 lg:mt-0'>
             <div ref={imageRef} className='relative z-20'>
               <motion.div
                 variants={revealVariants}
                 initial="hidden"
                 animate="visible"
                 custom={1.5}
-                className='absolute -top-12 -left-8 bg-white/90 backdrop-blur-xl p-5 rounded-[2.5rem] shadow-2xl z-30 flex items-center gap-4 border border-white/80 group'
+                className='absolute -top-8 -left-4 sm:-top-12 sm:-left-8 bg-white/95 backdrop-blur-xl p-3.5 sm:p-5 rounded-2xl sm:rounded-[2.5rem] shadow-xl sm:shadow-2xl z-30 flex items-center gap-3 sm:gap-4 border border-white/80 group'
               >
-                <div className='w-12 h-12 bg-linear-to-br from-[#FFD54F] to-[#FFA000] rounded-2xl flex items-center justify-center shadow-lg shadow-[#FFD54F]/20 transition-transform duration-500 group-hover:scale-110 text-grey-dark'>
-                  <Icon icon='ion:heart' className='text-grey-dark text-xl animate-pulse' />
+                <div className='w-10 h-10 sm:w-12 sm:h-12 bg-linear-to-br from-[#FFD54F] to-[#FFA000] rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg shadow-[#FFD54F]/20 transition-transform duration-500 group-hover:scale-110 text-grey-dark'>
+                  <Icon icon='ion:heart' className='text-grey-dark text-lg sm:text-xl animate-pulse' />
                 </div>
                 <div>
-                  <p className='text-[10px] font-bold uppercase tracking-wider text-amber-600'>Our Promise</p>
-                  <p className='font-extrabold text-grey-dark text-base leading-tight'>Tradition in<br />Every Bite</p>
+                  <p className='text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-amber-600'>Our Promise</p>
+                  <p className='font-extrabold text-grey-dark text-xs sm:text-base leading-tight'>Tradition in<br />Every Bite</p>
                 </div>
               </motion.div>
 
@@ -205,7 +205,7 @@ const Hero = () => {
                 initial="hidden"
                 animate="visible"
                 custom={2}
-                className='main-hero-image-container relative aspect-4/5 rounded-[5rem] overflow-hidden border-[1.5rem] border-white shadow-[0_50px_100px_-20px_rgba(45,42,38,0.1)]'
+                className='main-hero-image-container relative aspect-4/5 rounded-[3rem] sm:rounded-[5rem] overflow-hidden border-8 sm:border-[1.5rem] border-white shadow-[0_50px_100px_-20px_rgba(45,42,38,0.1)] ring-1 ring-[#FFD54F]/20'
               >
                 <AnimatePresence mode='wait'>
                   <motion.div
@@ -220,6 +220,7 @@ const Hero = () => {
                       src={SLIDER_IMAGES[currentIdx]}
                       alt='hero-slide'
                       fill
+                      sizes='(max-width: 640px) 90vw, (max-width: 1024px) 50vw, 450px'
                       className='object-cover'
                       priority
                     />
@@ -227,11 +228,11 @@ const Hero = () => {
                 </AnimatePresence>
 
                 {/* Progress Indicators */}
-                <div className='absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-3 z-30'>
+                <div className='absolute bottom-6 sm:bottom-10 left-1/2 -translate-x-1/2 flex gap-2.5 sm:gap-3 z-30'>
                   {SLIDER_IMAGES.map((_, i) => (
                     <div
                       key={i}
-                      className={`h-1.5 rounded-full transition-all duration-500 ${i === currentIdx ? 'w-8 bg-[#FFD54F]' : 'w-2 bg-white/50'}`}
+                      className={`h-1.5 rounded-full transition-all duration-500 ${i === currentIdx ? 'w-6 sm:w-8 bg-[#FFD54F]' : 'w-2 bg-white/50'}`}
                     />
                   ))}
                 </div>
@@ -239,13 +240,13 @@ const Hero = () => {
 
               {/* Floating Decorative Items */}
               <motion.div
-                className='floating-food absolute -right-16 top-10 w-44 h-44 z-30 hidden lg:block drop-shadow-2xl'
+                className='floating-food absolute -right-10 top-10 w-36 h-36 sm:w-44 sm:h-44 z-30 hidden xl:block drop-shadow-2xl'
               >
                 <Image src='/images/food/biryani_premium.png' alt='biryani' width={180} height={180} className='rounded-full' />
               </motion.div>
 
               <motion.div
-                className='floating-food absolute -left-20 bottom-10 w-36 h-36 z-30 hidden lg:block drop-shadow-2xl'
+                className='floating-food absolute -left-12 bottom-10 w-28 h-28 sm:w-36 sm:h-36 z-30 hidden xl:block drop-shadow-2xl'
               >
                 <Image src='/images/food/parotta.png' alt='parotta' width={140} height={140} className='rounded-full' />
               </motion.div>

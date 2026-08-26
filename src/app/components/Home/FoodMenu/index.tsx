@@ -6,7 +6,7 @@ import axios from 'axios'
 import Link from 'next/link'
 import { Icon } from '@iconify/react'
 
-type FoodItem = {
+export type FoodItem = {
     id: string
     name: string
     image: string | null
@@ -14,13 +14,13 @@ type FoodItem = {
     category?: { name: string }
 }
 
-type MealType = {
+export type MealType = {
     id: string
     name: string
     icon?: string
 }
 
-type FoodMenu = {
+export type FoodMenu = {
     id: string
     name: string
     description: string | null
@@ -65,20 +65,20 @@ const MealPlanCard = ({ menu, index, isPopular }: { menu: FoodMenu; index: numbe
 
     return (
         <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.1 }}
-            transition={{ delay: index * 0.1, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className={`relative rounded-3xl p-7 sm:p-8 flex flex-col justify-between transition-all duration-500 bg-white group ${
+            viewport={{ once: true, amount: 0.05 }}
+            transition={{ delay: index * 0.08, duration: 0.4, ease: 'easeOut' }}
+            className={`relative rounded-3xl p-7 sm:p-8 flex flex-col justify-between transition-all duration-300 bg-white group ${
                 isPopular
-                    ? 'shadow-2xl shadow-primary/20 border-2 border-primary scale-100 lg:scale-105 z-20'
-                    : 'shadow-xl shadow-grey/5 border border-grey/10 hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/10'
+                    ? 'shadow-2xl shadow-[#FFD54F]/20 border-2 border-[#FFD54F] scale-100 lg:scale-105 z-20 ring-1 ring-[#FFD54F]/40'
+                    : 'shadow-xl shadow-grey/5 border border-grey/10 hover:border-[#FFD54F]/60 hover:shadow-2xl hover:shadow-[#FFD54F]/15'
             }`}
         >
             {/* Top Featured Ribbon / Badge */}
             {isPopular && (
-                <div className='absolute -top-4 right-6 sm:right-8 bg-primary text-grey-dark font-extrabold text-[11px] uppercase tracking-wider px-4 py-1.5 rounded-full shadow-sm flex items-center gap-1.5'>
-                    <Icon icon='solar:star-bold' className='text-xs' />
+                <div className='absolute -top-4 right-6 sm:right-8 bg-[#FFD54F] text-grey-dark font-extrabold text-[11px] uppercase tracking-wider px-4 py-1.5 rounded-full shadow-md shadow-[#FFD54F]/30 flex items-center gap-1.5'>
+                    <Icon icon='solar:star-bold' className='text-xs text-amber-700' />
                     <span>{customBadge}</span>
                 </div>
             )}
@@ -86,13 +86,13 @@ const MealPlanCard = ({ menu, index, isPopular }: { menu: FoodMenu; index: numbe
             <div>
                 {/* Header: Plan Name & Meal Tag */}
                 <div className='flex items-center justify-between gap-2 flex-wrap mb-4'>
-                    <span className='px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 bg-primary/15 text-grey-dark border border-primary/30'>
-                        <Icon icon='solar:clock-circle-bold' className='text-sm text-grey-dark' />
+                    <span className='px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 bg-[#FFD54F]/20 text-grey-dark border border-[#FFD54F]/35'>
+                        <Icon icon='solar:clock-circle-bold' className='text-sm text-amber-600' />
                         {servingCount} Time Meal Plan
                     </span>
                 </div>
 
-                <h3 className='text-2xl sm:text-3xl font-bold text-grey-dark tracking-tight capitalize mb-2'>
+                <h3 className='text-2xl sm:text-3xl font-extrabold text-grey-dark tracking-tight capitalize mb-2'>
                     {menu.name}
                 </h3>
 
@@ -101,17 +101,17 @@ const MealPlanCard = ({ menu, index, isPopular }: { menu: FoodMenu; index: numbe
                 </p>
 
                 {/* Price Display */}
-                <div className='mb-6 pb-6 border-b border-grey/10'>
+                <div className='mb-6 pb-6 border-b border-[#FFD54F]/20'>
                     <div className='flex items-baseline gap-2'>
-                        <span className='text-4xl sm:text-5xl font-bold text-grey-dark tracking-tight'>
+                        <span className='text-4xl sm:text-5xl font-extrabold text-grey-dark tracking-tight'>
                             AED {menu.price.toFixed(0)}
                         </span>
-                        <span className='text-sm font-normal text-grey-muted'>
+                        <span className='text-sm font-medium text-grey-muted'>
                             / {days} days
                         </span>
                     </div>
                     <p className='text-xs text-grey-muted font-medium mt-2 flex items-center gap-1.5'>
-                        <span className='w-1.5 h-1.5 rounded-full bg-primary inline-block' />
+                        <span className='w-1.5 h-1.5 rounded-full bg-amber-500 inline-block' />
                         Special price for monthly mess subscribers
                     </p>
                 </div>
@@ -120,10 +120,10 @@ const MealPlanCard = ({ menu, index, isPopular }: { menu: FoodMenu; index: numbe
                 <div className='space-y-3.5 mb-8'>
                     {featuresList.map((feat: string, fIdx: number) => (
                         <div key={fIdx} className='flex items-start gap-3 text-sm'>
-                            <div className='w-5 h-5 rounded-full bg-primary/20 text-grey-dark flex items-center justify-center shrink-0 mt-0.5'>
+                            <div className='w-5 h-5 rounded-full bg-[#FFD54F]/25 text-amber-700 flex items-center justify-center shrink-0 mt-0.5'>
                                 <Icon icon='solar:check-read-linear' className='text-xs font-bold' />
                             </div>
-                            <span className='text-grey-dark font-normal leading-snug'>
+                            <span className='text-grey-dark/85 font-medium leading-snug'>
                                 {feat}
                             </span>
                         </div>
@@ -135,7 +135,7 @@ const MealPlanCard = ({ menu, index, isPopular }: { menu: FoodMenu; index: numbe
             <div className='pt-2'>
                 <Link
                     href={`/get-started?planId=${menu.id}`}
-                    className='w-full py-3.5 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 transition-all bg-primary hover:bg-primary/90 text-grey-dark shadow-sm hover:shadow-md text-center cursor-pointer'
+                    className='w-full py-3.5 rounded-2xl font-extrabold text-sm flex items-center justify-center gap-2 transition-all bg-[#FFD54F] hover:bg-[#F59E0B] text-grey-dark shadow-md shadow-[#FFD54F]/25 hover:shadow-lg hover:shadow-[#FFD54F]/35 text-center cursor-pointer'
                 >
                     <span>Order Meal Plan</span>
                     <Icon icon='solar:arrow-right-bold' className='text-base' />
@@ -145,13 +145,14 @@ const MealPlanCard = ({ menu, index, isPopular }: { menu: FoodMenu; index: numbe
     )
 }
 
-const FoodMenu = () => {
-    const { data: menus = [], isLoading } = useQuery<FoodMenu[]>({
+const FoodMenu = ({ initialPlans }: { initialPlans?: FoodMenu[] }) => {
+    const { data: menus = initialPlans || [], isLoading } = useQuery<FoodMenu[]>({
         queryKey: ['public-food-plans'],
         queryFn: async () => {
             const response = await axios.get('/api/food-menu?activeOnly=true')
             return response.data
         },
+        initialData: initialPlans,
         staleTime: 1000 * 60 * 10,
     })
 

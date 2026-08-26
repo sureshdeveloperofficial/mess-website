@@ -71,7 +71,7 @@ const PremiumBanner = () => {
             </div>
 
             {/* Ambient background glow */}
-            <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#FACB15]/5 rounded-full blur-[120px] pointer-events-none'></div>
+            <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#FFD54F]/10 rounded-full blur-[120px] pointer-events-none'></div>
         </section>
     )
 }

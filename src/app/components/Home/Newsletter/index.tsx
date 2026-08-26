@@ -63,7 +63,7 @@ const Newsletter = () => {
                 transition={{ delay: 0.3 }}
                 className='flex items-center gap-3 mb-6'
               >
-                <div className='w-10 h-[2px] bg-[#FACB15]' />
+                <div className='w-10 h-[2px] bg-[#FFD54F]' />
                 <span className='text-[10px] font-semibold uppercase tracking-wider text-primary'>
                   Daily Broadcast
                 </span>
@@ -79,7 +79,7 @@ const Newsletter = () => {
               </p>
 
               <div className='relative max-w-lg group'>
-                <div className='absolute -inset-1 bg-linear-to-r from-[#FACB15] to-[#FF9D6E] rounded-full opacity-20 group-focus-within:opacity-40 transition duration-500 blur'></div>
+                <div className='absolute -inset-1 bg-linear-to-r from-[#FFD54F] to-[#FFA000] rounded-full opacity-20 group-focus-within:opacity-40 transition duration-500 blur'></div>
                 <div className='relative flex items-center bg-white/10 backdrop-blur-xl border border-white/10 rounded-full p-2 pr-4 focus-within:bg-white transition-all duration-500'>
                   <input
                     type='email'
@@ -90,8 +90,8 @@ const Newsletter = () => {
                     whileHover={{ scale: 1.05, x: 5 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    <div className='w-12 h-12 bg-linear-to-br from-[#FACB15] to-[#FF9D6E] rounded-2xl flex items-center justify-center shadow-lg shadow-[#FACB15]/20 transition-transform duration-500 group-hover:scale-110'>
-                      <Icon icon='tabler:arrow-narrow-right' width='24' className='text-white' />
+                    <div className='w-12 h-12 bg-linear-to-br from-[#FFD54F] to-[#FFA000] rounded-2xl flex items-center justify-center shadow-lg shadow-[#FFD54F]/20 transition-transform duration-500 group-hover:scale-110'>
+                      <Icon icon='tabler:arrow-narrow-right' width='24' className='text-grey-dark' />
                     </div>
                   </motion.button>
                 </div>
@@ -107,7 +107,7 @@ const Newsletter = () => {
             <div className='lg:col-span-5 relative hidden lg:block'>
               <div className='relative group'>
                 {/* Main dish circle glow */}
-                <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-[#FACB15]/20 rounded-full blur-[60px] animate-pulse pointer-events-none' />
+                <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-[#FFD54F]/20 rounded-full blur-[60px] animate-pulse pointer-events-none' />
 
                 <div className='main-dish relative z-10'>
                   <Image

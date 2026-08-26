@@ -77,16 +77,16 @@ const Footer: FC = () => {
   }
 
   return (
-    <footer className='relative bg-neutral-50/50 pt-16 pb-12 overflow-hidden'>
-      {/* Premium Animated Top Border */}
-      <div className='absolute top-0 left-0 w-full h-[2px] animate-gradient-border opacity-70'></div>
+    <footer className='relative bg-[#FFFDF5] pt-16 pb-12 overflow-hidden border-t border-[#FFD54F]/30'>
+      {/* Premium Honey Yellow Animated Top Border */}
+      <div className='absolute top-0 left-0 w-full h-[3px] bg-linear-to-r from-[#FFD54F] via-[#F59E0B] to-[#FFD54F] opacity-80'></div>
 
       <div className='container relative z-10'>
-        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-12 pb-16 border-b border-grey/10'>
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-12 pb-16 border-b border-[#FFD54F]/20'>
           {/* Logo and About Section */}
           <div className='lg:col-span-4 space-y-6'>
             <Logo />
-            <p className='text-grey/80 text-sm md:text-base font-medium leading-relaxed max-w-sm'>
+            <p className='text-grey-dark/75 text-sm md:text-base font-medium leading-relaxed max-w-sm'>
               {siteBio}
             </p>
             <div className='flex gap-3 items-center pt-2'>
@@ -101,13 +101,13 @@ const Footer: FC = () => {
                   href={social.href}
                   target='_blank'
                   rel='noopener noreferrer'
-                  className='group bg-white hover:bg-primary transition-all duration-300 rounded-full shadow-sm hover:shadow-primary/20 p-2.5 flex items-center justify-center'
+                  className='group bg-white hover:bg-[#FFD54F] transition-all duration-300 rounded-full shadow-sm hover:shadow-[#FFD54F]/30 border border-[#FFD54F]/30 p-2.5 flex items-center justify-center'
                 >
                   <Icon
                     icon={social.icon}
                     width='16'
                     height='16'
-                    className='group-hover:text-white text-grey/70 transition-colors'
+                    className='group-hover:text-grey-dark text-grey-dark/70 transition-colors'
                   />
                 </a>
               ))}
@@ -118,7 +118,7 @@ const Footer: FC = () => {
           <div className='lg:col-span-4 grid grid-cols-2 gap-6'>
             {footerlink.map((product, i) => (
               <div key={i} className='space-y-4'>
-                <h4 className='text-black text-base font-bold uppercase tracking-wider'>
+                <h4 className='text-grey-dark text-base font-extrabold uppercase tracking-wider'>
                   {product.section}
                 </h4>
                 <ul className='space-y-3'>
@@ -126,7 +126,7 @@ const Footer: FC = () => {
                     <li key={idx}>
                       <Link
                         href={item.href}
-                        className='text-grey/70 hover:text-primary transition-colors text-sm font-medium'
+                        className='text-grey-dark/70 hover:text-amber-600 transition-colors text-sm font-medium'
                       >
                         {item.label}
                       </Link>
@@ -139,10 +139,10 @@ const Footer: FC = () => {
 
           {/* Newsletter Section */}
           <div className='lg:col-span-4 space-y-4'>
-            <h4 className='text-black text-base font-bold uppercase tracking-wider'>
+            <h4 className='text-grey-dark text-base font-extrabold uppercase tracking-wider'>
               Subscribe to Newsletter
             </h4>
-            <p className='text-grey/70 text-xs md:text-sm font-medium'>
+            <p className='text-grey-dark/70 text-xs md:text-sm font-medium'>
               Get weekly menu updates and exclusive offers delivered directly to your inbox.
             </p>
 
@@ -153,12 +153,12 @@ const Footer: FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder='Enter your email...'
-                className='w-full bg-white border border-grey/20 focus:border-primary/50 text-grey text-xs md:text-sm rounded-full py-3.5 pl-5 pr-28 focus:outline-none focus:ring-2 focus:ring-primary/10 shadow-sm transition-all'
+                className='w-full bg-white border border-[#FFD54F]/40 focus:border-[#FFD54F] text-grey-dark text-xs md:text-sm rounded-full py-3.5 pl-5 pr-28 focus:outline-none focus:ring-2 focus:ring-[#FFD54F]/20 shadow-sm transition-all placeholder:text-grey-dark/40 font-medium'
               />
               <button
                 type='submit'
                 disabled={loading}
-                className='absolute right-1.5 top-1.5 bottom-1.5 bg-primary hover:bg-primary/90 active:scale-95 disabled:opacity-70 text-white font-bold px-6 rounded-full transition-all text-xs shadow flex items-center justify-center min-w-[76px]'
+                className='absolute right-1.5 top-1.5 bottom-1.5 bg-[#FFD54F] hover:bg-[#F59E0B] active:scale-95 disabled:opacity-70 text-grey-dark font-extrabold px-6 rounded-full transition-all text-xs shadow-md shadow-[#FFD54F]/30 flex items-center justify-center min-w-[76px] cursor-pointer'
               >
                 {loading ? (
                   <Icon icon='line-md:loading-loop' className='text-base' />
@@ -181,18 +181,18 @@ const Footer: FC = () => {
                 href='https://www.google.com/maps/place/PREMIUM+CHEFFS+RESTAURANT/@25.2912692,55.4030596,594m/data=!3m2!1e3!4b1!4m6!3m5!1s0x3e5f5ff265ef9e23:0x969e78034608b30d!8m2!3d25.2912692!4d55.4030596!16s%2Fg%2F11x36px11g?entry=ttu&g_ep=EgoyMDI2MDgyMy4wIKXMDSoASAFQAw%3D%3D'
                 target='_blank'
                 rel='noopener noreferrer'
-                className='flex items-center gap-2.5 group hover:text-primary transition-colors cursor-pointer'
+                className='flex items-center gap-2.5 group hover:text-amber-600 transition-colors cursor-pointer'
                 title='Open PREMIUM CHEFFS RESTAURANT on Google Maps'
               >
-                <Icon icon='solar:map-point-bold' className='text-primary text-lg shrink-0 group-hover:scale-110 group-hover:text-primary transition-all' />
-                <span className='text-grey/80 group-hover:text-primary text-xs leading-relaxed transition-colors font-semibold flex items-center gap-1.5'>
+                <Icon icon='solar:map-point-bold' className='text-amber-600 text-lg shrink-0 group-hover:scale-110 transition-all' />
+                <span className='text-grey-dark/80 group-hover:text-amber-600 text-xs leading-relaxed transition-colors font-semibold flex items-center gap-1.5'>
                   PREMIUM CHEFFS RESTAURANT
                   <Icon icon='solar:arrow-right-up-linear' className='text-xs opacity-60 group-hover:opacity-100 transition-opacity' />
                 </span>
               </a>
               <div className='flex items-center gap-2.5'>
-                <Icon icon='solar:phone-bold' className='text-primary text-lg shrink-0' />
-                <a href={`tel:${contactPhone.replace(/\s+/g, '')}`} className='text-grey/70 hover:text-primary transition-colors text-xs font-medium'>
+                <Icon icon='solar:phone-bold' className='text-amber-600 text-lg shrink-0' />
+                <a href={`tel:${contactPhone.replace(/\s+/g, '')}`} className='text-grey-dark/70 hover:text-amber-600 transition-colors text-xs font-semibold'>
                   {contactPhone}
                 </a>
               </div>
@@ -202,15 +202,15 @@ const Footer: FC = () => {
 
         {/* Bottom Bar */}
         <div className='pt-8 flex flex-col md:flex-row justify-between items-center gap-4'>
-          <p className='text-xs font-medium text-grey/60 text-center md:text-left'>
+          <p className='text-xs font-medium text-grey-dark/60 text-center md:text-left'>
             © {new Date().getFullYear()} {restaurantName}. All rights reserved.
           </p>
 
           <div className='flex gap-6'>
-            <Link href='/privacy' className='text-xs font-bold text-grey/50 hover:text-primary uppercase tracking-wider transition-colors'>
+            <Link href='/privacy' className='text-xs font-bold text-grey-dark/50 hover:text-amber-600 uppercase tracking-wider transition-colors'>
               Privacy Policy
             </Link>
-            <Link href='/terms' className='text-xs font-bold text-grey/50 hover:text-primary uppercase tracking-wider transition-colors'>
+            <Link href='/terms' className='text-xs font-bold text-grey-dark/50 hover:text-amber-600 uppercase tracking-wider transition-colors'>
               Terms &amp; Conditions
             </Link>
           </div>

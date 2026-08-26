@@ -159,12 +159,12 @@ export default function ContactPage() {
                                     <div>
                                         <p className='text-[10px] font-bold uppercase tracking-wider text-grey-muted'>WhatsApp Desk</p>
                                         <a
-                                            href='https://wa.me/971501234567?text=Hello%20Premium%20Mess,%20I%20am%20interested%20in%20a%20Monthly%20Corporate%20Meal%20Plan.'
+                                            href='https://wa.me/97142642613?text=Hello%20Premium%20Mess,%20I%20am%20interested%20in%20a%20Monthly%20Corporate%20Meal%20Plan.'
                                             target='_blank'
                                             rel='noopener noreferrer'
                                             className='text-sm font-extrabold text-grey-dark hover:text-amber-600 transition-colors'
                                         >
-                                            +971 50 123 4567
+                                            +971 4 264 2613
                                         </a>
                                     </div>
                                 </div>
@@ -178,11 +178,11 @@ export default function ContactPage() {
                             transition={{ duration: 0.6, delay: 0.2 }}
                             className='lg:col-span-7'
                         >
-                            <div className='bg-white rounded-[2.5rem] p-7 sm:p-10 md:p-12 border border-primary/20 shadow-xl shadow-primary/5'>
+                            <div className='bg-white rounded-3xl sm:rounded-[2.5rem] p-5 sm:p-10 md:p-12 border border-[#FFD54F]/30 shadow-xl shadow-[#FFD54F]/5'>
 
                                 {/* Form Header */}
                                 <div className='mb-8 pb-6 border-b border-grey-dark/5'>
-                                    <div className='inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-grey-dark text-[10px] font-extrabold uppercase tracking-wider border border-primary/20 mb-3'>
+                                    <div className='inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FFD54F]/20 text-grey-dark text-[10px] font-extrabold uppercase tracking-wider border border-[#FFD54F]/30 mb-3'>
                                         <Icon icon='solar:buildings-2-bold-duotone' className='text-xs text-amber-600' />
                                         Customized Office Catering
                                     </div>
@@ -194,9 +194,9 @@ export default function ContactPage() {
                                     </p>
                                 </div>
 
-                                <form onSubmit={handleSubmit} className='space-y-6'>
+                                <form onSubmit={handleSubmit} className='space-y-5 sm:space-y-6'>
                                     {/* Row 1: Company Name & Contact Person */}
-                                    <div className='grid grid-cols-1 sm:grid-cols-2 gap-5'>
+                                    <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5'>
                                         <div className='space-y-1.5'>
                                             <label htmlFor='companyName' className='text-[11px] font-extrabold text-grey-dark uppercase tracking-wider block'>
                                                 Company Name <span className='text-red-500'>*</span>
@@ -210,7 +210,7 @@ export default function ContactPage() {
                                                     id='companyName'
                                                     name='companyName'
                                                     required
-                                                    className='w-full bg-grey/5 border border-grey/10 focus:bg-white focus:border-primary/40 px-4 py-3 pl-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-grey-dark/30'
+                                                    className='w-full bg-[#FFFDF5] border border-[#FFD54F]/30 focus:bg-white focus:border-[#FFD54F] px-4 py-3 pl-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[#FFD54F]/20 transition-all placeholder:text-grey-dark/30'
                                                     placeholder='Company Name'
                                                 />
                                             </div>
@@ -229,7 +229,7 @@ export default function ContactPage() {
                                                     id='contactPerson'
                                                     name='contactPerson'
                                                     required
-                                                    className='w-full bg-grey/5 border border-grey/10 focus:bg-white focus:border-primary/40 px-4 py-3 pl-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-grey-dark/30'
+                                                    className='w-full bg-[#FFFDF5] border border-[#FFD54F]/30 focus:bg-white focus:border-[#FFD54F] px-4 py-3 pl-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[#FFD54F]/20 transition-all placeholder:text-grey-dark/30'
                                                     placeholder='Contact Person'
                                                 />
                                             </div>
@@ -237,7 +237,7 @@ export default function ContactPage() {
                                     </div>
 
                                     {/* Row 2: Phone & Email */}
-                                    <div className='grid grid-cols-1 sm:grid-cols-2 gap-5'>
+                                    <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5'>
                                         <div className='space-y-1.5'>
                                             <label htmlFor='phone' className='text-[11px] font-extrabold text-grey-dark uppercase tracking-wider block'>
                                                 Phone Number <span className='text-red-500'>*</span>
@@ -251,7 +251,7 @@ export default function ContactPage() {
                                                     id='phone'
                                                     name='phone'
                                                     required
-                                                    className='w-full bg-grey/5 border border-grey/10 focus:bg-white focus:border-primary/40 px-4 py-3 pl-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-grey-dark/30'
+                                                    className='w-full bg-[#FFFDF5] border border-[#FFD54F]/30 focus:bg-white focus:border-[#FFD54F] px-4 py-3 pl-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[#FFD54F]/20 transition-all placeholder:text-grey-dark/30'
                                                     placeholder='Phone'
                                                 />
                                             </div>
@@ -270,7 +270,7 @@ export default function ContactPage() {
                                                     id='email'
                                                     name='email'
                                                     required
-                                                    className='w-full bg-grey/5 border border-grey/10 focus:bg-white focus:border-primary/40 px-4 py-3 pl-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-grey-dark/30'
+                                                    className='w-full bg-[#FFFDF5] border border-[#FFD54F]/30 focus:bg-white focus:border-[#FFD54F] px-4 py-3 pl-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[#FFD54F]/20 transition-all placeholder:text-grey-dark/30'
                                                     placeholder='Email'
                                                 />
                                             </div>
@@ -278,7 +278,7 @@ export default function ContactPage() {
                                     </div>
 
                                     {/* Row 3: Location & Number of People */}
-                                    <div className='grid grid-cols-1 sm:grid-cols-2 gap-5'>
+                                    <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5'>
                                         <div className='space-y-1.5'>
                                             <label htmlFor='location' className='text-[11px] font-extrabold text-grey-dark uppercase tracking-wider block'>
                                                 Office Location <span className='text-red-500'>*</span>
@@ -292,7 +292,7 @@ export default function ContactPage() {
                                                     id='location'
                                                     name='location'
                                                     required
-                                                    className='w-full bg-grey/5 border border-grey/10 focus:bg-white focus:border-primary/40 px-4 py-3 pl-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-grey-dark/30'
+                                                    className='w-full bg-[#FFFDF5] border border-[#FFD54F]/30 focus:bg-white focus:border-[#FFD54F] px-4 py-3 pl-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[#FFD54F]/20 transition-all placeholder:text-grey-dark/30'
                                                     placeholder='Location (e.g. Business Bay, Dubai)'
                                                 />
                                             </div>
@@ -312,7 +312,7 @@ export default function ContactPage() {
                                                     id='numberOfPeople'
                                                     name='numberOfPeople'
                                                     required
-                                                    className='w-full bg-grey/5 border border-grey/10 focus:bg-white focus:border-primary/40 px-4 py-3 pl-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-grey-dark/30'
+                                                    className='w-full bg-[#FFFDF5] border border-[#FFD54F]/30 focus:bg-white focus:border-[#FFD54F] px-4 py-3 pl-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[#FFD54F]/20 transition-all placeholder:text-grey-dark/30'
                                                     placeholder='Number of People'
                                                 />
                                             </div>
@@ -320,7 +320,7 @@ export default function ContactPage() {
                                     </div>
 
                                     {/* Row 4: Meals Per Day (1/2/3) & Preferred Start Date */}
-                                    <div className='grid grid-cols-1 sm:grid-cols-2 gap-5'>
+                                    <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5'>
                                         <div className='space-y-1.5'>
                                             <label htmlFor='mealsPerDay' className='text-[11px] font-extrabold text-grey-dark uppercase tracking-wider block'>
                                                 Meals Per Day (1/2/3) <span className='text-red-500'>*</span>
@@ -334,7 +334,7 @@ export default function ContactPage() {
                                                     name='mealsPerDay'
                                                     required
                                                     defaultValue='1 Meal (Lunch)'
-                                                    className='w-full bg-grey/5 border border-grey/10 focus:bg-white focus:border-primary/40 px-4 py-3 pl-11 rounded-2xl text-grey-dark font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all appearance-none cursor-pointer'
+                                                    className='w-full bg-[#FFFDF5] border border-[#FFD54F]/30 focus:bg-white focus:border-[#FFD54F] px-4 py-3 pl-11 rounded-2xl text-grey-dark font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-[#FFD54F]/20 transition-all appearance-none cursor-pointer'
                                                 >
                                                     <option value='1 Meal (Lunch)'>1 Meal (Lunch)</option>
                                                     <option value='2 Meals (Lunch + Dinner)'>2 Meals (Lunch + Dinner)</option>
@@ -360,7 +360,7 @@ export default function ContactPage() {
                                                     id='startDate'
                                                     name='startDate'
                                                     required
-                                                    className='w-full bg-grey/5 border border-grey/10 focus:bg-white focus:border-primary/40 px-4 py-3 pl-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-grey-dark/30'
+                                                    className='w-full bg-[#FFFDF5] border border-[#FFD54F]/30 focus:bg-white focus:border-[#FFD54F] px-4 py-3 pl-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[#FFD54F]/20 transition-all placeholder:text-grey-dark/30'
                                                 />
                                             </div>
                                         </div>
@@ -380,7 +380,7 @@ export default function ContactPage() {
                                                 name='notes'
                                                 rows={4}
                                                 style={{ resize: 'none' }}
-                                                className='w-full bg-grey/5 border border-grey/10 focus:bg-white focus:border-primary/40 px-4 py-3 pl-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-grey-dark/30'
+                                                className='w-full bg-[#FFFDF5] border border-[#FFD54F]/30 focus:bg-white focus:border-[#FFD54F] px-4 py-3 pl-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[#FFD54F]/20 transition-all placeholder:text-grey-dark/30'
                                                 placeholder='Additional Notes'
                                             />
                                         </div>

@@ -14,14 +14,14 @@ const MobileHeaderLink: React.FC<{ item: HeaderItem }> = ({ item }) => {
       <Link
         href={item.href}
         onClick={item.submenu ? handleToggle : undefined}
-        className="flex items-center justify-between w-full py-2 text-muted focus:outline-hidden"
+        className="flex items-center justify-between w-full py-2.5 text-grey-dark font-bold hover:text-amber-600 focus:outline-hidden transition-colors"
       >
         {item.label}
         {item.submenu && (
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="1.5em"
-            height="1.5em"
+            width="1.2em"
+            height="1.2em"
             viewBox="0 0 24 24"
           >
             <path
@@ -29,19 +29,19 @@ const MobileHeaderLink: React.FC<{ item: HeaderItem }> = ({ item }) => {
               stroke="currentColor"
               strokeLinecap="round"
               strokeLinejoin="round"
-              strokeWidth="1.5"
+              strokeWidth="2"
               d="m7 10l5 5l5-5"
             />
           </svg>
         )}
       </Link>
       {submenuOpen && item.submenu && (
-        <div className="bg-white p-2 w-full">
+        <div className="bg-[#FFD54F]/10 border border-[#FFD54F]/30 rounded-xl p-2 w-full mt-1">
           {item.submenu.map((subItem, index) => (
             <Link
               key={index}
               href={subItem.href}
-              className="block py-2 text-gray-500 hover:bg-gray-200"
+              className="block py-2 px-3 text-xs font-bold text-grey-dark hover:bg-[#FFD54F]/30 rounded-lg transition-colors"
             >
               {subItem.label}
             </Link>

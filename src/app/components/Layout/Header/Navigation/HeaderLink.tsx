@@ -25,24 +25,25 @@ const HeaderLink: React.FC<{ item: HeaderItem }> = ({ item }) => {
       onMouseLeave={handleMouseLeave}>
       <Link
         href={item.href}
-        className={`text-sm xl:text-base flex font-bold whitespace-nowrap duration-300 ${
+        className={`text-sm xl:text-base flex items-center font-extrabold whitespace-nowrap transition-colors duration-300 ${
           path === item.href
-            ? 'text-primary '
-            : 'text-grey hover:text-primary'
+            ? 'text-amber-600'
+            : 'text-grey-dark/80 hover:text-amber-600'
         }`}>
         {item.label}
         {item.submenu && (
           <svg
             xmlns='http://www.w3.org/2000/svg'
-            width='1.5em'
-            height='1.5em'
+            width='1.2em'
+            height='1.2em'
+            className='ms-1'
             viewBox='0 0 24 24'>
             <path
               fill='none'
               stroke='currentColor'
               strokeLinecap='round'
               strokeLinejoin='round'
-              strokeWidth='1.5'
+              strokeWidth='2'
               d='m7 10l5 5l5-5'
             />
           </svg>
@@ -50,17 +51,17 @@ const HeaderLink: React.FC<{ item: HeaderItem }> = ({ item }) => {
       </Link>
       {submenuOpen && (
         <div
-          className={`absolute py-2 left-0 mt-0.5 w-60 bg-white shadow-lg rounded-lg `}
+          className={`absolute py-2 left-0 mt-1.5 w-60 bg-[#FFFDF5] border border-[#FFD54F]/30 shadow-xl shadow-[#FFD54F]/10 rounded-2xl overflow-hidden`}
           data-aos='fade-up'
-          data-aos-duration='500'>
+          data-aos-duration='300'>
           {item.submenu?.map((subItem, index) => (
             <Link
               key={index}
               href={subItem.href}
-              className={`block px-4 py-2   ${
+              className={`block px-4 py-2.5 text-xs font-bold transition-colors ${
                 path === subItem.href
-                  ? 'bg-primary text-white'
-                  : 'text-black dark:text-white hover:bg-primary'
+                  ? 'bg-[#FFD54F] text-grey-dark'
+                  : 'text-grey-dark hover:bg-[#FFD54F]/20 hover:text-amber-700'
               }`}>
               {subItem.label}
             </Link>

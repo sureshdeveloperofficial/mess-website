@@ -65,7 +65,7 @@ const ImageUpload = ({ value, onChange, folder = 'restaurant' }: ImageUploadProp
             onClick={handleContainerClick}
             className={`
                 relative h-48 w-full border-2 border-dashed rounded-2xl cursor-pointer transition-all flex flex-col items-center justify-center 
-                ${value ? 'border-transparent' : 'border-grey/20 hover:border-[#df6853] hover:bg-[#df6853]/5'}
+                ${value ? 'border-transparent' : 'border-grey/20 hover:border-[#FFD54F] hover:bg-[#FFD54F]/5'}
             `}
         >
             <input
@@ -95,17 +95,17 @@ const ImageUpload = ({ value, onChange, folder = 'restaurant' }: ImageUploadProp
                     </div>
                 </div>
             ) : (
-                <div className="flex flex-col items-center text-grey/40">
+                <div className="flex flex-col items-center text-grey-muted">
                     {loading ? (
                         <div className="flex flex-col items-center">
-                            <Icon icon="line-md:loading-loop" fontSize={48} className="text-[#df6853] mb-2" />
-                            <span className="text-sm font-medium">Uploading...</span>
+                            <Icon icon="line-md:loading-loop" fontSize={48} className="text-amber-600 mb-2" />
+                            <span className="text-sm font-bold text-grey-dark">Uploading...</span>
                         </div>
                     ) : (
                         <>
-                            <Icon icon="ion:cloud-upload-outline" fontSize={48} className="mb-2" />
-                            <span className="text-sm font-medium">Click to upload image</span>
-                            <span className="text-xs mt-1">Maximum quality preserved</span>
+                            <Icon icon="solar:cloud-upload-bold-duotone" fontSize={48} className="mb-2 text-amber-600" />
+                            <span className="text-sm font-extrabold text-grey-dark">Click to upload image</span>
+                            <span className="text-xs font-medium text-grey-muted mt-1">High quality JPEG, PNG, WebP up to 10MB</span>
                         </>
                     )}
                 </div>

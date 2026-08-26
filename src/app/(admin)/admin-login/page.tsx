@@ -39,60 +39,60 @@ export default function AdminLogin() {
     }
 
     return (
-        <div className='min-h-screen flex items-center justify-center bg-[#fdf2f0] px-4'>
+        <div className='min-h-screen flex items-center justify-center bg-[#FFFDF5] px-4'>
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className='max-w-md w-full bg-white rounded-3xl shadow-xl overflow-hidden'
+                className='max-w-md w-full bg-white rounded-3xl shadow-xl shadow-[#FFD54F]/10 border border-[#FFD54F]/20 overflow-hidden'
             >
                 <div className='p-8'>
                     <div className='text-center mb-10'>
-                        <div className='inline-flex items-center justify-center w-20 h-20 bg-[#df6853]/10 rounded-2xl mb-4'>
-                            <Icon icon='ion:cafe' className='text-4xl text-[#df6853]' />
+                        <div className='inline-flex items-center justify-center w-20 h-20 bg-[#FFD54F]/20 rounded-2xl mb-4 border border-[#FFD54F]/30 shadow-sm'>
+                            <Icon icon='solar:chef-hat-bold-duotone' className='text-4xl text-amber-600' />
                         </div>
-                        <h1 className='text-3xl font-bold text-grey capitalize'>Admin Portal</h1>
-                        <p className='text-grey/60 mt-2'>Sign in to manage your restaurant</p>
+                        <h1 className='text-3xl font-extrabold text-grey-dark capitalize'>Admin Portal</h1>
+                        <p className='text-grey-muted text-sm mt-2'>Sign in to manage your mess subscriptions</p>
                     </div>
 
                     <form onSubmit={handleSubmit} className='space-y-6'>
                         <div>
-                            <label className='block text-sm font-medium text-grey mb-2'>Email Address</label>
+                            <label className='block text-xs font-extrabold text-grey-dark uppercase tracking-wider mb-2'>Email Address</label>
                             <div className='relative'>
-                                <span className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-grey/40'>
-                                    <Icon icon='ion:mail-outline' />
+                                <span className='absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-grey-dark/40'>
+                                    <Icon icon='solar:letter-bold-duotone' className='text-lg' />
                                 </span>
                                 <input
                                     type='email'
                                     required
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className='block w-full pl-10 pr-3 py-3 border border-grey/10 rounded-xl bg-grey/5 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#df6853]/20 focus:border-[#df6853] transition-all'
-                                    placeholder='admin@chefs-kitchen.com'
+                                    className='block w-full pl-11 pr-4 py-3.5 border border-grey/10 rounded-2xl bg-grey/5 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#FFD54F]/30 focus:border-[#FFD54F] text-grey-dark font-medium text-sm transition-all'
+                                    placeholder='admin@premiummess.com'
                                 />
                             </div>
                         </div>
 
                         <div>
-                            <label className='block text-sm font-medium text-grey mb-2'>Password</label>
+                            <label className='block text-xs font-extrabold text-grey-dark uppercase tracking-wider mb-2'>Password</label>
                             <div className='relative'>
-                                <span className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-grey/40'>
-                                    <Icon icon='ion:lock-closed-outline' />
+                                <span className='absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-grey-dark/40'>
+                                    <Icon icon='solar:lock-password-bold-duotone' className='text-lg' />
                                 </span>
                                 <input
                                     type={showPassword ? 'text' : 'password'}
                                     required
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className='block w-full pl-10 pr-10 py-3 border border-grey/10 rounded-xl bg-grey/5 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#df6853]/20 focus:border-[#df6853] transition-all'
+                                    className='block w-full pl-11 pr-11 py-3.5 border border-grey/10 rounded-2xl bg-grey/5 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#FFD54F]/30 focus:border-[#FFD54F] text-grey-dark font-medium text-sm transition-all'
                                     placeholder='••••••••'
                                 />
                                 <button
                                     type='button'
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className='absolute inset-y-0 right-0 pr-3 flex items-center text-grey/40 hover:text-grey transition-colors'
+                                    className='absolute inset-y-0 right-0 pr-3.5 flex items-center text-grey-dark/40 hover:text-grey-dark transition-colors'
                                 >
-                                    <Icon icon={showPassword ? 'ion:eye-off-outline' : 'ion:eye-outline'} className='text-xl' />
+                                    <Icon icon={showPassword ? 'solar:eye-closed-bold' : 'solar:eye-bold'} className='text-xl' />
                                 </button>
                             </div>
                         </div>
@@ -100,7 +100,7 @@ export default function AdminLogin() {
                         <button
                             type='submit'
                             disabled={loading}
-                            className='w-full py-4 bg-[#df6853] text-white rounded-xl font-semibold shadow-lg shadow-[#df6853]/30 hover:bg-[#df6853]/90 active:scale-[0.98] transition-all flex items-center justify-center'
+                            className='w-full py-4 bg-[#FFD54F] hover:bg-[#F59E0B] text-grey-dark rounded-2xl font-extrabold shadow-lg shadow-[#FFD54F]/30 active:scale-[0.98] transition-all flex items-center justify-center cursor-pointer disabled:opacity-50'
                         >
                             {loading ? (
                                 <Icon icon='line-md:loading-loop' className='text-2xl mr-2' />
@@ -110,12 +110,12 @@ export default function AdminLogin() {
                         </button>
                     </form>
                 </div>
-                <div className='bg-grey/5 p-4 text-center border-t border-grey/5'>
+                <div className='bg-grey/5 p-4 text-center border-t border-grey/10'>
                     <button
                         onClick={() => router.push('/')}
-                        className='text-grey/40 hover:text-grey text-sm transition-colors flex items-center justify-center w-full'
+                        className='text-grey-muted hover:text-grey-dark text-xs font-bold transition-colors flex items-center justify-center w-full gap-1 cursor-pointer'
                     >
-                        <Icon icon='ion:arrow-back-outline' className='mr-1' />
+                        <Icon icon='solar:arrow-left-linear' />
                         Back to Public Site
                     </button>
                 </div>

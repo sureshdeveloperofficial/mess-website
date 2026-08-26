@@ -60,9 +60,9 @@ const Expert = () => {
   }
 
   return (
-    <section className='bg-[#FACB15]/5 py-16 relative overflow-hidden'>
+    <section className='bg-[#FFD54F]/5 py-16 relative overflow-hidden'>
       {/* Decorative background circle */}
-      <div className='absolute top-0 right-0 w-[500px] h-[500px] bg-[#FACB15]/2 rounded-full blur-[150px] -translate-y-1/2 translate-x-1/2'></div>
+      <div className='absolute top-0 right-0 w-[500px] h-[500px] bg-[#FFD54F]/5 rounded-full blur-[150px] -translate-y-1/2 translate-x-1/2'></div>
 
       <div className='container relative z-10'>
         <div className='text-center mb-10'>
@@ -92,7 +92,7 @@ const Expert = () => {
             ))}
           </div>
         ) : dishItems.length === 0 ? (
-          <div className='text-center py-20 bg-white rounded-[4rem] border border-dashed border-[#FACB15]/20 text-[#2D2A26]/30 font-bold'>
+          <div className='text-center py-20 bg-white rounded-[4rem] border border-dashed border-[#FFD54F]/30 text-[#2D2A26]/30 font-bold'>
             <Icon icon='ion:fast-food-outline' className='text-6xl mx-auto mb-4 opacity-10' />
             No food items added in Admin yet.
           </div>

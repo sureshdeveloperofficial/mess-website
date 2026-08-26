@@ -1,6 +1,6 @@
 import Header from '@/app/components/Layout/Header'
 import Footer from '@/app/components/Layout/Footer'
-import ScrollToTop from '@/app/components/ScrollToTop'
+import FloatingActions from '@/app/components/Common/FloatingActions'
 
 export default function SiteLayout({
     children,
@@ -12,7 +12,7 @@ export default function SiteLayout({
             <Header />
             {children}
             <Footer />
-            <ScrollToTop />
+            <FloatingActions />
         </>
     )
 }

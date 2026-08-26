@@ -19,6 +19,7 @@ const Header: React.FC = () => {
   const [navbarOpen, setNavbarOpen] = useState(false)
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [sticky, setSticky] = useState(false)
+  const contactPhone = '+971 4 264 2613'
   const navbarRef = useRef<HTMLDivElement>(null)
   const mobileMenuRef = useRef<HTMLDivElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -76,8 +77,10 @@ const Header: React.FC = () => {
 
   return (
     <header
-      className={`fixed top-0 z-40 py-4 w-full transition-all duration-300 ${
-        sticky ? 'shadow-lg bg-white' : 'shadow-none'
+      className={`fixed top-0 z-40 py-3.5 w-full transition-all duration-300 ${
+        sticky
+          ? 'shadow-md shadow-[#FFD54F]/10 bg-[#FFFDF5]/98 backdrop-blur-lg border-b border-[#FFD54F]/30'
+          : 'bg-[#FFFDF5]/90 backdrop-blur-md border-b border-[#FFD54F]/20 shadow-xs'
       }`}>
       <div>
         <div className='container flex items-center justify-between'>
@@ -91,15 +94,15 @@ const Header: React.FC = () => {
           </nav>
 
           <div className='flex items-center gap-2 lg:gap-4'>
-            <Link
-              href='#'
-              className='text-sm xl:text-base font-bold hover:text-primary hidden xl:flex items-center whitespace-nowrap mr-2'>
+            <a
+              href={`tel:${contactPhone.replace(/\s+/g, '')}`}
+              className='text-sm xl:text-base font-extrabold text-grey-dark hover:text-amber-600 hidden xl:flex items-center whitespace-nowrap mr-2 transition-colors'>
               <Icon
                 icon='solar:phone-bold'
-                className='text-primary text-2xl inline-block me-1'
+                className='text-amber-600 text-2xl inline-block me-1.5'
               />
-              +971 4 264 2613
-            </Link>
+              {contactPhone}
+            </a>
 
             {status === 'authenticated' ? (
               <div className="flex items-center gap-3 relative" ref={dropdownRef}>
@@ -107,19 +110,19 @@ const Header: React.FC = () => {
                   onClick={() => setDropdownOpen(!dropdownOpen)}
                   className="hidden xl:flex flex-col items-end cursor-pointer group"
                 >
-                  <span className="text-[10px] font-extrabold text-grey-dark uppercase tracking-wider leading-none group-hover:text-primary transition-colors whitespace-nowrap pb-1">Welcome back</span>
-                  <span className="text-sm font-extrabold text-grey-dark flex items-center gap-1 group-hover:text-primary transition-colors whitespace-nowrap">
+                  <span className="text-[10px] font-black text-amber-600 uppercase tracking-widest leading-none whitespace-nowrap pb-1">Welcome back</span>
+                  <span className="text-sm font-extrabold text-grey-dark flex items-center gap-1 group-hover:text-amber-600 transition-colors whitespace-nowrap">
                     {session?.user?.name || 'Customer'}
-                    <Icon icon="solar:alt-arrow-down-bold" className={`text-xs transition-transform duration-300 text-grey-dark ${dropdownOpen ? 'rotate-180 text-primary' : ''}`} />
+                    <Icon icon="solar:alt-arrow-down-bold" className={`text-xs transition-transform duration-300 text-grey-dark ${dropdownOpen ? 'rotate-180 text-amber-600' : ''}`} />
                   </span>
                 </button>
                 
                 <button
                   onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="bg-primary/10 border border-primary/20 hover:bg-primary/20 text-primary p-2 rounded-xl transition-all duration-300 group cursor-pointer shadow-2xs"
+                  className="bg-[#FFD54F]/20 border border-[#FFD54F]/40 hover:bg-[#FFD54F]/40 text-grey-dark p-2.5 rounded-2xl transition-all duration-300 group cursor-pointer shadow-sm shadow-[#FFD54F]/10"
                   title="Open user profile menu"
                 >
-                  <Icon icon="solar:user-circle-bold-duotone" className="text-2xl group-hover:scale-105 transition-transform" />
+                  <Icon icon="solar:user-circle-bold-duotone" className="text-2xl text-grey-dark group-hover:scale-105 transition-transform" />
                 </button>
 
                 {/* Desktop Dropdown */}
@@ -129,10 +132,10 @@ const Header: React.FC = () => {
                       initial={{ opacity: 0, y: 8, scale: 0.96 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 8, scale: 0.96 }}
-                      className="absolute top-full right-0 mt-3 w-64 bg-white rounded-3xl shadow-xl border border-grey/15 overflow-hidden z-50 p-2"
+                      className="absolute top-full right-0 mt-3 w-64 bg-[#FFFDF5] rounded-3xl shadow-xl shadow-[#FFD54F]/15 border border-[#FFD54F]/30 overflow-hidden z-50 p-2.5"
                     >
-                      <div className="p-3.5 bg-grey/5 rounded-2xl border border-grey/10 mb-2">
-                        <p className="text-[10px] font-extrabold text-grey-dark uppercase tracking-wider mb-1">Authenticated Account</p>
+                      <div className="p-3.5 bg-[#FFD54F]/15 rounded-2xl border border-[#FFD54F]/25 mb-2">
+                        <p className="text-[10px] font-black text-amber-600 uppercase tracking-wider mb-1">Authenticated Account</p>
                         <p className="text-xs font-extrabold text-grey-dark truncate">{session?.user?.name || 'Customer'}</p>
                         <p className="text-[11px] font-medium text-grey-dark/75 truncate mt-0.5">{session.user?.email}</p>
                       </div>
@@ -141,21 +144,21 @@ const Header: React.FC = () => {
                         <Link 
                           href="/profile" 
                           onClick={() => setDropdownOpen(false)}
-                          className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-grey-dark hover:bg-stone-100 hover:text-black font-bold text-xs transition-all"
+                          className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-grey-dark hover:bg-[#FFD54F]/20 font-bold text-xs transition-all"
                         >
-                          <Icon icon="solar:user-bold-duotone" className="text-lg text-grey-dark/80 shrink-0" />
+                          <Icon icon="solar:user-bold-duotone" className="text-lg text-amber-600 shrink-0" />
                           <span>My Profile</span>
                         </Link>
                         <Link 
                           href="/my-orders" 
                           onClick={() => setDropdownOpen(false)}
-                          className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-grey-dark hover:bg-stone-100 hover:text-black font-bold text-xs transition-all"
+                          className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-grey-dark hover:bg-[#FFD54F]/20 font-bold text-xs transition-all"
                         >
-                          <Icon icon="solar:bag-check-bold-duotone" className="text-lg text-grey-dark/80 shrink-0" />
+                          <Icon icon="solar:bag-check-bold-duotone" className="text-lg text-amber-600 shrink-0" />
                           <span>My Orders</span>
                         </Link>
                         
-                        <hr className="border-grey/10 my-1.5" />
+                        <hr className="border-[#FFD54F]/20 my-1.5" />
                         
                         <button
                           onClick={() => signOut({ callbackUrl: '/' })}
@@ -173,12 +176,12 @@ const Header: React.FC = () => {
               <>
                 <Link
                   href='/signin'
-                  className='hidden lg:block text-grey-dark duration-300 bg-primary/20 hover:bg-primary font-bold text-sm xl:text-base py-2 px-4 xl:px-6 rounded-full whitespace-nowrap'>
+                  className='hidden lg:block text-grey-dark duration-300 bg-[#FFD54F]/25 hover:bg-[#FFD54F] border border-[#FFD54F]/40 font-extrabold text-sm xl:text-base py-2 px-4 xl:px-6 rounded-full whitespace-nowrap transition-all'>
                   Sign In
                 </Link>
                 <Link
                   href='/signup'
-                  className='hidden lg:block bg-primary duration-300 text-grey-dark hover:bg-[#F59E0B] font-bold text-sm xl:text-base py-2 px-4 xl:px-6 rounded-full whitespace-nowrap shadow-md shadow-primary/20'>
+                  className='hidden lg:block bg-[#FFD54F] duration-300 text-grey-dark hover:bg-[#F59E0B] font-extrabold text-sm xl:text-base py-2 px-4 xl:px-6 rounded-full whitespace-nowrap shadow-md shadow-[#FFD54F]/30 transition-all'>
                   Sign Up
                 </Link>
               </>
@@ -186,29 +189,29 @@ const Header: React.FC = () => {
 
             <button
               onClick={() => setNavbarOpen(!navbarOpen)}
-              className='block lg:hidden p-2 rounded-lg'
+              className='block lg:hidden p-2 rounded-xl bg-[#FFD54F]/20 border border-[#FFD54F]/40 text-grey-dark'
               aria-label='Toggle mobile menu'>
-              <span className='block w-6 h-0.5 bg-black'></span>
-              <span className='block w-6 h-0.5 bg-black mt-1.5'></span>
-              <span className='block w-6 h-0.5 bg-black mt-1.5'></span>
+              <span className='block w-6 h-0.5 bg-grey-dark'></span>
+              <span className='block w-6 h-0.5 bg-grey-dark mt-1.5'></span>
+              <span className='block w-6 h-0.5 bg-grey-dark mt-1.5'></span>
             </button>
           </div>
         </div>
 
         {/* Mobile Navigation Drawer */}
         {navbarOpen && (
-          <div className='fixed top-0 left-0 w-full h-full bg-black/50 z-40' onClick={() => setNavbarOpen(false)} />
+          <div className='fixed top-0 left-0 w-full h-full bg-black/50 backdrop-blur-xs z-40' onClick={() => setNavbarOpen(false)} />
         )}
         <div
-          className={`lg:hidden fixed top-0 right-0 h-full w-[300px] bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out ${
+          className={`lg:hidden fixed top-0 right-0 h-full w-[300px] bg-[#FFFDF5] border-l border-[#FFD54F]/30 shadow-2xl z-50 transform transition-transform duration-300 ease-in-out ${
             navbarOpen ? 'translate-x-0' : 'translate-x-full'
           }`}>
-          <div className='flex items-center justify-between p-4 border-b border-grey/10'>
+          <div className='flex items-center justify-between p-4 border-b border-[#FFD54F]/20'>
             <span className='text-sm font-extrabold text-grey-dark'>Navigation Menu</span>
             <button
               onClick={() => setNavbarOpen(false)}
-              className='p-1 rounded-lg text-grey-dark hover:bg-grey/10'>
-              <Icon icon='solar:close-circle-bold' className='text-xl' />
+              className='p-1.5 rounded-lg text-grey-dark hover:bg-[#FFD54F]/20'>
+              <Icon icon='solar:close-circle-bold' className='text-2xl text-grey-dark' />
             </button>
           </div>
 
@@ -219,8 +222,8 @@ const Header: React.FC = () => {
             <div className='mt-4 flex flex-col space-y-4 w-full'>
               {status === 'authenticated' ? (
                 <>
-                  <div className="p-3.5 bg-grey/5 rounded-2xl border border-grey/15">
-                    <p className="text-[10px] font-extrabold text-grey-dark uppercase tracking-wider mb-1">Signed in as</p>
+                  <div className="p-3.5 bg-[#FFD54F]/15 rounded-2xl border border-[#FFD54F]/25">
+                    <p className="text-[10px] font-black text-amber-600 uppercase tracking-wider mb-1">Signed in as</p>
                     <p className="text-sm font-extrabold text-grey-dark truncate">{session?.user?.name || 'Customer'}</p>
                     <p className="text-[11px] font-medium text-grey-dark/75 truncate mt-0.5">{session?.user?.email}</p>
                   </div>
@@ -229,17 +232,17 @@ const Header: React.FC = () => {
                     <Link 
                       href="/profile" 
                       onClick={() => setNavbarOpen(false)}
-                      className="flex items-center gap-3 px-4 py-3 rounded-xl bg-grey/5 text-grey-dark font-bold text-xs hover:bg-stone-100 hover:text-black transition-all"
+                      className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white border border-[#FFD54F]/20 text-grey-dark font-bold text-xs hover:bg-[#FFD54F]/20 transition-all"
                     >
-                      <Icon icon="solar:user-bold-duotone" className="text-lg text-grey-dark/80" />
+                      <Icon icon="solar:user-bold-duotone" className="text-lg text-amber-600" />
                       <span>Edit Profile</span>
                     </Link>
                     <Link 
                       href="/my-orders" 
                       onClick={() => setNavbarOpen(false)}
-                      className="flex items-center gap-3 px-4 py-3 rounded-xl bg-grey/5 text-grey-dark font-bold text-xs hover:bg-stone-100 hover:text-black transition-all"
+                      className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white border border-[#FFD54F]/20 text-grey-dark font-bold text-xs hover:bg-[#FFD54F]/20 transition-all"
                     >
-                      <Icon icon="solar:bag-check-bold-duotone" className="text-lg text-grey-dark/80" />
+                      <Icon icon="solar:bag-check-bold-duotone" className="text-lg text-amber-600" />
                       <span>My Orders</span>
                     </Link>
                   </div>
@@ -256,13 +259,13 @@ const Header: React.FC = () => {
                 <>
                   <Link
                     href='/signin'
-                    className='bg-primary text-white px-4 py-2 rounded-lg border border-primary hover:text-primary hover:bg-transparent text-center transition duration-300 ease-in-out'
+                    className='bg-[#FFD54F]/25 text-grey-dark font-bold px-4 py-2.5 rounded-xl border border-[#FFD54F]/40 hover:bg-[#FFD54F] text-center transition duration-300 ease-in-out'
                     onClick={() => setNavbarOpen(false)}>
                     Sign In
                   </Link>
                   <Link
                     href='/signup'
-                    className='bg-primary text-white px-4 py-2 rounded-lg border border-primary hover:text-primary hover:bg-transparent text-center transition duration-300 ease-in-out'
+                    className='bg-[#FFD54F] text-grey-dark font-extrabold px-4 py-2.5 rounded-xl shadow-md shadow-[#FFD54F]/30 hover:bg-[#F59E0B] text-center transition duration-300 ease-in-out'
                     onClick={() => setNavbarOpen(false)}>
                     Sign Up
                   </Link>

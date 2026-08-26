@@ -5,21 +5,26 @@ import { Icon } from '@iconify/react'
 
 const Cook = () => {
   return (
-    <section className='relative py-16 bg-white' id='aboutus'>
-      <div className='container'>
-        <div className='grid grid-cols-1 lg:grid-cols-12 items-center gap-20'>
+    <section className='relative py-20 bg-[#FFFDF5] overflow-hidden' id='aboutus'>
+      {/* Ambient Honey Yellow Glow Orbs */}
+      <div className='absolute top-1/4 -left-20 w-96 h-96 bg-[#FFD54F]/15 rounded-full blur-3xl pointer-events-none' />
+      <div className='absolute bottom-10 right-0 w-80 h-80 bg-[#FFD54F]/10 rounded-full blur-3xl pointer-events-none' />
+
+      <div className='container relative z-10'>
+        <div className='grid grid-cols-1 lg:grid-cols-12 items-center gap-10 lg:gap-20'>
           <div className='lg:col-span-6 relative'>
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              className='relative z-20 rounded-[5rem] overflow-hidden border-[1.5rem] border-[#FFFDF5] shadow-2xl'
+              className='relative z-20 rounded-[3rem] sm:rounded-[5rem] overflow-hidden border-8 sm:border-[1.5rem] border-white shadow-2xl shadow-[#FFD54F]/15 ring-1 ring-[#FFD54F]/30'
             >
               <Image
                 src='/images/Cook/cook.webp'
                 alt='chef'
                 width={636}
                 height={808}
+                sizes='(max-width: 640px) 90vw, (max-width: 1024px) 50vw, 550px'
                 className='w-full h-full object-cover'
               />
             </motion.div>
@@ -28,9 +33,9 @@ const Cook = () => {
             <motion.div
               animate={{ y: [0, -15, 0] }}
               transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-              className='absolute -right-10 -bottom-10 w-48 h-48 z-30 hidden xl:block drop-shadow-2xl'
+              className='absolute -right-4 -bottom-4 sm:-right-6 sm:-bottom-6 w-32 h-32 sm:w-48 sm:h-48 z-30 drop-shadow-2xl'
             >
-              <Image src='/images/food/parotta.png' alt='parotta' width={200} height={200} className='rounded-full' />
+              <Image src='/images/food/parotta.png' alt='parotta' width={200} height={200} sizes='(max-width: 640px) 130px, 200px' className='rounded-full border-4 border-white shadow-lg' />
             </motion.div>
           </div>
 
@@ -39,8 +44,9 @@ const Cook = () => {
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className='text-primary text-xs font-semibold mb-4 tracking-wider uppercase'
+              className='text-amber-600 text-xs font-black mb-4 tracking-widest uppercase inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FFD54F]/20 border border-[#FFD54F]/40'
             >
+              <Icon icon='solar:heart-bold-duotone' className='text-sm text-amber-600' />
               The Heart of our Mess
             </motion.p>
             <motion.h2
@@ -50,10 +56,10 @@ const Cook = () => {
               transition={{ delay: 0.1 }}
               className='text-4xl md:text-6xl font-extrabold text-grey-dark tracking-tight leading-tight mb-8'
             >
-              Crafted with <span className='text-primary'>Passion</span>, Served with Pride
+              Crafted with <span className='text-amber-500 italic'>Passion</span>, Served with Pride
             </motion.h2>
 
-            <div className='space-y-6 text-base font-normal text-grey-dark/75 leading-relaxed'>
+            <div className='space-y-6 text-base font-normal text-grey-dark/80 leading-relaxed'>
               <p>
                 At <span className='text-grey-dark font-extrabold'>PREMIUM MESS</span>, every dish tells a story. Our team blends
                 tradition with quality to deliver a hearty home-style dining experience that

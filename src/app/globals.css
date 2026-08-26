@@ -35,9 +35,18 @@
 */
 @layer base {
 
-  html,
+  html {
+    overflow-x: clip;
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+
   body {
+    overflow-x: clip;
     font-family: var(--font-poppins), 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   input,
@@ -45,6 +54,11 @@
   select,
   textarea {
     font-family: inherit;
+  }
+
+  /* Ensure touch targets on interactive elements are comfortable */
+  button, a {
+    touch-action: manipulation;
   }
 
   *,
@@ -56,22 +70,22 @@
   }
 
   section {
-    @apply py-10;
+    @apply py-8 sm:py-12 lg:py-16;
   }
 
   h1 {
-    @apply text-black md:text-7xl sm:text-6xl text-5xl
+    @apply text-grey-dark text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight;
   }
 
   h2 {
-    @apply text-black font-semibold sm:text-5xl text-4xl sm:leading-14 leading-11
+    @apply text-grey-dark text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight;
   }
 
 }
 
 @layer utilities {
   .container {
-    @apply max-w-7xl mx-auto w-full px-4;
+    @apply max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8;
   }
 
   .perspective-1000 {
@@ -108,12 +122,12 @@
   }
 
   .premium-glow {
-    box-shadow: 0 0 20px rgba(223, 104, 83, 0.2);
+    box-shadow: 0 0 20px rgba(255, 213, 79, 0.25);
     transition: box-shadow 0.3s ease;
   }
 
   .premium-glow:hover {
-    box-shadow: 0 0 40px rgba(223, 104, 83, 0.4);
+    box-shadow: 0 0 40px rgba(255, 213, 79, 0.45);
   }
 
   .custom-scrollbar::-webkit-scrollbar {
@@ -125,7 +139,7 @@
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #FACB15;
+    background: #FFD54F;
     border-radius: 10px;
   }
 
@@ -198,8 +212,8 @@
   .admin-input:focus {
     background-color: #ffffff;
     outline: none;
-    border-color: #FACB15;
-    box-shadow: 0 0 0 3px rgba(250, 203, 21, 0.2);
+    border-color: #FFD54F;
+    box-shadow: 0 0 0 3px rgba(255, 213, 79, 0.25);
   }
 
   .admin-btn-primary {
@@ -208,20 +222,20 @@
     justify-content: center;
     gap: 0.5rem;
     padding: 0.75rem 1.5rem;
-    background-color: #FACB15;
-    color: #ffffff;
+    background-color: #FFD54F;
+    color: #171717;
     font-size: 0.875rem;
     line-height: 1.25rem;
-    font-weight: 700;
+    font-weight: 800;
     border-radius: 0.75rem;
-    box-shadow: 0 4px 14px 0 rgba(250, 203, 21, 0.35);
+    box-shadow: 0 4px 14px 0 rgba(255, 213, 79, 0.35);
     transition: all 0.2s ease;
     cursor: pointer;
   }
 
   .admin-btn-primary:hover {
-    filter: brightness(0.95);
-    box-shadow: 0 6px 20px 0 rgba(250, 203, 21, 0.45);
+    background-color: #F59E0B;
+    box-shadow: 0 6px 20px 0 rgba(245, 158, 11, 0.4);
   }
 
   .admin-btn-primary:active {
