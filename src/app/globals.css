@@ -3,6 +3,9 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
+  --font-sans: var(--font-poppins), 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-poppins: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+
   --color-primary: #FFD54F;
   --color-primary-hover: #F59E0B;
   --color-honey: #FFD54F;
@@ -31,6 +34,18 @@
   color utility to any element that depends on these defaults.
 */
 @layer base {
+
+  html,
+  body {
+    font-family: var(--font-poppins), 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  input,
+  button,
+  select,
+  textarea {
+    font-family: inherit;
+  }
 
   *,
   ::after,

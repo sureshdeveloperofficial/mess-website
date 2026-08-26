@@ -6,6 +6,8 @@ import SmoothScrollProvider from '@/app/components/Common/SmoothScrollProvider'
 const font = Poppins({
   subsets: ['latin'],
   weight: ['300', '400', '500', '600', '700', '800', '900'],
+  variable: '--font-poppins',
+  display: 'swap',
 })
 
 export default function RootLayout({
@@ -14,8 +16,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang='en' suppressHydrationWarning>
-      <body className={`${font.className}`} suppressHydrationWarning>
+    <html lang='en' className={`${font.variable}`} suppressHydrationWarning>
+      <body className={`${font.className} font-sans`} suppressHydrationWarning>
         <SmoothScrollProvider>
           <Providers>
             {children}
