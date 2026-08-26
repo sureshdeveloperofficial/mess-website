@@ -7,6 +7,7 @@ import toast from 'react-hot-toast'
 
 export default function ContactPage() {
     const [isSubmitting, setIsSubmitting] = useState(false)
+    const [isSubmitted, setIsSubmitted] = useState(false)
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
@@ -45,7 +46,8 @@ export default function ContactPage() {
             const data = await res.json()
             if (!res.ok) throw new Error(data.error || 'Failed to submit corporate plan request')
 
-            toast.success("Corporate plan request submitted successfully! We'll get back to you shortly.")
+            toast.success("Corporate plan request submitted successfully! Our team will contact you shortly.")
+            setIsSubmitted(true)
             form.reset()
         } catch (err: any) {
             toast.error(err.message || 'Failed to submit request. Please try again.')
@@ -193,6 +195,24 @@ export default function ContactPage() {
                                         Fill in your team details below and our corporate meal specialist will prepare a customized quote.
                                     </p>
                                 </div>
+
+                                {isSubmitted && (
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                                        className='mb-6 p-5 rounded-2xl bg-[#FFF9E6] border border-[#FFD54F] flex items-start gap-3.5 shadow-md shadow-[#FFD54F]/10'
+                                    >
+                                        <div className='w-8 h-8 rounded-full bg-[#FFD54F] flex items-center justify-center text-grey-dark shrink-0 font-bold'>
+                                            <Icon icon='solar:check-circle-bold' className='text-xl text-amber-800' />
+                                        </div>
+                                        <div className='flex-1'>
+                                            <p className='text-sm font-extrabold text-grey-dark'>Request Submitted Successfully!</p>
+                                            <p className='text-xs font-medium text-grey-dark/75 mt-0.5'>
+                                                Our corporate meal coordinator has received your requirements and will reach out to you within a few business hours.
+                                            </p>
+                                        </div>
+                                    </motion.div>
+                                )}
 
                                 <form onSubmit={handleSubmit} className='space-y-5 sm:space-y-6'>
                                     {/* Row 1: Company Name & Contact Person */}
