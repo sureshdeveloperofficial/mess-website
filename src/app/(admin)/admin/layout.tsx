@@ -57,7 +57,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <motion.div
                     animate={{ scale: [1, 1.08, 1] }}
                     transition={{ duration: 1.2, repeat: Infinity }}
-                    className='w-16 h-16 bg-primary rounded-2xl flex items-center justify-center text-white text-3xl shadow-lg shadow-primary/30'
+                    className='w-16 h-16 bg-primary rounded-2xl flex items-center justify-center text-grey-dark text-3xl shadow-lg shadow-primary/30'
                 >
                     <Icon icon='solar:chef-hat-bold-duotone' />
                 </motion.div>
@@ -77,7 +77,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                             <img src={logoUrl} alt='Logo' className='w-full h-full object-contain p-1' />
                         </div>
                     ) : (
-                        <div className='w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white shrink-0 shadow-md shadow-primary/20'>
+                        <div className='w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-grey-dark shrink-0 shadow-md shadow-primary/20'>
                             <Icon icon='solar:chef-hat-bold-duotone' className='text-2xl' />
                         </div>
                     )}
@@ -121,7 +121,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                             <div className='text-xs font-bold text-grey-dark'>{session.user?.email}</div>
                             <div className='text-[10px] font-bold text-grey-muted uppercase tracking-wider'>Super Admin</div>
                         </div>
-                        <div className='w-10 h-10 bg-primary/10 rounded-xl border border-primary/20 flex items-center justify-center text-primary'>
+                        <div className='w-10 h-10 bg-primary/20 rounded-xl border border-primary/40 flex items-center justify-center text-grey-dark'>
                             <Icon icon='solar:user-bold-duotone' className='text-xl' />
                         </div>
                     </div>

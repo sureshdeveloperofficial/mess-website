@@ -49,16 +49,16 @@ const Signin = () => {
   return (
     <div className='min-h-screen flex items-center justify-center bg-[#FFFDF5] py-12 sm:py-20 px-4 sm:px-6 relative overflow-hidden'>
       {/* Decorative Ambient Honey Yellow Glows */}
-      <div className='absolute -top-24 -left-24 w-96 h-96 bg-[#FFD54F]/20 rounded-full blur-3xl pointer-events-none' />
-      <div className='absolute -bottom-24 -right-24 w-96 h-96 bg-[#FFD54F]/15 rounded-full blur-3xl pointer-events-none' />
-      <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#FFD54F]/10 rounded-full blur-[140px] pointer-events-none' />
+      <div className='absolute -top-24 -left-24 w-96 h-96 bg-[#fed869]/20 rounded-full blur-3xl pointer-events-none' />
+      <div className='absolute -bottom-24 -right-24 w-96 h-96 bg-[#fed869]/15 rounded-full blur-3xl pointer-events-none' />
+      <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#fed869]/10 rounded-full blur-[140px] pointer-events-none' />
 
       {/* Main Centered Card */}
       <motion.div
         initial={{ opacity: 0, y: 25 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: 'easeOut' }}
-        className='w-full max-w-[500px] bg-white rounded-3xl sm:rounded-[2.5rem] p-7 sm:p-11 shadow-2xl shadow-[#FFD54F]/15 border border-[#FFD54F]/35 relative z-10'
+        className='w-full max-w-[500px] bg-white rounded-3xl sm:rounded-[2.5rem] p-7 sm:p-11 shadow-2xl shadow-[#fed869]/15 border border-[#fed869]/35 relative z-10'
       >
         {/* Back to Home Link */}
         <div className='mb-6'>
@@ -76,12 +76,12 @@ const Signin = () => {
           <div className='inline-block mb-3'>
             <Logo />
           </div>
-          <div className='inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFD54F]/20 text-grey-dark text-[10px] font-black uppercase tracking-wider border border-[#FFD54F]/40 mb-3'>
-            <Icon icon='solar:user-circle-bold-duotone' className='text-xs text-amber-600' />
+          <div className='inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#fed869]/20 text-grey-dark text-[10px] font-black uppercase tracking-wider border border-[#fed869]/40 mb-3'>
+            <Icon icon='solar:user-circle-bold-duotone' className='text-xs text-amber-700' />
             Customer Portal
           </div>
           <h1 className='text-2.5xl sm:text-3.5xl font-extrabold text-grey-dark tracking-tight leading-tight'>
-            Welcome <span className='text-amber-500'>Back</span>
+            Welcome <span className='text-amber-600'>Back</span>
           </h1>
           <p className='text-xs sm:text-sm font-medium text-grey-dark/65 mt-1.5'>
             Sign in to manage your meal plans and orders
@@ -105,7 +105,7 @@ const Signin = () => {
                 required
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className='w-full bg-[#FFFDF5] border border-[#FFD54F]/35 focus:bg-white focus:border-[#FFD54F] px-4 py-3.5 pl-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[#FFD54F]/20 transition-all placeholder:text-grey-dark/30'
+                className='w-full bg-[#FFFDF5] border border-[#fed869]/35 focus:bg-white focus:border-[#fed869] px-4 py-3.5 pl-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[#fed869]/20 transition-all placeholder:text-grey-dark/30'
               />
             </div>
           </div>
@@ -133,7 +133,7 @@ const Signin = () => {
                 required
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                className='w-full bg-[#FFFDF5] border border-[#FFD54F]/35 focus:bg-white focus:border-[#FFD54F] px-4 py-3.5 pl-11 pr-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[#FFD54F]/20 transition-all placeholder:text-grey-dark/30'
+                className='w-full bg-[#FFFDF5] border border-[#fed869]/35 focus:bg-white focus:border-[#fed869] px-4 py-3.5 pl-11 pr-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[#fed869]/20 transition-all placeholder:text-grey-dark/30'
               />
               <button
                 type='button'
@@ -151,7 +151,7 @@ const Signin = () => {
             <button
               disabled={loading}
               type='submit'
-              className='w-full bg-[#FFD54F] hover:bg-[#F59E0B] text-grey-dark px-8 py-4 rounded-2xl font-extrabold text-sm sm:text-base flex justify-center items-center gap-2.5 shadow-lg shadow-[#FFD54F]/25 hover:shadow-xl hover:shadow-[#FFD54F]/35 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer'
+              className='w-full bg-[#fed869] hover:bg-[#e6c04f] text-grey-dark px-8 py-4 rounded-2xl font-extrabold text-sm sm:text-base flex justify-center items-center gap-2.5 shadow-lg shadow-[#fed869]/25 hover:shadow-xl hover:shadow-[#fed869]/35 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer'
             >
               {loading ? (
                 <>

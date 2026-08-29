@@ -87,10 +87,10 @@ const Hero = () => {
   const activeSlide = sliderImages[currentIdx % sliderImages.length] || sliderImages[0]
 
   return (
-    <section ref={containerRef} id='home-section' className='relative bg-[#FFFDF5] overflow-hidden pt-20 lg:pt-32'>
+    <section ref={containerRef} id='home-section' className='relative bg-[#FEEBB1] overflow-hidden pt-20 lg:pt-32'>
       {/* Background Decorative Elements */}
-      <div className='absolute top-0 right-0 w-1/2 h-full bg-[#FFD54F]/10 -skew-x-12 origin-top-right pointer-events-none'></div>
-      <div className='absolute top-20 left-[10%] w-64 h-64 bg-[#FFD54F]/15 rounded-full blur-[120px] pointer-events-none'></div>
+      <div className='absolute top-0 right-0 w-1/2 h-full bg-[#fed869]/20 -skew-x-12 origin-top-right pointer-events-none'></div>
+      <div className='absolute top-20 left-[10%] w-64 h-64 bg-[#fed869]/30 rounded-full blur-[120px] pointer-events-none'></div>
 
       <div className='container relative z-10'>
         <div className='grid grid-cols-1 lg:grid-cols-12 items-center gap-16'>
@@ -105,7 +105,7 @@ const Hero = () => {
                 className='text-3xl sm:text-4.5xl md:text-5xl lg:text-5.5xl xl:text-6xl font-extrabold text-grey-dark lg:text-start text-center leading-[1.15] tracking-tight mb-6 sm:mb-8'
               >
                 Authentic Taste. <br />
-                <span className='text-amber-500 italic'>Everyday Comfort.</span>
+                <span className='text-amber-600 italic'>Everyday Comfort.</span>
               </motion.h1>
 
               <motion.p
@@ -113,7 +113,7 @@ const Hero = () => {
                 initial="hidden"
                 animate="visible"
                 custom={2}
-                className='text-grey-dark/75 text-sm sm:text-base md:text-lg font-normal mb-8 sm:mb-12 lg:text-start text-center max-w-2xl leading-relaxed'
+                className='text-grey-dark/80 text-sm sm:text-base md:text-lg font-medium mb-8 sm:mb-12 lg:text-start text-center max-w-2xl leading-relaxed'
               >
                 {settings?.site_tagline || 'Traditional flavours, freshly prepared meals, and the comforting taste of home — served fresh every day.'}
               </motion.p>
@@ -127,9 +127,9 @@ const Hero = () => {
               >
                 <Link href='/plans' className='w-full sm:w-auto'>
                   <motion.button
-                    whileHover={{ scale: 1.05, boxShadow: '0 20px 40px -10px rgba(255, 213, 79, 0.4)' }}
+                    whileHover={{ scale: 1.05, boxShadow: '0 20px 40px -10px rgba(254, 216, 105, 0.5)' }}
                     whileTap={{ scale: 0.95 }}
-                    className='w-full sm:w-auto text-sm sm:text-base font-extrabold rounded-3xl sm:rounded-4xl text-grey-dark py-4 px-8 sm:py-5 sm:px-10 bg-[#FFD54F] hover:bg-[#F59E0B] shadow-xl shadow-[#FFD54F]/30 transition-all duration-300 flex items-center justify-center gap-3 group cursor-pointer'
+                    className='w-full sm:w-auto text-sm sm:text-base font-extrabold rounded-3xl sm:rounded-4xl text-grey-dark py-4 px-8 sm:py-5 sm:px-10 bg-[#fed869] hover:bg-[#e6c04f] shadow-xl shadow-[#fed869]/40 transition-all duration-300 flex items-center justify-center gap-3 group cursor-pointer'
                   >
                     Explore Food Plans
                     <Icon icon='ion:calendar-outline' className='group-hover:translate-x-1.5 transition-transform' />
@@ -137,11 +137,11 @@ const Hero = () => {
                 </Link>
                 <Link href='/menu' className='w-full sm:w-auto'>
                   <motion.button
-                    whileHover={{ scale: 1.02, backgroundColor: 'rgba(45,42,38,0.05)' }}
+                    whileHover={{ scale: 1.02, backgroundColor: 'rgba(255,255,255,0.9)' }}
                     whileTap={{ scale: 0.98 }}
-                    className='w-full sm:w-auto text-sm sm:text-base border-2 sm:border-3 border-grey-dark/15 rounded-3xl sm:rounded-4xl font-extrabold py-4 px-8 sm:py-5 sm:px-10 text-grey-dark hover:border-[#FFD54F] hover:bg-[#FFD54F]/10 transition-all duration-300 flex items-center justify-center gap-3 bg-white/60 backdrop-blur-sm cursor-pointer'
+                    className='w-full sm:w-auto text-sm sm:text-base border-2 sm:border-3 border-grey-dark/15 rounded-3xl sm:rounded-4xl font-extrabold py-4 px-8 sm:py-5 sm:px-10 text-grey-dark hover:border-[#fed869] hover:bg-white/80 transition-all duration-300 flex items-center justify-center gap-3 bg-white/70 backdrop-blur-sm cursor-pointer'
                   >
-                    View Special Menu
+                    View Today&apos;s Menu
                     <Icon icon='ion:restaurant-outline' />
                   </motion.button>
                 </Link>
@@ -152,9 +152,9 @@ const Hero = () => {
                 initial="hidden"
                 animate="visible"
                 custom={4}
-                className='mt-8 sm:mt-10 inline-flex items-center gap-3 sm:gap-4 bg-white/90 backdrop-blur-xl p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl border border-white/80 shadow-xl shadow-grey-dark/5 group hover:shadow-2xl hover:scale-[1.01] transition-all duration-300 max-w-full'
+                className='mt-8 sm:mt-10 inline-flex items-center gap-3 sm:gap-4 bg-white/95 backdrop-blur-xl p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl border border-white/90 shadow-xl shadow-grey-dark/5 group hover:shadow-2xl hover:scale-[1.01] transition-all duration-300 max-w-full'
               >
-                <div className='w-10 h-10 sm:w-11 sm:h-11 bg-linear-to-br from-[#FFD54F] to-[#FFA000] rounded-xl sm:rounded-2xl flex items-center justify-center text-grey-dark text-lg sm:text-xl shadow-md shadow-[#FFD54F]/25 shrink-0 group-hover:scale-105 transition-transform'>
+                <div className='w-10 h-10 sm:w-11 sm:h-11 bg-linear-to-br from-[#fed869] to-[#e6c04f] rounded-xl sm:rounded-2xl flex items-center justify-center text-grey-dark text-lg sm:text-xl shadow-md shadow-[#fed869]/30 shrink-0 group-hover:scale-105 transition-transform'>
                   <Icon icon='solar:scooter-bold' />
                 </div>
                 <div>
@@ -177,9 +177,9 @@ const Hero = () => {
                 initial="hidden"
                 animate="visible"
                 custom={1.5}
-                className='absolute -top-8 -left-4 sm:-top-12 sm:-left-8 bg-white/95 backdrop-blur-xl p-3.5 sm:p-5 rounded-2xl sm:rounded-[2.5rem] shadow-xl sm:shadow-2xl z-30 flex items-center gap-3 sm:gap-4 border border-white/80 group'
+                className='absolute -top-8 -left-4 sm:-top-12 sm:-left-8 bg-white/95 backdrop-blur-xl p-3.5 sm:p-5 rounded-2xl sm:rounded-[2.5rem] shadow-xl sm:shadow-2xl z-30 flex items-center gap-3 sm:gap-4 border border-white/90 group'
               >
-                <div className='w-10 h-10 sm:w-12 sm:h-12 bg-linear-to-br from-[#FFD54F] to-[#FFA000] rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg shadow-[#FFD54F]/20 transition-transform duration-500 group-hover:scale-110 text-grey-dark'>
+                <div className='w-10 h-10 sm:w-12 sm:h-12 bg-linear-to-br from-[#fed869] to-[#e6c04f] rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg shadow-[#fed869]/30 transition-transform duration-500 group-hover:scale-110 text-grey-dark'>
                   <Icon icon='ion:heart' className='text-grey-dark text-lg sm:text-xl animate-pulse' />
                 </div>
                 <div>
@@ -194,7 +194,7 @@ const Hero = () => {
                 initial="hidden"
                 animate="visible"
                 custom={2}
-                className='main-hero-image-container relative aspect-4/5 rounded-[3rem] sm:rounded-[5rem] overflow-hidden border-8 sm:border-[1.5rem] border-white shadow-[0_50px_100px_-20px_rgba(45,42,38,0.1)] ring-1 ring-[#FFD54F]/20'
+                className='main-hero-image-container relative aspect-4/5 rounded-[3rem] sm:rounded-[5rem] overflow-hidden border-8 sm:border-[1.5rem] border-white shadow-[0_50px_100px_-20px_rgba(45,42,38,0.1)] ring-1 ring-[#fed869]/30'
               >
                 <AnimatePresence mode='wait'>
                   <motion.div
@@ -229,7 +229,7 @@ const Hero = () => {
                   {sliderImages.map((_, i) => (
                     <div
                       key={i}
-                      className={`h-1.5 rounded-full transition-all duration-500 ${i === (currentIdx % sliderImages.length) ? 'w-6 sm:w-8 bg-[#FFD54F]' : 'w-2 bg-white/50'}`}
+                      className={`h-1.5 rounded-full transition-all duration-500 ${i === (currentIdx % sliderImages.length) ? 'w-6 sm:w-8 bg-[#fed869]' : 'w-2 bg-white/60'}`}
                     />
                   ))}
                 </div>

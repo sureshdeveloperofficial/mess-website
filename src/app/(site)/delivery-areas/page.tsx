@@ -190,13 +190,14 @@ export default function DeliveryAreasPage() {
       : `Hello ${restaurantName}! I would like to inquire about your meal delivery service.`
   )}`
 
-  return (
-    <main className='pt-20 bg-[#FFFDF5] min-h-screen'>
-      {/* Hero Banner Section */}
-      <section className='pt-16 pb-16 bg-linear-to-b from-primary/15 via-primary/5 to-[#FFFDF5] relative overflow-hidden'>
-        <div className='absolute -top-20 -left-20 w-80 h-80 bg-primary/20 rounded-full blur-3xl pointer-events-none' />
-        <div className='absolute -bottom-10 -right-10 w-96 h-96 bg-primary/15 rounded-full blur-3xl pointer-events-none' />
+    return (
+    <main className='pt-20 bg-[#FEEBB1] min-h-screen relative overflow-hidden'>
+      {/* Ambient background glows */}
+      <div className='absolute top-0 right-1/4 w-96 h-96 bg-[#fed869]/30 rounded-full blur-3xl pointer-events-none' />
+      <div className='absolute bottom-10 left-10 w-96 h-96 bg-[#fed869]/30 rounded-full blur-3xl pointer-events-none' />
 
+      {/* Hero Banner Section */}
+      <section className='pt-16 pb-16 relative z-10'>
         <div className='container max-w-6xl mx-auto px-4 relative z-10'>
           <div className='grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch'>
             {/* Left Column: Search and Checker */}
@@ -207,16 +208,16 @@ export default function DeliveryAreasPage() {
               className='lg:col-span-7 flex flex-col justify-between'
             >
               <div>
-                <div className='inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/20 text-grey-dark text-xs font-semibold mb-4 border border-primary/30'>
-                  <Icon icon='solar:map-point-wave-bold-duotone' className='text-sm text-primary' />
+                <div className='inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#fed869] text-grey-dark text-xs font-black mb-5 border border-[#fed869] tracking-wider uppercase shadow-xs'>
+                  <Icon icon='solar:map-point-wave-bold-duotone' className='text-base text-amber-800' />
                   DELIVERY AREAS
                 </div>
 
                 <h1 className='text-3xl sm:text-5xl lg:text-6xl font-extrabold text-grey-dark tracking-tight leading-tight mb-4'>
-                  Free delivery across <span className='text-primary'>selected Dubai areas</span>
+                  Free delivery across <span className='text-amber-800 italic underline decoration-[#fed869]'>selected Dubai areas</span>
                 </h1>
 
-                <p className='text-grey-muted text-sm sm:text-base font-normal leading-relaxed mb-8 max-w-xl'>
+                <p className='text-grey-dark/85 text-sm sm:text-base font-medium leading-relaxed mb-8 max-w-xl'>
                   Type your area to check coverage. If you don't see your area, message us — we may already serve it.
                 </p>
 
@@ -227,7 +228,7 @@ export default function DeliveryAreasPage() {
                       e.preventDefault()
                       handleCheckArea()
                     }}
-                    className='relative flex items-center bg-white rounded-full p-2 pl-5 border border-grey/15 shadow-sm focus-within:border-primary focus-within:shadow-md transition-all'
+                    className='relative flex items-center bg-white rounded-full p-2 pl-5 border border-[#fed869]/50 shadow-md focus-within:border-[#fed869] focus-within:ring-4 focus-within:ring-[#fed869]/20 transition-all'
                   >
                     <Icon icon='solar:magnifer-linear' className='text-xl text-grey-dark/50 mr-3 shrink-0' />
                     <input
@@ -242,7 +243,7 @@ export default function DeliveryAreasPage() {
                     />
                     <button
                       type='submit'
-                      className='px-6 py-3 bg-primary text-grey-dark font-extrabold text-sm rounded-full hover:bg-primary/90 transition-all cursor-pointer shrink-0 shadow-xs active:scale-95'
+                      className='px-6 py-3 bg-[#fed869] hover:bg-[#e6c04f] text-grey-dark font-extrabold text-sm rounded-full transition-all cursor-pointer shrink-0 shadow-xs active:scale-95'
                     >
                       Check
                     </button>
@@ -325,19 +326,19 @@ export default function DeliveryAreasPage() {
                     <button
                       key={idx}
                       onClick={() => handleTagClick(tag)}
-                      className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer ${
+                      className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold border transition-all cursor-pointer ${
                         searchQuery.toLowerCase() === tag.toLowerCase()
-                          ? 'bg-primary text-grey-dark border-primary shadow-xs'
-                          : 'bg-white/80 text-grey-dark/80 border-grey/15 hover:border-primary hover:text-grey-dark hover:bg-white'
+                          ? 'bg-[#fed869] text-grey-dark border-[#fed869] shadow-xs'
+                          : 'bg-white/90 text-grey-dark/80 border-[#fed869]/40 hover:border-[#fed869] hover:text-grey-dark hover:bg-white'
                       }`}
                     >
-                      <Icon icon='solar:map-point-linear' className='text-xs text-primary' />
+                      <Icon icon='solar:map-point-linear' className='text-xs text-amber-700' />
                       {tag}
                     </button>
                   ))}
                 </div>
 
-                <p className='text-xs font-medium text-grey-dark/50'>
+                <p className='text-xs font-semibold text-grey-dark/70'>
                   More locations coming soon • Custom corporate and cluster drops available
                 </p>
               </div>
@@ -350,31 +351,31 @@ export default function DeliveryAreasPage() {
               transition={{ duration: 0.6, delay: 0.15 }}
               className='lg:col-span-5'
             >
-              <div className='h-full bg-white p-7 sm:p-8 rounded-3xl border border-grey/10 shadow-sm flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-shadow'>
+              <div className='h-full bg-white p-7 sm:p-8 rounded-3xl border border-[#fed869]/50 shadow-md flex flex-col justify-between relative overflow-hidden group hover:shadow-lg transition-shadow'>
                 {/* Decorative Map Grid Pattern */}
                 <div className='absolute inset-0 opacity-[0.03] pointer-events-none bg-[radial-gradient(#2D2A26_1px,transparent_1px)] [background-size:16px_16px]' />
 
                 <div>
-                  <div className='inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-grey-dark text-[10px] font-extrabold uppercase tracking-wider mb-4 border border-primary/20'>
-                    <Icon icon='solar:chef-hat-bold' className='text-primary' />
+                  <div className='inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#fed869]/40 text-amber-950 text-[10px] font-extrabold uppercase tracking-wider mb-4 border border-[#fed869]'>
+                    <Icon icon='solar:chef-hat-bold' className='text-amber-800' />
                     KITCHEN LOCATION
                   </div>
 
                   <h3 className='text-2xl font-extrabold text-grey-dark mb-2'>
                     Al Quoz, Dubai
                   </h3>
-                  <p className='text-xs sm:text-sm font-normal text-grey-dark/70 leading-relaxed mb-6'>
+                  <p className='text-xs sm:text-sm font-medium text-grey-dark/75 leading-relaxed mb-6'>
                     Visit us or call to plan your monthly subscription. Fresh meals dispatched hot every morning and evening.
                   </p>
 
                   {/* Route & Network Visual Illustration */}
-                  <div className='bg-[#FFF9E6] p-5 rounded-2xl border border-primary/20 mb-6 relative overflow-hidden'>
+                  <div className='bg-[#FEEBB1]/40 p-5 rounded-2xl border border-[#fed869]/40 mb-6 relative overflow-hidden'>
                     <div className='flex items-center justify-between text-xs font-bold text-grey-dark mb-4'>
-                      <span className='flex items-center gap-1.5 text-primary font-extrabold'>
-                        <span className='w-2 h-2 rounded-full bg-primary animate-ping inline-block' />
+                      <span className='flex items-center gap-1.5 text-amber-800 font-extrabold'>
+                        <span className='w-2 h-2 rounded-full bg-[#fed869] animate-ping inline-block' />
                         Kitchen Hub
                       </span>
-                      <span className='text-grey-dark/60 font-semibold'>Direct Doorstep Delivery</span>
+                      <span className='text-grey-dark/70 font-bold'>Direct Doorstep Delivery</span>
                     </div>
 
                     {/* Stylized delivery wave curve */}
@@ -390,13 +391,13 @@ export default function DeliveryAreasPage() {
                           stroke='currentColor'
                           strokeWidth='3'
                           strokeLinecap='round'
-                          className='text-primary/70'
+                          className='text-amber-600/70'
                           strokeDasharray='6 6'
                         />
-                        <circle cx='20' cy='50' r='6' className='fill-primary' />
+                        <circle cx='20' cy='50' r='6' className='fill-[#fed869]' />
                         <circle cx='280' cy='20' r='6' className='fill-emerald-500 animate-pulse' />
                       </svg>
-                      <div className='absolute left-1 bottom-1 text-[10px] font-bold text-grey-dark/70 bg-white px-2 py-0.5 rounded-md border border-grey/10 shadow-2xs'>
+                      <div className='absolute left-1 bottom-1 text-[10px] font-bold text-grey-dark/80 bg-white px-2 py-0.5 rounded-md border border-[#fed869]/30 shadow-2xs'>
                         Kitchen Hub
                       </div>
                       <div className='absolute right-1 top-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200 shadow-2xs'>
@@ -412,7 +413,7 @@ export default function DeliveryAreasPage() {
                   rel='noopener noreferrer'
                   className='w-full py-3.5 px-6 rounded-2xl bg-grey-dark text-white font-extrabold text-sm text-center hover:bg-grey-dark/90 transition-all flex items-center justify-center gap-2 shadow-xs group-hover:scale-[1.01]'
                 >
-                  <Icon icon='solar:map-point-bold' className='text-primary text-base' />
+                  <Icon icon='solar:map-point-bold' className='text-[#fed869] text-base' />
                   Open in Google Maps
                 </a>
               </div>
@@ -422,14 +423,14 @@ export default function DeliveryAreasPage() {
       </section>
 
       {/* Section 2: How It Works */}
-      <section className='py-16 bg-white relative overflow-hidden'>
+      <section className='py-16 bg-white/80 backdrop-blur-sm border-t border-[#fed869]/30 relative overflow-hidden'>
         <div className='container max-w-6xl mx-auto px-4'>
           <div className='text-center mb-12'>
             <motion.p
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className='text-primary text-xs font-semibold mb-3 tracking-wider uppercase'
+              className='text-amber-800 text-xs font-black mb-3 tracking-wider uppercase inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#fed869]/30 border border-[#fed869]/50'
             >
               HOW IT WORKS
             </motion.p>
@@ -438,9 +439,9 @@ export default function DeliveryAreasPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className='text-3xl sm:text-5xl font-extrabold text-grey-dark tracking-tight leading-none'
+              className='text-3xl sm:text-5xl font-extrabold text-grey-dark tracking-tight leading-none mt-2'
             >
-              From <span className='text-primary'>WhatsApp</span> to your doorstep
+              From <span className='text-amber-800 italic underline decoration-[#fed869]'>WhatsApp</span> to your doorstep
             </motion.h2>
           </div>
 
@@ -452,19 +453,19 @@ export default function DeliveryAreasPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.1 }}
                 transition={{ delay: idx * 0.08, duration: 0.5 }}
-                className='bg-[#FFF9E6] p-6 sm:p-7 rounded-3xl border border-primary/20 shadow-xs hover:shadow-md hover:-translate-y-1 transition-all duration-300 group flex flex-col justify-between'
+                className='bg-white p-6 sm:p-7 rounded-3xl border border-[#fed869]/50 shadow-xs hover:shadow-md hover:-translate-y-1 transition-all duration-300 group flex flex-col justify-between'
               >
                 <div>
-                  <div className='w-12 h-12 bg-primary/15 rounded-2xl flex items-center justify-center text-primary mb-6 border border-primary/20 group-hover:scale-105 transition-transform'>
-                    <Icon icon={item.icon} className='text-2xl' />
+                  <div className='w-12 h-12 bg-[#fed869] rounded-2xl flex items-center justify-center text-grey-dark mb-6 border border-[#fed869] group-hover:scale-105 transition-transform shadow-xs'>
+                    <Icon icon={item.icon} className='text-2xl text-amber-900' />
                   </div>
-                  <span className='text-[10px] font-extrabold tracking-widest text-primary uppercase block mb-1.5'>
+                  <span className='text-[10px] font-black tracking-widest text-amber-800 uppercase block mb-1.5'>
                     {item.step}
                   </span>
                   <h3 className='text-lg font-extrabold text-grey-dark mb-2'>
                     {item.title}
                   </h3>
-                  <p className='text-xs sm:text-sm font-normal text-grey-dark/75 leading-relaxed'>
+                  <p className='text-xs sm:text-sm font-medium text-grey-dark/80 leading-relaxed'>
                     {item.description}
                   </p>
                 </div>
@@ -475,14 +476,14 @@ export default function DeliveryAreasPage() {
       </section>
 
       {/* Section 3: Why PREMIUM MESS */}
-      <section className='py-16 bg-[#FFFDF5] relative overflow-hidden'>
+      <section className='py-16 bg-[#FEEBB1] relative overflow-hidden'>
         <div className='container max-w-6xl mx-auto px-4'>
           <div className='text-center mb-12'>
             <motion.p
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className='text-amber-600 text-xs font-bold mb-3 tracking-wider uppercase'
+              className='text-amber-800 text-xs font-black mb-3 tracking-wider uppercase inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#fed869] border border-[#fed869] shadow-xs'
             >
               WHY PREMIUM MESS
             </motion.p>
@@ -491,9 +492,9 @@ export default function DeliveryAreasPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className='text-3xl sm:text-5xl font-extrabold text-grey-dark tracking-tight leading-none'
+              className='text-3xl sm:text-5xl font-extrabold text-grey-dark tracking-tight leading-none mt-2'
             >
-              A monthly meal plan you'll <span className='text-amber-500'>actually keep.</span>
+              A monthly meal plan you'll <span className='text-amber-800 italic underline decoration-[#fed869]'>actually keep.</span>
             </motion.h2>
           </div>
 
@@ -505,15 +506,15 @@ export default function DeliveryAreasPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.1 }}
                 transition={{ delay: idx * 0.06, duration: 0.5 }}
-                className='bg-white p-7 rounded-3xl border border-grey/10 shadow-xs hover:shadow-md hover:-translate-y-1 transition-all duration-300 group'
+                className='bg-white p-7 rounded-3xl border border-[#fed869]/50 shadow-xs hover:shadow-md hover:-translate-y-1 transition-all duration-300 group'
               >
-                <div className='w-12 h-12 bg-primary/20 rounded-2xl flex items-center justify-center text-amber-600 mb-4 border border-primary/30 group-hover:scale-105 transition-transform'>
-                  <Icon icon={item.icon} className='text-2xl' />
+                <div className='w-12 h-12 bg-[#fed869] rounded-2xl flex items-center justify-center text-amber-900 mb-4 border border-[#fed869] group-hover:scale-105 transition-transform shadow-xs'>
+                  <Icon icon={item.icon} className='text-2xl text-amber-900' />
                 </div>
                 <h3 className='text-base sm:text-lg font-extrabold text-grey-dark mb-2'>
                   {item.title}
                 </h3>
-                <p className='text-xs sm:text-sm font-normal text-grey-dark/75 leading-relaxed'>
+                <p className='text-xs sm:text-sm font-medium text-grey-dark/80 leading-relaxed'>
                   {item.description}
                 </p>
               </motion.div>
@@ -523,14 +524,14 @@ export default function DeliveryAreasPage() {
       </section>
 
       {/* Bottom CTA Banner */}
-      <section className='pb-20 bg-[#FFFDF5]'>
+      <section className='pb-20 bg-[#FEEBB1]'>
         <div className='container max-w-6xl mx-auto px-4'>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className='bg-primary rounded-3xl p-8 md:p-12 relative overflow-hidden shadow-md'
+            className='bg-[#fed869] rounded-3xl p-8 md:p-12 relative overflow-hidden shadow-xl border border-[#e6c04f]'
           >
             <div className='absolute right-0 bottom-0 opacity-10 pointer-events-none'>
               <Icon icon='solar:scooter-bold' className='text-[12rem] -mr-8 -mb-8' />
@@ -541,7 +542,7 @@ export default function DeliveryAreasPage() {
                 <h3 className='text-2xl sm:text-3xl font-extrabold text-grey-dark mb-2'>
                   Ready for fresh, home-cooked daily meals?
                 </h3>
-                <p className='text-sm sm:text-base font-medium text-grey-dark/80 leading-relaxed'>
+                <p className='text-sm sm:text-base font-bold text-grey-dark/85 leading-relaxed'>
                   Explore our weekly and monthly subscription plans or talk to our delivery team today.
                 </p>
               </div>

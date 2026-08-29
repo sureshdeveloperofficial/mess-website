@@ -122,13 +122,13 @@ export default function CustomerPortalLayout({ children }: { children: React.Rea
                             <Link
                                 key={item.href}
                                 href={item.href}
-                                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all text-xs font-bold ${
+                                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all text-xs font-extrabold ${
                                     isActive
-                                        ? 'bg-primary text-white font-extrabold shadow-md shadow-primary/25'
+                                        ? 'bg-primary text-grey-dark shadow-md shadow-primary/25'
                                         : 'text-grey-dark hover:bg-stone-100 hover:text-black'
                                 }`}
                             >
-                                <Icon icon={item.icon} className={`text-lg shrink-0 ${isActive ? 'text-white' : 'text-grey-dark/80'}`} />
+                                <Icon icon={item.icon} className={`text-lg shrink-0 ${isActive ? 'text-grey-dark' : 'text-grey-dark/80'}`} />
                                 <span className='truncate'>{item.label}</span>
                             </Link>
                         )
@@ -151,13 +151,13 @@ export default function CustomerPortalLayout({ children }: { children: React.Rea
                 <div className='mt-auto pt-4 border-t border-grey/10 space-y-2'>
                     <a
                         href={`tel:${contactPhone}`}
-                        className='flex items-center justify-between p-2.5 rounded-xl bg-primary/5 border border-primary/20 text-[11px] font-bold text-grey-dark hover:bg-primary/10 transition-colors'
+                        className='flex items-center justify-between p-2.5 rounded-xl bg-primary/10 border border-primary/20 text-[11px] font-bold text-grey-dark hover:bg-primary/20 transition-colors'
                     >
                         <div className='flex items-center gap-2'>
-                            <Icon icon='solar:phone-calling-bold' className='text-primary text-sm' />
+                            <Icon icon='solar:phone-calling-bold' className='text-amber-800 text-sm' />
                             <span>Helpline</span>
                         </div>
-                        <span className='font-extrabold text-primary'>{contactPhone}</span>
+                        <span className='font-extrabold text-amber-900'>{contactPhone}</span>
                     </a>
 
                     <button
@@ -182,7 +182,7 @@ export default function CustomerPortalLayout({ children }: { children: React.Rea
                     {/* Mobile Navigation Trigger */}
                     <div className='flex items-center gap-3'>
                         <div className='md:hidden flex items-center gap-2'>
-                            <Link href='/' className='w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white'>
+                            <Link href='/' className='w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-grey-dark'>
                                 <Icon icon='solar:chef-hat-bold-duotone' className='text-lg' />
                             </Link>
                         </div>
@@ -202,13 +202,13 @@ export default function CustomerPortalLayout({ children }: { children: React.Rea
                         <div className='flex md:hidden items-center gap-1 bg-grey/5 p-1 rounded-xl border border-grey/10 text-xs font-semibold'>
                             <Link
                                 href='/my-orders'
-                                className={`px-2.5 py-1 rounded-lg ${pathname.startsWith('/my-orders') ? 'bg-primary text-white font-bold' : 'text-grey-dark font-bold'}`}
+                                className={`px-2.5 py-1 rounded-lg ${pathname.startsWith('/my-orders') ? 'bg-primary text-grey-dark font-bold' : 'text-grey-dark font-bold'}`}
                             >
                                 Orders
                             </Link>
                             <Link
                                 href='/profile'
-                                className={`px-2.5 py-1 rounded-lg ${pathname === '/profile' ? 'bg-primary text-white font-bold' : 'text-grey-dark font-bold'}`}
+                                className={`px-2.5 py-1 rounded-lg ${pathname === '/profile' ? 'bg-primary text-grey-dark font-bold' : 'text-grey-dark font-bold'}`}
                             >
                                 Profile
                             </Link>

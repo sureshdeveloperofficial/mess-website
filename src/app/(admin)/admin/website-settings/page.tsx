@@ -863,7 +863,7 @@ function WebsiteSettingsContent() {
                                                         ? 'bg-amber-50 border-2 border-dashed border-amber-500 scale-102'
                                                         : isDragging
                                                         ? 'opacity-40 border-2 border-dashed border-grey/30 bg-grey/10'
-                                                        : 'bg-[#FFFDF5] border-2 border-[#FFD54F]/30 hover:border-[#FFD54F]'
+                                                        : 'bg-[#FFFDF5] border-2 border-primary/35 hover:border-primary'
                                                 }`}
                                             >
                                                 <div className='aspect-4/3 rounded-xl overflow-hidden bg-grey/10 relative mb-3'>
@@ -875,7 +875,7 @@ function WebsiteSettingsContent() {
 
                                                     {/* Slide number badge & Drag grip */}
                                                     <div className='absolute top-2 left-2 flex items-center gap-1 bg-grey-dark/85 backdrop-blur-md text-white text-[10px] font-black px-2 py-0.5 rounded-md'>
-                                                        <Icon icon='solar:move-bold' className='text-xs text-[#FFD54F]' />
+                                                        <Icon icon='solar:move-bold' className='text-xs text-primary' />
                                                         <span>Slide #{index + 1}</span>
                                                     </div>
 
@@ -1346,7 +1346,7 @@ function WebsiteSettingsContent() {
                                                     ? 'bg-amber-50 border-2 border-dashed border-amber-500 scale-102'
                                                     : isDragging
                                                     ? 'opacity-40 border-2 border-dashed border-grey/30 bg-grey/10'
-                                                    : 'bg-[#FFFDF5] border-2 border-[#FFD54F]/30 hover:border-[#FFD54F]'
+                                                    : 'bg-[#FFFDF5] border-2 border-primary/35 hover:border-primary'
                                             }`}
                                         >
                                             <div className='aspect-4/3 rounded-2xl overflow-hidden bg-white border border-grey/10 relative group'>
@@ -1358,7 +1358,7 @@ function WebsiteSettingsContent() {
 
                                                 {/* Dish Index Badge & Drag Grip */}
                                                 <div className='absolute top-2 left-2 flex items-center gap-1 bg-grey-dark/85 backdrop-blur-md text-white text-[10px] font-black px-2 py-0.5 rounded-md'>
-                                                    <Icon icon='solar:move-bold' className='text-xs text-[#FFD54F]' />
+                                                    <Icon icon='solar:move-bold' className='text-xs text-primary' />
                                                     <span>Dish #{index + 1}</span>
                                                 </div>
 

@@ -6,7 +6,7 @@ import { Order } from '@/app/types/order'
 
 // Enterprise-standard HEX Color Palette (Legacy Safe)
 export const COLORS = {
-    PRIMARY: '#FFD54F',
+    PRIMARY: '#fed869',
     GREY: '#363636',
     SLATE_50: '#F8FAFC',
     SLATE_100: '#F1F5F9',

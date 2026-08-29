@@ -81,17 +81,21 @@ export default function MealPlanDetailPage({ params }: { params: Promise<{ id: s
     const days = menu.days || 30
 
     return (
-        <main className='pt-20 bg-[#FFFDF5] text-grey-dark min-h-screen'>
+        <main className='pt-20 bg-[#FEEBB1] text-grey-dark min-h-screen relative overflow-hidden'>
+            {/* Ambient Background Glows */}
+            <div className='absolute top-0 right-1/4 w-96 h-96 bg-[#fed869]/30 rounded-full blur-3xl pointer-events-none' />
+            <div className='absolute bottom-10 left-10 w-96 h-96 bg-[#fed869]/30 rounded-full blur-3xl pointer-events-none' />
+
             {/* Hero Section */}
-            <div className='relative pt-24 pb-16 overflow-hidden bg-linear-to-b from-primary/15 via-primary/5 to-[#FFFDF5]'>
+            <div className='relative pt-16 pb-14 z-10'>
                 <div className='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10'>
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         className='max-w-4xl'
                     >
-                        <div className='inline-flex items-center gap-2 px-4 py-1.5 bg-primary/20 text-grey-dark rounded-full mb-6 border border-primary/30'>
-                            <div className='w-2 h-2 bg-primary rounded-full animate-pulse' />
+                        <div className='inline-flex items-center gap-2 px-4 py-1.5 bg-[#fed869] text-grey-dark rounded-full mb-6 border border-[#fed869] shadow-xs'>
+                            <div className='w-2 h-2 bg-amber-800 rounded-full animate-pulse' />
                             <span className='text-[10px] font-black uppercase tracking-[0.2em]'>
                                 {menu.mealType?.name || 'Daily'} Subscription Pass • {days} Days ({menu.availableDays && menu.availableDays.length < 7 ? `${menu.availableDays.length} Days/Wk` : '7 Days/Wk'})
                             </span>
@@ -101,7 +105,7 @@ export default function MealPlanDetailPage({ params }: { params: Promise<{ id: s
                             {menu.name}
                         </h1>
 
-                        <p className='text-lg sm:text-xl text-grey-muted font-medium leading-relaxed max-w-2xl border-l-4 border-primary pl-6'>
+                        <p className='text-lg sm:text-xl text-grey-dark/85 font-medium leading-relaxed max-w-2xl border-l-4 border-amber-600 pl-6'>
                             "{menu.description || "Experience our authentic home-cooked meals crafted daily with fresh ingredients and traditional recipes."}"
                         </p>
                     </motion.div>
@@ -109,8 +113,8 @@ export default function MealPlanDetailPage({ params }: { params: Promise<{ id: s
             </div>
 
             {/* Content Container */}
-            <div className='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 relative z-20 pb-20'>
-                <div className='bg-white rounded-3xl overflow-hidden shadow-xl border border-grey/10 flex flex-col'>
+            <div className='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-2 relative z-20 pb-20'>
+                <div className='bg-white rounded-3xl overflow-hidden shadow-xl border border-[#fed869]/50 flex flex-col'>
 
                     {/* Secondary Header / Quick Stats */}
                     <div className='p-6 sm:p-10 border-b border-grey/10 bg-grey/5'>

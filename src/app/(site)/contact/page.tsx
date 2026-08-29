@@ -70,15 +70,13 @@ export default function ContactPage() {
     ]
 
     return (
-        <main className='pt-20 bg-[#FFFDF5] min-h-screen'>
-            {/* Top Sub-banner */}
-            <div className='pt-12 pb-6 bg-linear-to-b from-primary/15 via-primary/5 to-[#FFFDF5] text-center relative overflow-hidden'>
-                <div className='absolute -top-20 -left-20 w-72 h-72 bg-primary/20 rounded-full blur-3xl pointer-events-none' />
-                <div className='absolute -bottom-10 -right-10 w-96 h-96 bg-primary/15 rounded-full blur-3xl pointer-events-none' />
-            </div>
+        <main className='pt-20 bg-[#FEEBB1] min-h-screen relative overflow-hidden'>
+            {/* Ambient Background Glows */}
+            <div className='absolute top-0 right-1/4 w-96 h-96 bg-[#fed869]/30 rounded-full blur-3xl pointer-events-none' />
+            <div className='absolute bottom-10 left-10 w-96 h-96 bg-[#fed869]/30 rounded-full blur-3xl pointer-events-none' />
 
             {/* Main Content Area */}
-            <div className='relative z-20 pb-24'>
+            <div className='relative z-20 pt-10 pb-24'>
                 <div className='container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
                     <div className='grid lg:grid-cols-12 gap-10 lg:gap-12 items-start'>
 
@@ -91,33 +89,33 @@ export default function ContactPage() {
                         >
                             <div>
                                 {/* Corporate Badge */}
-                                <div className='inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/20 text-grey-dark text-xs font-black tracking-widest uppercase mb-6 border border-primary/40'>
-                                    <Icon icon='solar:buildings-3-bold-duotone' className='text-base text-amber-600' />
+                                <div className='inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#fed869] text-grey-dark text-xs font-black tracking-widest uppercase mb-6 border border-[#fed869] shadow-xs'>
+                                    <Icon icon='solar:buildings-3-bold-duotone' className='text-base text-amber-800' />
                                     Corporate
                                 </div>
 
                                 {/* Main Headline */}
                                 <h1 className='text-3xl sm:text-5xl lg:text-5xl font-extrabold text-grey-dark tracking-tight leading-[1.15] mb-6'>
-                                    Monthly Meal Plans for <span className='text-amber-500 italic'>Offices and Employees</span>
+                                    Monthly Meal Plans for <span className='text-amber-800 italic underline decoration-[#fed869]'>Offices and Employees</span>
                                 </h1>
 
                                 {/* Subtitle */}
-                                <p className='text-grey-dark/75 text-base sm:text-lg font-normal leading-relaxed mb-8'>
+                                <p className='text-grey-dark/85 text-base sm:text-lg font-medium leading-relaxed mb-8'>
                                     <strong className='text-grey-dark font-extrabold'>PREMIUM MESS</strong> provides monthly employee meal plans, office lunch packages, bulk orders and corporate subscriptions for teams across selected Dubai locations.
                                 </p>
                             </div>
 
                             {/* 2-Column Feature Checklist */}
-                            <div className='bg-white/80 backdrop-blur-sm p-6 sm:p-8 rounded-3xl border border-primary/20 shadow-sm'>
+                            <div className='bg-white/90 backdrop-blur-md p-6 sm:p-8 rounded-3xl border border-[#fed869]/50 shadow-md shadow-[#fed869]/10'>
                                 <div className='grid sm:grid-cols-2 gap-y-4 gap-x-6'>
                                     {/* Column 1 */}
                                     <div className='space-y-3.5'>
                                         {featureListCol1.map((item, index) => (
                                             <div key={index} className='flex items-start gap-3'>
-                                                <div className='w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center text-amber-700 shrink-0 mt-0.5'>
-                                                    <Icon icon='solar:check-circle-bold' className='text-base text-amber-600' />
+                                                <div className='w-5 h-5 rounded-full bg-[#fed869]/40 flex items-center justify-center text-amber-800 shrink-0 mt-0.5'>
+                                                    <Icon icon='solar:check-circle-bold' className='text-base text-amber-700' />
                                                 </div>
-                                                <span className='text-sm font-semibold text-grey-dark leading-snug'>
+                                                <span className='text-sm font-bold text-grey-dark leading-snug'>
                                                     {item}
                                                 </span>
                                             </div>
@@ -128,10 +126,10 @@ export default function ContactPage() {
                                     <div className='space-y-3.5'>
                                         {featureListCol2.map((item, index) => (
                                             <div key={index} className='flex items-start gap-3'>
-                                                <div className='w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center text-amber-700 shrink-0 mt-0.5'>
-                                                    <Icon icon='solar:check-circle-bold' className='text-base text-amber-600' />
+                                                <div className='w-5 h-5 rounded-full bg-[#fed869]/40 flex items-center justify-center text-amber-800 shrink-0 mt-0.5'>
+                                                    <Icon icon='solar:check-circle-bold' className='text-base text-amber-700' />
                                                 </div>
-                                                <span className='text-sm font-semibold text-grey-dark leading-snug'>
+                                                <span className='text-sm font-bold text-grey-dark leading-snug'>
                                                     {item}
                                                 </span>
                                             </div>
@@ -142,29 +140,29 @@ export default function ContactPage() {
 
                             {/* Quick Assistance Cards */}
                             <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
-                                <div className='bg-white p-5 rounded-2xl border border-grey/10 shadow-xs flex items-center gap-4 group hover:border-primary/40 transition-all'>
-                                    <div className='w-11 h-11 bg-primary/10 rounded-xl flex items-center justify-center text-primary shrink-0 group-hover:scale-105 transition-transform'>
+                                <div className='bg-white p-5 rounded-2xl border border-[#fed869]/50 shadow-xs flex items-center gap-4 group hover:border-[#fed869] hover:shadow-md transition-all'>
+                                    <div className='w-11 h-11 bg-[#fed869]/30 rounded-xl flex items-center justify-center text-amber-800 shrink-0 group-hover:scale-105 transition-transform'>
                                         <Icon icon='solar:phone-calling-bold-duotone' className='text-xl' />
                                     </div>
                                     <div>
-                                        <p className='text-[10px] font-bold uppercase tracking-wider text-grey-muted'>Direct Hotline</p>
-                                        <a href='tel:+97142642613' className='text-sm font-extrabold text-grey-dark hover:text-primary transition-colors'>
+                                        <p className='text-[10px] font-extrabold uppercase tracking-wider text-grey-muted'>Direct Hotline</p>
+                                        <a href='tel:+97142642613' className='text-sm font-extrabold text-grey-dark hover:text-amber-700 transition-colors'>
                                             +971 4 264 2613
                                         </a>
                                     </div>
                                 </div>
 
-                                <div className='bg-white p-5 rounded-2xl border border-grey/10 shadow-xs flex items-center gap-4 group hover:border-[#25D366]/40 transition-all'>
+                                <div className='bg-white p-5 rounded-2xl border border-[#fed869]/50 shadow-xs flex items-center gap-4 group hover:border-[#25D366]/60 hover:shadow-md transition-all'>
                                     <div className='w-11 h-11 bg-[#25D366]/10 rounded-xl flex items-center justify-center text-[#25D366] shrink-0 group-hover:scale-105 transition-transform'>
                                         <Icon icon='logos:whatsapp-icon' className='text-xl' />
                                     </div>
                                     <div>
-                                        <p className='text-[10px] font-bold uppercase tracking-wider text-grey-muted'>WhatsApp Desk</p>
+                                        <p className='text-[10px] font-extrabold uppercase tracking-wider text-grey-muted'>WhatsApp Desk</p>
                                         <a
                                             href='https://wa.me/97142642613?text=Hello%20Premium%20Mess,%20I%20am%20interested%20in%20a%20Monthly%20Corporate%20Meal%20Plan.'
                                             target='_blank'
                                             rel='noopener noreferrer'
-                                            className='text-sm font-extrabold text-grey-dark hover:text-amber-600 transition-colors'
+                                            className='text-sm font-extrabold text-grey-dark hover:text-emerald-700 transition-colors'
                                         >
                                             +971 4 264 2613
                                         </a>
@@ -180,18 +178,18 @@ export default function ContactPage() {
                             transition={{ duration: 0.6, delay: 0.2 }}
                             className='lg:col-span-7'
                         >
-                            <div className='bg-white rounded-3xl sm:rounded-[2.5rem] p-5 sm:p-10 md:p-12 border border-[#FFD54F]/30 shadow-xl shadow-[#FFD54F]/5'>
+                            <div className='bg-white rounded-3xl sm:rounded-[2.5rem] p-5 sm:p-10 md:p-12 border border-[#fed869]/50 shadow-xl shadow-[#fed869]/15'>
 
                                 {/* Form Header */}
-                                <div className='mb-8 pb-6 border-b border-grey-dark/5'>
-                                    <div className='inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FFD54F]/20 text-grey-dark text-[10px] font-extrabold uppercase tracking-wider border border-[#FFD54F]/30 mb-3'>
-                                        <Icon icon='solar:buildings-2-bold-duotone' className='text-xs text-amber-600' />
+                                <div className='mb-8 pb-6 border-b border-grey-dark/10'>
+                                    <div className='inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#fed869]/40 text-amber-950 text-[10px] font-extrabold uppercase tracking-wider border border-[#fed869] mb-3'>
+                                        <Icon icon='solar:buildings-2-bold-duotone' className='text-xs text-amber-700' />
                                         Customized Office Catering
                                     </div>
                                     <h2 className='text-2xl sm:text-3xl font-extrabold text-grey-dark tracking-tight'>
                                         Request Monthly Corporate Plan
                                     </h2>
-                                    <p className='text-xs sm:text-sm font-medium text-grey-dark/70 mt-1.5'>
+                                    <p className='text-xs sm:text-sm font-medium text-grey-dark/75 mt-1.5'>
                                         Fill in your team details below and our corporate meal specialist will prepare a customized quote.
                                     </p>
                                 </div>
@@ -200,9 +198,9 @@ export default function ContactPage() {
                                     <motion.div
                                         initial={{ opacity: 0, scale: 0.95, y: -10 }}
                                         animate={{ opacity: 1, scale: 1, y: 0 }}
-                                        className='mb-6 p-5 rounded-2xl bg-[#FFF9E6] border border-[#FFD54F] flex items-start gap-3.5 shadow-md shadow-[#FFD54F]/10'
+                                        className='mb-6 p-5 rounded-2xl bg-[#FFFDF5] border border-[#fed869] flex items-start gap-3.5 shadow-md shadow-[#fed869]/10'
                                     >
-                                        <div className='w-8 h-8 rounded-full bg-[#FFD54F] flex items-center justify-center text-grey-dark shrink-0 font-bold'>
+                                        <div className='w-8 h-8 rounded-full bg-[#fed869] flex items-center justify-center text-grey-dark shrink-0 font-bold'>
                                             <Icon icon='solar:check-circle-bold' className='text-xl text-amber-800' />
                                         </div>
                                         <div className='flex-1'>
@@ -230,7 +228,7 @@ export default function ContactPage() {
                                                     id='companyName'
                                                     name='companyName'
                                                     required
-                                                    className='w-full bg-[#FFFDF5] border border-[#FFD54F]/30 focus:bg-white focus:border-[#FFD54F] px-4 py-3 pl-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[#FFD54F]/20 transition-all placeholder:text-grey-dark/30'
+                                                    className='w-full bg-[#FFFDF5] border border-[#fed869]/35 focus:bg-white focus:border-[#fed869] px-4 py-3 pl-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[#fed869]/20 transition-all placeholder:text-grey-dark/30'
                                                     placeholder='Company Name'
                                                 />
                                             </div>
@@ -249,7 +247,7 @@ export default function ContactPage() {
                                                     id='contactPerson'
                                                     name='contactPerson'
                                                     required
-                                                    className='w-full bg-[#FFFDF5] border border-[#FFD54F]/30 focus:bg-white focus:border-[#FFD54F] px-4 py-3 pl-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[#FFD54F]/20 transition-all placeholder:text-grey-dark/30'
+                                                    className='w-full bg-[#FFFDF5] border border-[#fed869]/35 focus:bg-white focus:border-[#fed869] px-4 py-3 pl-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[#fed869]/20 transition-all placeholder:text-grey-dark/30'
                                                     placeholder='Contact Person'
                                                 />
                                             </div>
@@ -271,7 +269,7 @@ export default function ContactPage() {
                                                     id='phone'
                                                     name='phone'
                                                     required
-                                                    className='w-full bg-[#FFFDF5] border border-[#FFD54F]/30 focus:bg-white focus:border-[#FFD54F] px-4 py-3 pl-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[#FFD54F]/20 transition-all placeholder:text-grey-dark/30'
+                                                    className='w-full bg-[#FFFDF5] border border-[#fed869]/35 focus:bg-white focus:border-[#fed869] px-4 py-3 pl-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[#fed869]/20 transition-all placeholder:text-grey-dark/30'
                                                     placeholder='Phone'
                                                 />
                                             </div>
@@ -290,7 +288,7 @@ export default function ContactPage() {
                                                     id='email'
                                                     name='email'
                                                     required
-                                                    className='w-full bg-[#FFFDF5] border border-[#FFD54F]/30 focus:bg-white focus:border-[#FFD54F] px-4 py-3 pl-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[#FFD54F]/20 transition-all placeholder:text-grey-dark/30'
+                                                    className='w-full bg-[#FFFDF5] border border-[#fed869]/35 focus:bg-white focus:border-[#fed869] px-4 py-3 pl-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[#fed869]/20 transition-all placeholder:text-grey-dark/30'
                                                     placeholder='Email'
                                                 />
                                             </div>
@@ -312,7 +310,7 @@ export default function ContactPage() {
                                                     id='location'
                                                     name='location'
                                                     required
-                                                    className='w-full bg-[#FFFDF5] border border-[#FFD54F]/30 focus:bg-white focus:border-[#FFD54F] px-4 py-3 pl-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[#FFD54F]/20 transition-all placeholder:text-grey-dark/30'
+                                                    className='w-full bg-[#FFFDF5] border border-[#fed869]/35 focus:bg-white focus:border-[#fed869] px-4 py-3 pl-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[#fed869]/20 transition-all placeholder:text-grey-dark/30'
                                                     placeholder='Location (e.g. Business Bay, Dubai)'
                                                 />
                                             </div>
@@ -332,7 +330,7 @@ export default function ContactPage() {
                                                     id='numberOfPeople'
                                                     name='numberOfPeople'
                                                     required
-                                                    className='w-full bg-[#FFFDF5] border border-[#FFD54F]/30 focus:bg-white focus:border-[#FFD54F] px-4 py-3 pl-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[#FFD54F]/20 transition-all placeholder:text-grey-dark/30'
+                                                    className='w-full bg-[#FFFDF5] border border-[#fed869]/35 focus:bg-white focus:border-[#fed869] px-4 py-3 pl-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[#fed869]/20 transition-all placeholder:text-grey-dark/30'
                                                     placeholder='Number of People'
                                                 />
                                             </div>
@@ -354,7 +352,7 @@ export default function ContactPage() {
                                                     name='mealsPerDay'
                                                     required
                                                     defaultValue='1 Meal (Lunch)'
-                                                    className='w-full bg-[#FFFDF5] border border-[#FFD54F]/30 focus:bg-white focus:border-[#FFD54F] px-4 py-3 pl-11 rounded-2xl text-grey-dark font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-[#FFD54F]/20 transition-all appearance-none cursor-pointer'
+                                                    className='w-full bg-[#FFFDF5] border border-[#fed869]/35 focus:bg-white focus:border-[#fed869] px-4 py-3 pl-11 rounded-2xl text-grey-dark font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-[#fed869]/20 transition-all appearance-none cursor-pointer'
                                                 >
                                                     <option value='1 Meal (Lunch)'>1 Meal (Lunch)</option>
                                                     <option value='2 Meals (Lunch + Dinner)'>2 Meals (Lunch + Dinner)</option>
@@ -380,7 +378,7 @@ export default function ContactPage() {
                                                     id='startDate'
                                                     name='startDate'
                                                     required
-                                                    className='w-full bg-[#FFFDF5] border border-[#FFD54F]/30 focus:bg-white focus:border-[#FFD54F] px-4 py-3 pl-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[#FFD54F]/20 transition-all placeholder:text-grey-dark/30'
+                                                    className='w-full bg-[#FFFDF5] border border-[#fed869]/35 focus:bg-white focus:border-[#fed869] px-4 py-3 pl-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[#fed869]/20 transition-all placeholder:text-grey-dark/30'
                                                 />
                                             </div>
                                         </div>
@@ -400,7 +398,7 @@ export default function ContactPage() {
                                                 name='notes'
                                                 rows={4}
                                                 style={{ resize: 'none' }}
-                                                className='w-full bg-[#FFFDF5] border border-[#FFD54F]/30 focus:bg-white focus:border-[#FFD54F] px-4 py-3 pl-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[#FFD54F]/20 transition-all placeholder:text-grey-dark/30'
+                                                className='w-full bg-[#FFFDF5] border border-[#fed869]/35 focus:bg-white focus:border-[#fed869] px-4 py-3 pl-11 rounded-2xl text-grey-dark font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[#fed869]/20 transition-all placeholder:text-grey-dark/30'
                                                 placeholder='Additional Notes'
                                             />
                                         </div>
@@ -410,7 +408,7 @@ export default function ContactPage() {
                                     <button
                                         type='submit'
                                         disabled={isSubmitting}
-                                        className='w-full bg-[#FFD54F] hover:bg-[#F59E0B] text-grey-dark px-8 py-4 rounded-2xl font-extrabold text-sm sm:text-base flex justify-center items-center gap-3 shadow-lg shadow-[#FFD54F]/30 hover:shadow-xl hover:shadow-[#FFD54F]/40 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed group cursor-pointer'
+                                        className='w-full bg-[#fed869] hover:bg-[#e6c04f] text-grey-dark px-8 py-4 rounded-2xl font-extrabold text-sm sm:text-base flex justify-center items-center gap-3 shadow-lg shadow-[#fed869]/30 hover:shadow-xl hover:shadow-[#fed869]/40 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed group cursor-pointer'
                                     >
                                         {isSubmitting ? (
                                             <>

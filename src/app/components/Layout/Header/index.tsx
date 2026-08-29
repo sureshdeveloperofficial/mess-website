@@ -108,7 +108,7 @@ const Header: React.FC = () => {
     <header
       className={`fixed top-0 z-40 w-full transition-all duration-300 ${
         sticky
-          ? 'shadow-md shadow-[#FFD54F]/10 bg-[#FFFDF5]/95 backdrop-blur-md py-3'
+          ? 'shadow-md shadow-[#fed869]/15 bg-[#FEEBB1]/95 backdrop-blur-md py-3'
           : 'shadow-none py-4 sm:py-5 bg-transparent'
       }`}>
       <div className='container mx-auto max-w-c-1390 px-4 sm:px-6 xl:px-8'>
@@ -130,9 +130,9 @@ const Header: React.FC = () => {
             {/* Phone Button (visible on wide screens without wrapping) */}
             <a
               href={`tel:${contactPhone.replace(/\s+/g, '')}`}
-              className='hidden 2xl:flex items-center gap-2 px-4 py-2 rounded-full bg-[#FFD54F]/20 text-grey-dark hover:bg-[#FFD54F]/35 transition-all text-xs font-bold whitespace-nowrap shrink-0 border border-[#FFD54F]/30'
+              className='hidden 2xl:flex items-center gap-2 px-4 py-2 rounded-full bg-[#fed869]/30 text-grey-dark hover:bg-[#fed869]/50 transition-all text-xs font-bold whitespace-nowrap shrink-0 border border-[#fed869]/40'
               title='Call Our Support'>
-              <Icon icon='solar:phone-calling-bold-duotone' className='text-base text-amber-600 shrink-0' />
+              <Icon icon='solar:phone-calling-bold-duotone' className='text-base text-amber-700 shrink-0' />
               <span className='whitespace-nowrap'>{contactPhone}</span>
             </a>
 
@@ -140,9 +140,9 @@ const Header: React.FC = () => {
               <div className='relative' ref={dropdownRef}>
                 <button
                   onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className='flex items-center gap-2.5 p-1.5 pr-3 rounded-full bg-[#FFD54F]/20 hover:bg-[#FFD54F]/30 border border-[#FFD54F]/30 transition-all text-left group cursor-pointer'
+                  className='flex items-center gap-2.5 p-1.5 pr-3 rounded-full bg-[#fed869]/25 hover:bg-[#fed869]/40 border border-[#fed869]/40 transition-all text-left group cursor-pointer'
                   aria-expanded={dropdownOpen}>
-                  <div className='w-8 h-8 rounded-full bg-[#FFD54F] flex items-center justify-center text-grey-dark font-extrabold text-xs shadow-xs'>
+                  <div className='w-8 h-8 rounded-full bg-[#fed869] flex items-center justify-center text-grey-dark font-extrabold text-xs shadow-xs'>
                     {session?.user?.name ? session.user.name.charAt(0).toUpperCase() : 'U'}
                   </div>
                   <div className='hidden sm:block text-left'>
@@ -169,8 +169,8 @@ const Header: React.FC = () => {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 10, scale: 0.95 }}
                       transition={{ duration: 0.15 }}
-                      className='absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl shadow-[#FFD54F]/15 border border-[#FFD54F]/30 py-2 z-50 overflow-hidden'>
-                      <div className='px-4 py-2.5 border-b border-[#FFD54F]/20 bg-[#FFFDF5]'>
+                      className='absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl shadow-[#fed869]/20 border border-[#fed869]/40 py-2 z-50 overflow-hidden'>
+                      <div className='px-4 py-2.5 border-b border-[#fed869]/20 bg-[#FFFDF5]'>
                         <p className='text-xs font-black text-grey-dark truncate'>
                           {session?.user?.name || 'Customer'}
                         </p>
@@ -183,20 +183,20 @@ const Header: React.FC = () => {
                         <Link
                           href='/profile'
                           onClick={() => setDropdownOpen(false)}
-                          className='flex items-center gap-2.5 px-4 py-2 text-xs font-bold text-grey-dark hover:bg-[#FFD54F]/15 transition-colors'>
+                          className='flex items-center gap-2.5 px-4 py-2 text-xs font-bold text-grey-dark hover:bg-[#fed869]/20 transition-colors'>
                           <Icon icon='solar:user-bold-duotone' className='text-base text-amber-600' />
                           <span>Edit Profile</span>
                         </Link>
                         <Link
                           href='/my-orders'
                           onClick={() => setDropdownOpen(false)}
-                          className='flex items-center gap-2.5 px-4 py-2 text-xs font-bold text-grey-dark hover:bg-[#FFD54F]/15 transition-colors'>
+                          className='flex items-center gap-2.5 px-4 py-2 text-xs font-bold text-grey-dark hover:bg-[#fed869]/20 transition-colors'>
                           <Icon icon='solar:bag-check-bold-duotone' className='text-base text-amber-600' />
                           <span>My Orders</span>
                         </Link>
                       </div>
 
-                      <div className='pt-1.5 border-t border-[#FFD54F]/20 px-2'>
+                      <div className='pt-1.5 border-t border-[#fed869]/20 px-2'>
                         <button
                           onClick={handleSignOut}
                           className='w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50 rounded-xl transition-colors cursor-pointer'>
@@ -213,13 +213,13 @@ const Header: React.FC = () => {
                 <button
                   type='button'
                   onClick={openSignIn}
-                  className='hidden lg:block text-grey-dark duration-300 bg-[#FFD54F]/25 hover:bg-[#FFD54F] border border-[#FFD54F]/40 font-extrabold text-sm xl:text-base py-2.5 px-5 xl:px-6 rounded-full whitespace-nowrap transition-all cursor-pointer'>
+                  className='hidden lg:block text-grey-dark duration-300 bg-[#fed869]/30 hover:bg-[#fed869] border border-[#fed869]/50 font-extrabold text-sm xl:text-base py-2.5 px-5 xl:px-6 rounded-full whitespace-nowrap transition-all cursor-pointer'>
                   Sign In
                 </button>
                 <button
                   type='button'
                   onClick={openSignUp}
-                  className='hidden lg:block bg-[#FFD54F] duration-300 text-grey-dark hover:bg-[#F59E0B] font-extrabold text-sm xl:text-base py-2.5 px-5 xl:px-6 rounded-full whitespace-nowrap shadow-md shadow-[#FFD54F]/30 transition-all cursor-pointer'>
+                  className='hidden lg:block bg-[#fed869] duration-300 text-grey-dark hover:bg-[#e6c04f] font-extrabold text-sm xl:text-base py-2.5 px-5 xl:px-6 rounded-full whitespace-nowrap shadow-md shadow-[#fed869]/35 transition-all cursor-pointer'>
                   Sign Up
                 </button>
               </>
@@ -227,7 +227,7 @@ const Header: React.FC = () => {
 
             <button
               onClick={() => setNavbarOpen(!navbarOpen)}
-              className='block lg:hidden p-2 rounded-xl bg-[#FFD54F]/20 border border-[#FFD54F]/40 text-grey-dark cursor-pointer'
+              className='block lg:hidden p-2 rounded-xl bg-[#fed869]/30 border border-[#fed869]/50 text-grey-dark cursor-pointer'
               aria-label='Toggle mobile menu'>
               <span className='block w-6 h-0.5 bg-grey-dark'></span>
               <span className='block w-6 h-0.5 bg-grey-dark mt-1.5'></span>
@@ -241,14 +241,14 @@ const Header: React.FC = () => {
           <div className='fixed top-0 left-0 w-full h-full bg-black/50 backdrop-blur-xs z-40' onClick={() => setNavbarOpen(false)} />
         )}
         <div
-          className={`lg:hidden fixed top-0 right-0 h-full w-[300px] bg-[#FFFDF5] border-l border-[#FFD54F]/30 shadow-2xl z-50 transform transition-transform duration-300 ease-in-out ${
+          className={`lg:hidden fixed top-0 right-0 h-full w-[300px] bg-[#FFFDF5] border-l border-[#fed869]/40 shadow-2xl z-50 transform transition-transform duration-300 ease-in-out ${
             navbarOpen ? 'translate-x-0' : 'translate-x-full'
           }`}>
-          <div className='flex items-center justify-between p-4 border-b border-[#FFD54F]/20'>
+          <div className='flex items-center justify-between p-4 border-b border-[#fed869]/20'>
             <span className='text-sm font-extrabold text-grey-dark'>Navigation Menu</span>
             <button
               onClick={() => setNavbarOpen(false)}
-              className='p-1.5 rounded-lg text-grey-dark hover:bg-[#FFD54F]/20 cursor-pointer'>
+              className='p-1.5 rounded-lg text-grey-dark hover:bg-[#fed869]/30 cursor-pointer'>
               <Icon icon='solar:close-circle-bold' className='text-2xl text-grey-dark' />
             </button>
           </div>
@@ -260,8 +260,8 @@ const Header: React.FC = () => {
             <div className='mt-4 flex flex-col space-y-4 w-full'>
               {status === 'authenticated' ? (
                 <>
-                  <div className="p-3.5 bg-[#FFD54F]/15 rounded-2xl border border-[#FFD54F]/25">
-                    <p className="text-[10px] font-black text-amber-600 uppercase tracking-wider mb-1">Signed in as</p>
+                  <div className="p-3.5 bg-[#fed869]/20 rounded-2xl border border-[#fed869]/30">
+                    <p className="text-[10px] font-black text-amber-700 uppercase tracking-wider mb-1">Signed in as</p>
                     <p className="text-sm font-extrabold text-grey-dark truncate">{session?.user?.name || 'Customer'}</p>
                     <p className="text-[11px] font-medium text-grey-dark/75 truncate mt-0.5">{session?.user?.email}</p>
                   </div>
@@ -270,7 +270,7 @@ const Header: React.FC = () => {
                     <Link 
                       href="/profile" 
                       onClick={() => setNavbarOpen(false)}
-                      className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white border border-[#FFD54F]/20 text-grey-dark font-bold text-xs hover:bg-[#FFD54F]/20 transition-all"
+                      className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white border border-[#fed869]/30 text-grey-dark font-bold text-xs hover:bg-[#fed869]/25 transition-all"
                     >
                       <Icon icon="solar:user-bold-duotone" className="text-lg text-amber-600" />
                       <span>Edit Profile</span>
@@ -278,7 +278,7 @@ const Header: React.FC = () => {
                     <Link 
                       href="/my-orders" 
                       onClick={() => setNavbarOpen(false)}
-                      className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white border border-[#FFD54F]/20 text-grey-dark font-bold text-xs hover:bg-[#FFD54F]/20 transition-all"
+                      className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white border border-[#fed869]/30 text-grey-dark font-bold text-xs hover:bg-[#fed869]/25 transition-all"
                     >
                       <Icon icon="solar:bag-check-bold-duotone" className="text-lg text-amber-600" />
                       <span>My Orders</span>
@@ -298,13 +298,13 @@ const Header: React.FC = () => {
                   <button
                     type='button'
                     onClick={openSignIn}
-                    className='bg-[#FFD54F]/25 text-grey-dark font-bold px-4 py-2.5 rounded-xl border border-[#FFD54F]/40 hover:bg-[#FFD54F] text-center transition duration-300 ease-in-out cursor-pointer'>
+                    className='bg-[#fed869]/30 text-grey-dark font-bold px-4 py-2.5 rounded-xl border border-[#fed869]/50 hover:bg-[#fed869] text-center transition duration-300 ease-in-out cursor-pointer'>
                     Sign In
                   </button>
                   <button
                     type='button'
                     onClick={openSignUp}
-                    className='bg-[#FFD54F] text-grey-dark font-extrabold px-4 py-2.5 rounded-xl shadow-md shadow-[#FFD54F]/30 hover:bg-[#F59E0B] text-center transition duration-300 ease-in-out cursor-pointer'>
+                    className='bg-[#fed869] text-grey-dark font-extrabold px-4 py-2.5 rounded-xl shadow-md shadow-[#fed869]/35 hover:bg-[#e6c04f] text-center transition duration-300 ease-in-out cursor-pointer'>
                     Sign Up
                   </button>
                 </>

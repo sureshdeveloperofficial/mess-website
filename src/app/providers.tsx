@@ -25,8 +25,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
                         style: {
                             background: '#FFFDF5',
                             color: '#171717',
-                            border: '1.5px solid #FFD54F',
-                            boxShadow: '0 10px 25px rgba(255, 213, 79, 0.25)',
+                            border: '1.5px solid #fed869',
+                            boxShadow: '0 10px 25px rgba(254, 216, 105, 0.3)',
                             borderRadius: '16px',
                             fontWeight: 700,
                             fontSize: '13px',
@@ -34,8 +34,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
                         },
                         success: {
                             iconTheme: {
-                                primary: '#F59E0B',
-                                secondary: '#FFFDF5',
+                                primary: '#fed869',
+                                secondary: '#171717',
                             },
                         },
                         error: {

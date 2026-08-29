@@ -49,7 +49,7 @@ const FloatingActions: React.FC = () => {
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               onClick={scrollToTop}
-              className='w-11 h-11 bg-[#FFD54F] hover:bg-[#F59E0B] text-grey-dark rounded-full shadow-lg shadow-[#FFD54F]/30 flex items-center justify-center border border-[#FFD54F]/40 cursor-pointer transition-colors'
+              className='w-11 h-11 bg-[#fed869] hover:bg-[#e6c04f] text-grey-dark rounded-full shadow-lg shadow-[#fed869]/35 flex items-center justify-center border border-[#fed869]/40 cursor-pointer transition-colors'
               aria-label='Scroll to top'
             >
               <Icon icon='solar:alt-arrow-up-bold' className='text-xl' />

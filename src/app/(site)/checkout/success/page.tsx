@@ -57,8 +57,12 @@ function OrderSuccessContent() {
     const whatsappShareUrl = `https://wa.me/${cleanWhatsAppNumber}?text=${encodeURIComponent(shareMessage)}`
 
     return (
-        <main className='min-h-screen pt-32 pb-48 bg-[#FFFBF7] flex items-center justify-center px-4 sm:px-6 selection:bg-primary/20'>
-            <div className='max-w-2xl w-full text-center'>
+        <main className='min-h-screen pt-32 pb-48 bg-[#FEEBB1] flex items-center justify-center px-4 sm:px-6 relative overflow-hidden'>
+            {/* Ambient background glows */}
+            <div className='absolute top-0 right-1/4 w-96 h-96 bg-[#fed869]/30 rounded-full blur-3xl pointer-events-none' />
+            <div className='absolute bottom-10 left-10 w-96 h-96 bg-[#fed869]/30 rounded-full blur-3xl pointer-events-none' />
+
+            <div className='max-w-2xl w-full text-center relative z-10'>
                 <motion.div
                     initial={{ scale: 0, rotate: -45 }}
                     animate={{ scale: 1, rotate: 0 }}

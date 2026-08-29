@@ -6,12 +6,12 @@ import { Order } from '@/app/types/order'
 
 export const FUTURISTIC_COLORS = {
     BG_DARK: '#0F1115',
-    ACCENT: '#FFD54F', // Honey Yellow
+    ACCENT: '#fed869', // Honey Yellow
     SURFACE: '#1A1D23',
     TEXT_MAIN: '#FFFFFF',
     TEXT_DIM: '#8A8F98',
     BORDER: '#2D3139',
-    GLOW: 'rgba(255, 213, 79, 0.15)',
+    GLOW: 'rgba(254, 216, 105, 0.15)',
     GLASS: 'rgba(255, 255, 255, 0.02)'
 }
 

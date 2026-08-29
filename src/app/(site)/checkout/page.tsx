@@ -27,8 +27,12 @@ export default function CheckoutPage() {
     )
 
     return (
-        <main className='min-h-screen pt-32 pb-48 bg-[#FFFBF7] selection:bg-primary/20'>
-            <div className='container max-w-7xl mx-auto px-6'>
+        <main className='min-h-screen pt-32 pb-48 bg-[#FEEBB1] relative overflow-hidden'>
+            {/* Ambient background glows */}
+            <div className='absolute top-0 right-1/4 w-96 h-96 bg-[#fed869]/30 rounded-full blur-3xl pointer-events-none' />
+            <div className='absolute bottom-10 left-10 w-96 h-96 bg-[#fed869]/30 rounded-full blur-3xl pointer-events-none' />
+
+            <div className='container max-w-7xl mx-auto px-6 relative z-10'>
                 {/* Header */}
                 <div className='mb-16 text-center max-w-2xl mx-auto'>
                     <motion.div
@@ -36,28 +40,25 @@ export default function CheckoutPage() {
                         animate={{ opacity: 1, y: 0 }}
                         className='flex items-center justify-center gap-3 mb-6'
                     >
-                        <span className='h-px w-10 bg-primary/40'></span>
-                        <span className='text-primary text-sm font-black tracking-[0.4em] uppercase'>Checkout Boundary</span>
-                        <span className='h-px w-10 bg-primary/40'></span>
+                        <span className='h-px w-10 bg-[#fed869]'></span>
+                        <span className='text-amber-800 text-xs font-black tracking-[0.3em] uppercase inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#fed869] border border-[#fed869] shadow-xs'>Secure Checkout</span>
+                        <span className='h-px w-10 bg-[#fed869]'></span>
                     </motion.div>
                     <motion.h1
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className='text-5xl md:text-7xl font-black text-grey tracking-tight mb-8'
+                        className='text-4xl sm:text-5xl md:text-6xl font-extrabold text-grey-dark tracking-tight mb-6'
                     >
                         Complete Your <br />
-                        <span className='text-primary italic relative'>
+                        <span className='text-amber-800 italic underline decoration-[#fed869]'>
                             Subscription
-                            <svg className="absolute -bottom-2 left-0 w-full" height="8" viewBox="0 0 100 8" preserveAspectRatio="none">
-                                <path d="M0 4 Q 25 0, 50 4 T 100 4" fill="none" stroke="currentColor" strokeWidth="2" strokeDasharray="4 4" />
-                            </svg>
                         </span>
                     </motion.h1>
                     <motion.p
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.2 }}
-                        className='text-grey/40 text-lg font-medium'
+                        className='text-grey-dark/85 text-base sm:text-lg font-medium'
                     >
                         Please provide your delivery and contact information below to finalize your mess subscription.
                     </motion.p>

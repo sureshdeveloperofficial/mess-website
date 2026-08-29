@@ -59,24 +59,29 @@ const MenuPreview = () => {
     }
 
     return (
-        <section id='menu' className='py-16 bg-[#FFFDF5]'>
-            <div className='container'>
-                <div className='flex flex-col md:flex-row justify-between items-end mb-10 gap-8'>
+        <section id='menu' className='py-20 bg-[#FEEBB1] relative overflow-hidden'>
+            {/* Ambient Background Accents */}
+            <div className='absolute top-0 right-1/4 w-96 h-96 bg-[#fed869]/30 rounded-full blur-3xl pointer-events-none' />
+            <div className='absolute bottom-10 left-10 w-96 h-96 bg-[#fed869]/30 rounded-full blur-3xl pointer-events-none' />
+
+            <div className='container relative z-10'>
+                <div className='flex flex-col md:flex-row justify-between items-end mb-12 gap-8'>
                     <div className='max-w-2xl'>
                         <motion.p
                             initial={{ opacity: 0, x: -20 }}
                             whileInView={{ opacity: 1, x: 0 }}
-                            className='text-amber-600 text-xs font-bold mb-4 tracking-wider uppercase'
+                            className='text-grey-dark text-xs font-black mb-4 tracking-wider uppercase inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#fed869] border border-[#fed869] shadow-xs'
                         >
+                            <Icon icon='solar:chef-hat-bold' className='text-sm text-amber-800' />
                             Wholesome Goodness
                         </motion.p>
                         <motion.h2
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.1 }}
-                            className='text-4xl md:text-6xl font-extrabold text-grey-dark tracking-tight leading-none'
+                            className='text-4xl md:text-6xl font-extrabold text-grey-dark tracking-tight leading-tight mt-2'
                         >
-                            Today's <span className='text-amber-500 italic'>Soul-Satiating</span> Specials
+                            Today's <span className='text-amber-800 italic underline decoration-[#fed869]'>Soul-Satiating</span> Specials
                         </motion.h2>
                     </div>
 
@@ -84,7 +89,7 @@ const MenuPreview = () => {
                         <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            className='flex items-center gap-2 text-grey-dark font-extrabold uppercase tracking-wider text-xs bg-[#FFD54F] hover:bg-[#F59E0B] px-8 py-4 rounded-full border border-[#FFD54F]/30 shadow-md shadow-[#FFD54F]/20 transition-all duration-300'
+                            className='flex items-center gap-2 text-grey-dark font-extrabold uppercase tracking-wider text-xs bg-[#fed869] hover:bg-[#e6c04f] px-8 py-4 rounded-full border border-[#fed869]/40 shadow-md shadow-[#fed869]/30 transition-all duration-300'
                         >
                             All Meal Plans <Icon icon='ion:arrow-forward' />
                         </motion.button>
@@ -106,7 +111,7 @@ const MenuPreview = () => {
                         >
                             <motion.div
                                 whileHover={{ y: -15 }}
-                                className='relative bg-white rounded-[4rem] overflow-hidden shadow-2xl shadow-[#FFD54F]/10 border border-[#FFD54F]/20'
+                                className='relative bg-white rounded-[4rem] overflow-hidden shadow-2xl shadow-[#fed869]/15 border border-[#fed869]/30'
                             >
                                 {/* Image Container */}
                                 <div className='relative h-80 overflow-hidden'>
@@ -116,7 +121,7 @@ const MenuPreview = () => {
                                         fill
                                         className='object-cover transform transition-transform duration-1000 group-hover:scale-110'
                                     />
-                                    <div className='absolute top-6 right-6 px-4 py-2 bg-white/95 backdrop-blur-sm rounded-full border border-[#FFD54F]/30 shadow-sm'>
+                                    <div className='absolute top-6 right-6 px-4 py-2 bg-white/95 backdrop-blur-sm rounded-full border border-[#fed869]/40 shadow-sm'>
                                         <span className='text-[10px] font-bold uppercase tracking-wider text-amber-600'>
                                             {item.tag}
                                         </span>

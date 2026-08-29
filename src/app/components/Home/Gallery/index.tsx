@@ -42,7 +42,7 @@ const Gallery = () => {
     return (
       <>
         {before}
-        <span className='text-amber-500 italic inline-block px-1.5'>
+        <span className='text-amber-600 italic inline-block px-1.5'>
           {keyword}
         </span>
         {after}
@@ -53,8 +53,8 @@ const Gallery = () => {
   return (
     <section id='gallery' className='py-20 sm:py-28 bg-[#FFFDF5] relative overflow-hidden'>
       {/* Ambient background glow */}
-      <div className='absolute top-1/4 right-0 w-96 h-96 bg-[#FFD54F]/15 rounded-full blur-3xl pointer-events-none' />
-      <div className='absolute bottom-10 left-10 w-96 h-96 bg-[#FFD54F]/15 rounded-full blur-3xl pointer-events-none' />
+      <div className='absolute top-1/4 right-0 w-96 h-96 bg-[#fed869]/20 rounded-full blur-3xl pointer-events-none' />
+      <div className='absolute bottom-10 left-10 w-96 h-96 bg-[#fed869]/20 rounded-full blur-3xl pointer-events-none' />
 
       <div className='container relative z-10 px-4 sm:px-6 lg:px-8'>
         {/* Clean, Spaced-out Section Header */}
@@ -67,8 +67,8 @@ const Gallery = () => {
               viewport={{ once: true }}
               className='mb-5 sm:mb-6'
             >
-              <span className='text-amber-800 text-xs sm:text-sm font-black tracking-widest uppercase inline-flex items-center gap-2 px-5 py-2 rounded-full bg-[#FFD54F]/25 border border-[#FFD54F]/50 shadow-xs'>
-                <Icon icon='solar:gallery-wide-bold-duotone' className='text-amber-600 text-base' />
+              <span className='text-amber-800 text-xs sm:text-sm font-black tracking-widest uppercase inline-flex items-center gap-2 px-5 py-2 rounded-full bg-[#fed869]/30 border border-[#fed869]/50 shadow-xs'>
+                <Icon icon='solar:gallery-wide-bold-duotone' className='text-amber-700 text-base' />
                 {badgeText}
               </span>
             </motion.div>
@@ -96,7 +96,7 @@ const Gallery = () => {
               <p className='text-grey-dark/85 text-base sm:text-lg md:text-xl font-semibold leading-relaxed md:leading-loose px-2'>
                 {subtitleText}
               </p>
-              <div className='w-20 h-1.5 bg-[#FFD54F] rounded-full mx-auto' />
+              <div className='w-20 h-1.5 bg-[#fed869] rounded-full mx-auto' />
             </motion.div>
           )}
         </div>
@@ -117,7 +117,7 @@ const Gallery = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.1 }}
                   transition={{ duration: 0.5, delay: index * 0.08, ease: 'easeOut' }}
-                  className='gallery-item overflow-hidden rounded-3xl sm:rounded-[3rem] mb-6 sm:mb-8 relative group bg-white shadow-xl shadow-[#FFD54F]/10 border border-[#FFD54F]/25 hover:border-[#FFD54F] transition-all duration-300'
+                  className='gallery-item overflow-hidden rounded-3xl sm:rounded-[3rem] mb-6 sm:mb-8 relative group bg-white shadow-xl shadow-[#fed869]/15 border border-[#fed869]/30 hover:border-[#fed869] transition-all duration-300'
                 >
                   <div className='relative aspect-square sm:aspect-4/3 overflow-hidden bg-[#FFFDF5]'>
                     <img

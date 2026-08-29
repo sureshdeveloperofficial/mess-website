@@ -6,12 +6,12 @@
   --font-sans: var(--font-poppins), 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-poppins: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
 
-  --color-primary: #FFD54F;
-  --color-primary-hover: #F59E0B;
-  --color-honey: #FFD54F;
-  --color-honey-light: #FFF8E7;
-  --color-honey-bg: #FFFDF5;
-  --color-honey-card: #FFF9E6;
+  --color-primary: #fed869;
+  --color-primary-hover: #e6c04f;
+  --color-honey: #fed869;
+  --color-honey-light: #FEEBB1;
+  --color-honey-bg: #FEEBB1;
+  --color-honey-card: #FFFDF5;
   --color-grey: #262626;
   --color-grey-dark: #171717;
   --color-grey-muted: #737373;
@@ -122,12 +122,12 @@
   }
 
   .premium-glow {
-    box-shadow: 0 0 20px rgba(255, 213, 79, 0.25);
+    box-shadow: 0 0 20px rgba(254, 216, 105, 0.35);
     transition: box-shadow 0.3s ease;
   }
 
   .premium-glow:hover {
-    box-shadow: 0 0 40px rgba(255, 213, 79, 0.45);
+    box-shadow: 0 0 40px rgba(254, 216, 105, 0.55);
   }
 
   .custom-scrollbar::-webkit-scrollbar {
@@ -139,7 +139,7 @@
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #FFD54F;
+    background: #fed869;
     border-radius: 10px;
   }
 
@@ -212,8 +212,8 @@
   .admin-input:focus {
     background-color: #ffffff;
     outline: none;
-    border-color: #FFD54F;
-    box-shadow: 0 0 0 3px rgba(255, 213, 79, 0.25);
+    border-color: #fed869;
+    box-shadow: 0 0 0 3px rgba(254, 216, 105, 0.3);
   }
 
   .admin-btn-primary {
@@ -222,20 +222,20 @@
     justify-content: center;
     gap: 0.5rem;
     padding: 0.75rem 1.5rem;
-    background-color: #FFD54F;
+    background-color: #fed869;
     color: #171717;
     font-size: 0.875rem;
     line-height: 1.25rem;
     font-weight: 800;
     border-radius: 0.75rem;
-    box-shadow: 0 4px 14px 0 rgba(255, 213, 79, 0.35);
+    box-shadow: 0 4px 14px 0 rgba(254, 216, 105, 0.4);
     transition: all 0.2s ease;
     cursor: pointer;
   }
 
   .admin-btn-primary:hover {
-    background-color: #F59E0B;
-    box-shadow: 0 6px 20px 0 rgba(245, 158, 11, 0.4);
+    background-color: #e6c04f;
+    box-shadow: 0 6px 20px 0 rgba(230, 192, 79, 0.45);
   }
 
   .admin-btn-primary:active {

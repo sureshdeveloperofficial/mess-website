@@ -39,17 +39,17 @@ export default function AdminLogin() {
     }
 
     return (
-        <div className='min-h-screen flex items-center justify-center bg-[#FFFDF5] px-4'>
+        <div className='min-h-screen flex items-center justify-center bg-[#FEEBB1]/40 px-4'>
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className='max-w-md w-full bg-white rounded-3xl shadow-xl shadow-[#FFD54F]/10 border border-[#FFD54F]/20 overflow-hidden'
+                className='max-w-md w-full bg-white rounded-3xl shadow-xl shadow-[#fed869]/15 border border-[#fed869]/30 overflow-hidden'
             >
                 <div className='p-8'>
                     <div className='text-center mb-10'>
-                        <div className='inline-flex items-center justify-center w-20 h-20 bg-[#FFD54F]/20 rounded-2xl mb-4 border border-[#FFD54F]/30 shadow-sm'>
-                            <Icon icon='solar:chef-hat-bold-duotone' className='text-4xl text-amber-600' />
+                        <div className='inline-flex items-center justify-center w-20 h-20 bg-[#fed869]/25 rounded-2xl mb-4 border border-[#fed869]/40 shadow-sm'>
+                            <Icon icon='solar:chef-hat-bold-duotone' className='text-4xl text-amber-700' />
                         </div>
                         <h1 className='text-3xl font-extrabold text-grey-dark capitalize'>Admin Portal</h1>
                         <p className='text-grey-muted text-sm mt-2'>Sign in to manage your mess subscriptions</p>
@@ -67,7 +67,7 @@ export default function AdminLogin() {
                                     required
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className='block w-full pl-11 pr-4 py-3.5 border border-grey/10 rounded-2xl bg-grey/5 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#FFD54F]/30 focus:border-[#FFD54F] text-grey-dark font-medium text-sm transition-all'
+                                    className='block w-full pl-11 pr-4 py-3.5 border border-grey/10 rounded-2xl bg-grey/5 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#fed869]/40 focus:border-[#fed869] text-grey-dark font-medium text-sm transition-all'
                                     placeholder='admin@premiummess.com'
                                 />
                             </div>
@@ -84,7 +84,7 @@ export default function AdminLogin() {
                                     required
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className='block w-full pl-11 pr-11 py-3.5 border border-grey/10 rounded-2xl bg-grey/5 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#FFD54F]/30 focus:border-[#FFD54F] text-grey-dark font-medium text-sm transition-all'
+                                    className='block w-full pl-11 pr-11 py-3.5 border border-grey/10 rounded-2xl bg-grey/5 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#fed869]/40 focus:border-[#fed869] text-grey-dark font-medium text-sm transition-all'
                                     placeholder='••••••••'
                                 />
                                 <button
@@ -100,7 +100,7 @@ export default function AdminLogin() {
                         <button
                             type='submit'
                             disabled={loading}
-                            className='w-full py-4 bg-[#FFD54F] hover:bg-[#F59E0B] text-grey-dark rounded-2xl font-extrabold shadow-lg shadow-[#FFD54F]/30 active:scale-[0.98] transition-all flex items-center justify-center cursor-pointer disabled:opacity-50'
+                            className='w-full py-4 bg-[#fed869] hover:bg-[#e6c04f] text-grey-dark rounded-2xl font-extrabold shadow-lg shadow-[#fed869]/35 active:scale-[0.98] transition-all flex items-center justify-center cursor-pointer disabled:opacity-50'
                         >
                             {loading ? (
                                 <Icon icon='line-md:loading-loop' className='text-2xl mr-2' />

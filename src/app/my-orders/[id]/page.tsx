@@ -79,7 +79,7 @@ export default function OrderDetailsPage({ params }: { params: Promise<{ id: str
                 <p className='text-xs text-grey-muted'>The requested subscription order could not be retrieved.</p>
                 <Link
                     href='/my-orders'
-                    className='inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-white font-bold text-xs hover:bg-primary/90 transition-all'
+                    className='inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-grey-dark font-extrabold text-xs hover:bg-primary-hover transition-all'
                 >
                     <Icon icon='solar:alt-arrow-left-bold' />
                     <span>Back to My Orders</span>

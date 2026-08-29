@@ -51,7 +51,7 @@ const HeaderLink: React.FC<{ item: HeaderItem }> = ({ item }) => {
       </Link>
       {submenuOpen && (
         <div
-          className={`absolute py-2 left-0 mt-1.5 w-60 bg-[#FFFDF5] border border-[#FFD54F]/30 shadow-xl shadow-[#FFD54F]/10 rounded-2xl overflow-hidden`}
+          className={`absolute py-2 left-0 mt-1.5 w-60 bg-[#FFFDF5] border border-[#fed869]/40 shadow-xl shadow-[#fed869]/20 rounded-2xl overflow-hidden`}
           data-aos='fade-up'
           data-aos-duration='300'>
           {item.submenu?.map((subItem, index) => (
@@ -60,8 +60,8 @@ const HeaderLink: React.FC<{ item: HeaderItem }> = ({ item }) => {
               href={subItem.href}
               className={`block px-4 py-2.5 text-xs font-bold transition-colors ${
                 path === subItem.href
-                  ? 'bg-[#FFD54F] text-grey-dark'
-                  : 'text-grey-dark hover:bg-[#FFD54F]/20 hover:text-amber-700'
+                  ? 'bg-[#fed869] text-grey-dark'
+                  : 'text-grey-dark hover:bg-[#fed869]/25 hover:text-amber-700'
               }`}>
               {subItem.label}
             </Link>

@@ -147,12 +147,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             transition={{ duration: 0.3, ease: 'easeOut' }}
             className={`w-full ${
               mode === 'signup' ? 'max-w-[780px]' : 'max-w-[560px]'
-            } bg-white rounded-3xl sm:rounded-[2rem] p-6 sm:p-10 md:p-12 shadow-2xl shadow-[#FFD54F]/20 border border-[#FFD54F]/35 relative z-10 my-auto transition-all duration-300 max-h-[92vh] overflow-y-auto`}
+            } bg-white rounded-3xl sm:rounded-[2rem] p-6 sm:p-10 md:p-12 shadow-2xl shadow-[#fed869]/20 border border-[#fed869]/35 relative z-10 my-auto transition-all duration-300 max-h-[92vh] overflow-y-auto`}
           >
             {/* Top Close Button */}
             <button
               onClick={onClose}
-              className='absolute top-5 right-5 p-2 rounded-full text-grey-dark/50 hover:text-grey-dark hover:bg-[#FFD54F]/20 transition-all cursor-pointer'
+              className='absolute top-5 right-5 p-2 rounded-full text-grey-dark/50 hover:text-grey-dark hover:bg-[#fed869]/20 transition-all cursor-pointer'
               aria-label='Close modal'
             >
               <Icon icon='solar:close-circle-bold' className='text-2xl' />
@@ -165,13 +165,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               </div>
 
               {/* Mode Switch Tabs */}
-              <div className='inline-flex p-1 rounded-2xl bg-[#FFFDF5] border border-[#FFD54F]/35 mt-1'>
+              <div className='inline-flex p-1 rounded-2xl bg-[#FFFDF5] border border-[#fed869]/35 mt-1'>
                 <button
                   type='button'
                   onClick={() => setMode('signin')}
                   className={`px-5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                     mode === 'signin'
-                      ? 'bg-[#FFD54F] text-grey-dark shadow-sm'
+                      ? 'bg-[#fed869] text-grey-dark shadow-sm'
                       : 'text-grey-dark/60 hover:text-grey-dark'
                   }`}
                 >
@@ -182,7 +182,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   onClick={() => setMode('signup')}
                   className={`px-5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                     mode === 'signup'
-                      ? 'bg-[#FFD54F] text-grey-dark shadow-sm'
+                      ? 'bg-[#fed869] text-grey-dark shadow-sm'
                       : 'text-grey-dark/60 hover:text-grey-dark'
                   }`}
                 >
@@ -215,7 +215,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                       required
                       value={signInData.email}
                       onChange={(e) => setSignInData({ ...signInData, email: e.target.value })}
-                      className='w-full bg-[#FFFDF5] border border-[#FFD54F]/35 focus:bg-white focus:border-[#FFD54F] px-3.5 py-3 pl-10 rounded-2xl text-grey-dark font-medium text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#FFD54F]/20 transition-all placeholder:text-grey-dark/30'
+                      className='w-full bg-[#FFFDF5] border border-[#fed869]/35 focus:bg-white focus:border-[#fed869] px-3.5 py-3 pl-10 rounded-2xl text-grey-dark font-medium text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#fed869]/20 transition-all placeholder:text-grey-dark/30'
                     />
                   </div>
                 </div>
@@ -243,7 +243,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                       required
                       value={signInData.password}
                       onChange={(e) => setSignInData({ ...signInData, password: e.target.value })}
-                      className='w-full bg-[#FFFDF5] border border-[#FFD54F]/35 focus:bg-white focus:border-[#FFD54F] px-3.5 py-3 pl-10 pr-10 rounded-2xl text-grey-dark font-medium text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#FFD54F]/20 transition-all placeholder:text-grey-dark/30'
+                      className='w-full bg-[#FFFDF5] border border-[#fed869]/35 focus:bg-white focus:border-[#fed869] px-3.5 py-3 pl-10 pr-10 rounded-2xl text-grey-dark font-medium text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#fed869]/20 transition-all placeholder:text-grey-dark/30'
                     />
                     <button
                       type='button'
@@ -259,7 +259,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   <button
                     disabled={loading}
                     type='submit'
-                    className='w-full bg-[#FFD54F] hover:bg-[#F59E0B] text-grey-dark px-6 py-3.5 rounded-2xl font-bold text-xs sm:text-sm flex justify-center items-center gap-2 shadow-md shadow-[#FFD54F]/25 hover:shadow-lg hover:shadow-[#FFD54F]/35 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer'
+                    className='w-full bg-[#fed869] hover:bg-[#e6c04f] text-grey-dark px-6 py-3.5 rounded-2xl font-bold text-xs sm:text-sm flex justify-center items-center gap-2 shadow-md shadow-[#fed869]/25 hover:shadow-lg hover:shadow-[#fed869]/35 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer'
                   >
                     {loading ? (
                       <>
@@ -315,7 +315,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                         required
                         value={signUpData.name}
                         onChange={(e) => setSignUpData({ ...signUpData, name: e.target.value })}
-                        className='w-full bg-[#FFFDF5] border border-[#FFD54F]/35 focus:bg-white focus:border-[#FFD54F] px-3.5 py-3 pl-10 rounded-2xl text-grey-dark font-medium text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#FFD54F]/20 transition-all placeholder:text-grey-dark/30'
+                        className='w-full bg-[#FFFDF5] border border-[#fed869]/35 focus:bg-white focus:border-[#fed869] px-3.5 py-3 pl-10 rounded-2xl text-grey-dark font-medium text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#fed869]/20 transition-all placeholder:text-grey-dark/30'
                       />
                     </div>
                   </div>
@@ -334,7 +334,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                         required
                         value={signUpData.email}
                         onChange={(e) => setSignUpData({ ...signUpData, email: e.target.value })}
-                        className='w-full bg-[#FFFDF5] border border-[#FFD54F]/35 focus:bg-white focus:border-[#FFD54F] px-3.5 py-3 pl-10 rounded-2xl text-grey-dark font-medium text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#FFD54F]/20 transition-all placeholder:text-grey-dark/30'
+                        className='w-full bg-[#FFFDF5] border border-[#fed869]/35 focus:bg-white focus:border-[#fed869] px-3.5 py-3 pl-10 rounded-2xl text-grey-dark font-medium text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#fed869]/20 transition-all placeholder:text-grey-dark/30'
                       />
                     </div>
                   </div>
@@ -353,7 +353,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                         required
                         value={signUpData.phone}
                         onChange={(e) => setSignUpData({ ...signUpData, phone: e.target.value })}
-                        className='w-full bg-[#FFFDF5] border border-[#FFD54F]/35 focus:bg-white focus:border-[#FFD54F] px-3.5 py-3 pl-10 rounded-2xl text-grey-dark font-medium text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#FFD54F]/20 transition-all placeholder:text-grey-dark/30'
+                        className='w-full bg-[#FFFDF5] border border-[#fed869]/35 focus:bg-white focus:border-[#fed869] px-3.5 py-3 pl-10 rounded-2xl text-grey-dark font-medium text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#fed869]/20 transition-all placeholder:text-grey-dark/30'
                       />
                     </div>
                   </div>
@@ -372,7 +372,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                         required
                         value={signUpData.password}
                         onChange={(e) => setSignUpData({ ...signUpData, password: e.target.value })}
-                        className='w-full bg-[#FFFDF5] border border-[#FFD54F]/35 focus:bg-white focus:border-[#FFD54F] px-3.5 py-3 pl-10 pr-10 rounded-2xl text-grey-dark font-medium text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#FFD54F]/20 transition-all placeholder:text-grey-dark/30'
+                        className='w-full bg-[#FFFDF5] border border-[#fed869]/35 focus:bg-white focus:border-[#fed869] px-3.5 py-3 pl-10 pr-10 rounded-2xl text-grey-dark font-medium text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#fed869]/20 transition-all placeholder:text-grey-dark/30'
                       />
                       <button
                         type='button'
@@ -386,7 +386,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 </div>
 
                 {signUpData.password.length > 0 && (
-                  <div className='my-2.5 grid grid-cols-2 sm:grid-cols-4 gap-2 p-2.5 bg-[#FFFDF5] rounded-2xl border border-[#FFD54F]/35'>
+                  <div className='my-2.5 grid grid-cols-2 sm:grid-cols-4 gap-2 p-2.5 bg-[#FFFDF5] rounded-2xl border border-[#fed869]/35'>
                     <CheckItem label='8+ Chars' isValid={passwordCriteria.minLength} />
                     <CheckItem label='Uppercase' isValid={passwordCriteria.hasUpper} />
                     <CheckItem label='Number' isValid={passwordCriteria.hasNumber} />
@@ -398,7 +398,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   <button
                     disabled={registerMutation.isPending}
                     type='submit'
-                    className='w-full bg-[#FFD54F] hover:bg-[#F59E0B] text-grey-dark px-6 py-3.5 rounded-2xl font-bold text-xs sm:text-sm flex justify-center items-center gap-2 shadow-md shadow-[#FFD54F]/25 hover:shadow-lg hover:shadow-[#FFD54F]/35 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer'
+                    className='w-full bg-[#fed869] hover:bg-[#e6c04f] text-grey-dark px-6 py-3.5 rounded-2xl font-bold text-xs sm:text-sm flex justify-center items-center gap-2 shadow-md shadow-[#fed869]/25 hover:shadow-lg hover:shadow-[#fed869]/35 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer'
                   >
                     {registerMutation.isPending ? (
                       <>

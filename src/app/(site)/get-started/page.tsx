@@ -541,9 +541,9 @@ function GetStartedContent() {
 
     if (isMenusLoading) {
         return (
-            <div className='min-h-screen pt-36 pb-20 flex flex-col items-center justify-center bg-[#FFFDF5]'>
-                <div className='w-14 h-14 border-3 border-primary border-t-transparent rounded-full animate-spin mb-4' />
-                <p className='text-grey-dark font-bold text-sm tracking-wide'>
+            <div className='min-h-screen pt-36 pb-20 flex flex-col items-center justify-center bg-[#FEEBB1]'>
+                <div className='w-14 h-14 border-4 border-amber-600 border-t-transparent rounded-full animate-spin mb-4' />
+                <p className='text-grey-dark font-extrabold text-sm tracking-wide'>
                     Loading Meal Plans...
                 </p>
             </div>
@@ -551,20 +551,24 @@ function GetStartedContent() {
     }
 
     return (
-        <main className='pt-20 bg-[#FFFDF5] min-h-screen text-grey-dark pb-24'>
-            {/* Top Page Header - Clean Admin Dashboard Typography */}
-            <div className='pt-14 pb-10 bg-linear-to-b from-primary/15 via-primary/5 to-transparent relative overflow-hidden'>
+        <main className='pt-20 bg-[#FEEBB1] min-h-screen text-grey-dark pb-24 relative overflow-hidden'>
+            {/* Ambient Background Glows */}
+            <div className='absolute top-0 right-1/4 w-96 h-96 bg-[#fed869]/30 rounded-full blur-3xl pointer-events-none' />
+            <div className='absolute bottom-10 left-10 w-96 h-96 bg-[#fed869]/30 rounded-full blur-3xl pointer-events-none' />
+
+            {/* Top Page Header */}
+            <div className='pt-14 pb-8 relative z-10'>
                 <div className='max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10'>
-                    <div className='inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/20 text-grey-dark text-xs font-semibold mb-3.5 border border-primary/30'>
-                        <Icon icon='solar:bag-check-bold' className='text-sm text-grey-dark' />
+                    <div className='inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#fed869] text-grey-dark text-xs font-black mb-4 border border-[#fed869] tracking-wider uppercase shadow-xs'>
+                        <Icon icon='solar:bag-check-bold' className='text-base text-amber-800' />
                         <span>Step-by-Step Meal Subscription</span>
                     </div>
 
-                    <h1 className='text-3xl sm:text-4xl lg:text-5xl font-extrabold text-grey-dark tracking-tight'>
-                        Customize & <span className='text-primary'>Order Meal Plan</span>
+                    <h1 className='text-3xl sm:text-4xl lg:text-5xl font-extrabold text-grey-dark tracking-tight leading-tight'>
+                        Customize & <span className='text-amber-800 italic underline decoration-[#fed869]'>Order Meal Plan</span>
                     </h1>
 
-                    <p className='text-grey-muted mt-2.5 max-w-2xl text-sm sm:text-base font-normal leading-relaxed'>
+                    <p className='text-grey-dark/85 mt-3 max-w-2xl text-sm sm:text-base font-medium leading-relaxed'>
                         Select your meal package, choose your daily dishes, and enter your delivery address to get fresh home-cooked meals delivered daily.
                     </p>
                 </div>

@@ -56,19 +56,20 @@ const HowItWorks = () => {
     }
 
     return (
-        <section className='py-16 bg-[#FFFDF5] overflow-hidden relative'>
+        <section className='py-20 lg:py-24 bg-[#FEEBB1]/40 overflow-hidden relative'>
             {/* Ambient background glow */}
-            <div className='absolute bottom-0 left-1/4 w-96 h-96 bg-[#FFD54F]/10 rounded-full blur-3xl pointer-events-none' />
+            <div className='absolute bottom-0 left-1/4 w-96 h-96 bg-[#fed869]/25 rounded-full blur-3xl pointer-events-none' />
+            <div className='absolute top-0 right-10 w-80 h-80 bg-[#fed869]/20 rounded-full blur-3xl pointer-events-none' />
 
             <div className='container relative z-10'>
-                <div className='text-center mb-12'>
+                <div className='text-center mb-14 sm:mb-16'>
                     <motion.p
                         initial={{ opacity: 0, y: 10 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        className='text-amber-600 text-xs font-black mb-4 tracking-widest uppercase inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFD54F]/20 border border-[#FFD54F]/40'
+                        className='text-grey-dark text-xs sm:text-sm font-black mb-4 tracking-widest uppercase inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#fed869] border border-[#fed869] shadow-xs'
                     >
-                        <Icon icon='solar:clock-circle-bold-duotone' className='text-amber-600' />
+                        <Icon icon='solar:clock-circle-bold' className='text-amber-900 text-sm' />
                         Simple Process
                     </motion.p>
                     <motion.h2
@@ -76,9 +77,9 @@ const HowItWorks = () => {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ delay: 0.1 }}
-                        className='text-3.5xl sm:text-5xl md:text-6xl font-extrabold text-grey-dark tracking-tight leading-tight'
+                        className='text-3.5xl sm:text-5xl md:text-6xl font-black text-grey-dark tracking-tight leading-tight'
                     >
-                        How It <span className='text-amber-500 italic'>Works</span>
+                        How It <span className='text-amber-700 italic underline decoration-[#fed869] underline-offset-8'>Works</span>
                     </motion.h2>
                 </div>
 
@@ -90,10 +91,10 @@ const HowItWorks = () => {
                     className='relative flex flex-col lg:flex-row justify-between items-center lg:items-start gap-10 lg:gap-8 lg:px-12'
                 >
                     {/* Connector Line (Desktop) */}
-                    <div className='absolute top-24 left-40 right-40 h-1 bg-[#FFD54F]/20 hidden lg:block'>
+                    <div className='absolute top-24 left-40 right-40 h-1 bg-[#fed869]/40 hidden lg:block'>
                         <motion.div
                             variants={lineVariants}
-                            className='h-full bg-[#FFD54F] w-full origin-left'
+                            className='h-full bg-[#fed869] w-full origin-left shadow-sm shadow-[#fed869]'
                         ></motion.div>
                     </div>
 
@@ -101,23 +102,23 @@ const HowItWorks = () => {
                         <motion.div
                             key={i}
                             variants={itemVariants}
-                            className='relative z-10 flex flex-col items-center text-center w-full max-w-sm lg:w-1/3'
+                            className='relative z-10 flex flex-col items-center text-center w-full max-w-sm lg:w-1/3 p-6 rounded-3xl bg-white/70 backdrop-blur-sm border border-[#fed869]/40 shadow-lg shadow-[#fed869]/10'
                         >
                             <motion.div
                                 whileHover={{ scale: 1.06, rotate: 2 }}
                                 whileTap={{ scale: 0.96 }}
-                                className='w-36 h-36 sm:w-44 sm:h-44 rounded-3xl sm:rounded-[3rem] bg-[#FFF9E6] border-4 border-white shadow-xl shadow-[#FFD54F]/15 flex items-center justify-center mb-6 sm:mb-8 group relative transition-all duration-300 hover:bg-[#FFD54F]'
+                                className='w-32 h-32 sm:w-36 sm:h-36 rounded-3xl bg-[#fed869] border-4 border-white shadow-xl shadow-[#fed869]/30 flex items-center justify-center mb-6 group relative transition-all duration-300 hover:bg-[#e6c04f]'
                             >
-                                <Icon icon={step.icon} className='text-5xl sm:text-6xl text-amber-600 group-hover:text-grey-dark transition-colors duration-300' />
+                                <Icon icon={step.icon} className='text-4xl sm:text-5xl text-grey-dark transition-colors duration-300' />
 
                                 {/* Step Number */}
-                                <div className='absolute -top-3 -right-3 w-10 h-10 sm:w-12 sm:h-12 bg-grey-dark text-white rounded-xl sm:rounded-2xl flex items-center justify-center font-extrabold text-sm sm:text-base shadow-lg'>
+                                <div className='absolute -top-3 -right-3 w-9 h-9 sm:w-10 sm:h-10 bg-grey-dark text-white rounded-xl flex items-center justify-center font-extrabold text-xs sm:text-sm shadow-md'>
                                     {i + 1}
                                 </div>
                             </motion.div>
 
-                            <h3 className='text-xl sm:text-2xl font-extrabold text-grey-dark mb-2 sm:mb-3 tracking-tight'>{step.title}</h3>
-                            <p className='text-xs sm:text-base font-normal text-grey-dark/75 max-w-xs leading-relaxed'>{step.desc}</p>
+                            <h3 className='text-lg sm:text-xl font-black text-grey-dark mb-2 tracking-tight'>{step.title}</h3>
+                            <p className='text-xs sm:text-sm font-medium text-grey-dark/80 max-w-xs leading-relaxed'>{step.desc}</p>
                         </motion.div>
                     ))}
                 </motion.div>

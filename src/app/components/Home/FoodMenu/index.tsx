@@ -71,14 +71,14 @@ const MealPlanCard = ({ menu, index, isPopular }: { menu: FoodMenu; index: numbe
             transition={{ delay: index * 0.08, duration: 0.4, ease: 'easeOut' }}
             className={`relative rounded-3xl p-7 sm:p-8 flex flex-col justify-between transition-all duration-300 bg-white group ${
                 isPopular
-                    ? 'shadow-2xl shadow-[#FFD54F]/20 border-2 border-[#FFD54F] scale-100 lg:scale-105 z-20 ring-1 ring-[#FFD54F]/40'
-                    : 'shadow-xl shadow-grey/5 border border-grey/10 hover:border-[#FFD54F]/60 hover:shadow-2xl hover:shadow-[#FFD54F]/15'
+                    ? 'shadow-2xl shadow-[#fed869]/30 border-2 border-[#fed869] scale-100 lg:scale-105 z-20 ring-4 ring-[#fed869]/25 hover:-translate-y-1.5'
+                    : 'shadow-lg shadow-[#fed869]/10 border border-[#fed869]/60 hover:border-[#fed869] hover:shadow-2xl hover:shadow-[#fed869]/25 hover:-translate-y-1.5'
             }`}
         >
             {/* Top Featured Ribbon / Badge */}
             {isPopular && (
-                <div className='absolute -top-4 right-6 sm:right-8 bg-[#FFD54F] text-grey-dark font-extrabold text-[11px] uppercase tracking-wider px-4 py-1.5 rounded-full shadow-md shadow-[#FFD54F]/30 flex items-center gap-1.5'>
-                    <Icon icon='solar:star-bold' className='text-xs text-amber-700' />
+                <div className='absolute -top-4 right-6 sm:right-8 bg-[#fed869] text-grey-dark font-black text-[11px] uppercase tracking-wider px-4 py-1.5 rounded-full shadow-md shadow-[#fed869]/40 border border-[#e6c04f] flex items-center gap-1.5'>
+                    <Icon icon='solar:star-bold' className='text-xs text-amber-800' />
                     <span>{customBadge}</span>
                 </div>
             )}
@@ -86,8 +86,8 @@ const MealPlanCard = ({ menu, index, isPopular }: { menu: FoodMenu; index: numbe
             <div>
                 {/* Header: Plan Name & Meal Tag */}
                 <div className='flex items-center justify-between gap-2 flex-wrap mb-4'>
-                    <span className='px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 bg-[#FFD54F]/20 text-grey-dark border border-[#FFD54F]/35'>
-                        <Icon icon='solar:clock-circle-bold' className='text-sm text-amber-600' />
+                    <span className='px-3.5 py-1 rounded-full text-xs font-black flex items-center gap-1.5 bg-[#fed869]/30 text-amber-950 border border-[#fed869]/60'>
+                        <Icon icon='solar:clock-circle-bold' className='text-sm text-amber-800' />
                         {servingCount} Time Meal Plan
                     </span>
                 </div>
@@ -96,22 +96,22 @@ const MealPlanCard = ({ menu, index, isPopular }: { menu: FoodMenu; index: numbe
                     {menu.name}
                 </h3>
 
-                <p className='text-sm text-grey-muted line-clamp-3 min-h-[44px] mb-6 font-normal leading-relaxed'>
+                <p className='text-sm text-grey-dark/70 line-clamp-3 min-h-[44px] mb-6 font-medium leading-relaxed'>
                     {menu.description || `${servingCount === 1 ? '1 Daily Meal' : servingCount === 2 ? '2 Daily Meals (e.g. Lunch + Dinner)' : '3 Daily Meals (Full Day)'} prepared fresh with authentic home-style recipes.`}
                 </p>
 
                 {/* Price Display */}
-                <div className='mb-6 pb-6 border-b border-[#FFD54F]/20'>
+                <div className='mb-6 pb-6 border-b border-[#fed869]/40'>
                     <div className='flex items-baseline gap-2'>
-                        <span className='text-4xl sm:text-5xl font-extrabold text-grey-dark tracking-tight'>
+                        <span className='text-4xl sm:text-5xl font-black text-grey-dark tracking-tight'>
                             AED {menu.price.toFixed(0)}
                         </span>
-                        <span className='text-sm font-medium text-grey-muted'>
+                        <span className='text-sm font-bold text-grey-dark/60'>
                             / {days} days
                         </span>
                     </div>
-                    <p className='text-xs text-grey-muted font-medium mt-2 flex items-center gap-1.5'>
-                        <span className='w-1.5 h-1.5 rounded-full bg-amber-500 inline-block' />
+                    <p className='text-xs text-amber-900 font-bold mt-2 flex items-center gap-1.5'>
+                        <span className='w-2 h-2 rounded-full bg-amber-500 inline-block' />
                         Special price for monthly mess subscribers
                     </p>
                 </div>
@@ -120,10 +120,10 @@ const MealPlanCard = ({ menu, index, isPopular }: { menu: FoodMenu; index: numbe
                 <div className='space-y-3.5 mb-8'>
                     {featuresList.map((feat: string, fIdx: number) => (
                         <div key={fIdx} className='flex items-start gap-3 text-sm'>
-                            <div className='w-5 h-5 rounded-full bg-[#FFD54F]/25 text-amber-700 flex items-center justify-center shrink-0 mt-0.5'>
+                            <div className='w-5 h-5 rounded-full bg-[#fed869]/40 text-amber-800 flex items-center justify-center shrink-0 mt-0.5'>
                                 <Icon icon='solar:check-read-linear' className='text-xs font-bold' />
                             </div>
-                            <span className='text-grey-dark/85 font-medium leading-snug'>
+                            <span className='text-grey-dark font-medium leading-snug'>
                                 {feat}
                             </span>
                         </div>
@@ -135,7 +135,7 @@ const MealPlanCard = ({ menu, index, isPopular }: { menu: FoodMenu; index: numbe
             <div className='pt-2'>
                 <Link
                     href={`/get-started?planId=${menu.id}`}
-                    className='w-full py-3.5 rounded-2xl font-extrabold text-sm flex items-center justify-center gap-2 transition-all bg-[#FFD54F] hover:bg-[#F59E0B] text-grey-dark shadow-md shadow-[#FFD54F]/25 hover:shadow-lg hover:shadow-[#FFD54F]/35 text-center cursor-pointer'
+                    className='w-full py-3.5 rounded-2xl font-black text-sm flex items-center justify-center gap-2 transition-all bg-[#fed869] hover:bg-[#e6c04f] text-grey-dark shadow-md shadow-[#fed869]/30 hover:shadow-xl hover:shadow-[#fed869]/40 active:scale-[0.99] text-center cursor-pointer'
                 >
                     <span>Order Meal Plan</span>
                     <Icon icon='solar:arrow-right-bold' className='text-base' />
@@ -162,16 +162,16 @@ const FoodMenu = ({ initialPlans }: { initialPlans?: FoodMenu[] }) => {
     const hasAnyConfiguredPopular = activePlans.some(p => p.isPopular === true || p.scheduleJson?.isPopular === true)
 
     return (
-        <section id='plans' className='py-12 sm:py-20 bg-[#FFFDF5] text-grey-dark relative overflow-hidden'>
+        <section id='plans' className='py-8 sm:py-16 bg-transparent text-grey-dark relative overflow-hidden'>
             {/* Ambient Background Accents */}
-            <div className='absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[140px] pointer-events-none' />
-            <div className='absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[160px] pointer-events-none' />
+            <div className='absolute top-0 left-1/4 w-[500px] h-[500px] bg-[#fed869]/20 rounded-full blur-[140px] pointer-events-none' />
+            <div className='absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-[#fed869]/20 rounded-full blur-[160px] pointer-events-none' />
 
             <div className='max-w-[1300px] relative z-10 mx-auto px-4 sm:px-6 lg:px-8'>
                 {isLoading ? (
                     <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'>
                         {[1, 2, 3].map((i) => (
-                            <div key={i} className='h-[580px] bg-white rounded-3xl animate-pulse border border-grey/10 shadow-xs' />
+                            <div key={i} className='h-[580px] bg-white rounded-3xl animate-pulse border border-[#fed869]/30 shadow-xs' />
                         ))}
                     </div>
                 ) : activePlans.length === 0 ? (

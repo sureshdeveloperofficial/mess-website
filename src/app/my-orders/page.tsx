@@ -475,7 +475,7 @@ export default function CustomerOrdersPage() {
                 <button
                     type='button'
                     onClick={() => window.location.reload()}
-                    className='px-6 py-2.5 rounded-xl bg-primary text-white font-bold text-xs shadow-xs hover:bg-primary/90 transition-all cursor-pointer'
+                    className='px-6 py-2.5 rounded-xl bg-primary text-grey-dark font-extrabold text-xs shadow-xs hover:bg-primary-hover transition-all cursor-pointer'
                 >
                     Refresh Page
                 </button>
@@ -499,7 +499,7 @@ export default function CustomerOrdersPage() {
                 <div className='flex items-center gap-3'>
                     <Link
                         href='/get-started'
-                        className='inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl bg-primary text-white font-extrabold text-xs hover:bg-primary/90 shadow-md shadow-primary/20 transition-all'
+                        className='inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl bg-primary text-grey-dark font-extrabold text-xs hover:bg-primary-hover shadow-md shadow-primary/20 transition-all'
                     >
                         <Icon icon='solar:cart-large-bold' className='text-base' />
                         <span>Order New Plan</span>
@@ -520,7 +520,7 @@ export default function CustomerOrdersPage() {
                     <div className='pt-2'>
                         <Link
                             href='/get-started'
-                            className='inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-primary text-white font-bold text-xs shadow-md shadow-primary/20 hover:scale-105 transition-all'
+                            className='inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-primary text-grey-dark font-extrabold text-xs shadow-md shadow-primary/20 hover:scale-105 transition-all'
                         >
                             <Icon icon='solar:chef-hat-bold-duotone' className='text-lg' />
                             <span>Explore Plans &amp; Start Today</span>

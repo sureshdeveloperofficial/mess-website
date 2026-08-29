@@ -1,6 +1,7 @@
 import React from 'react'
 import FoodMenu, { FoodMenu as FoodMenuType } from '@/app/components/Home/FoodMenu'
 import { Metadata } from 'next'
+import { Icon } from '@iconify/react'
 import prisma from '@/utils/prisma'
 
 export const dynamic = 'force-dynamic'
@@ -94,26 +95,27 @@ export default async function MealPlansPage() {
     const initialPlans = await getInitialMealPlans()
 
     return (
-        <main className='pt-20 bg-[#FFFDF5] min-h-screen'>
-            <div className='pt-20 pb-10 bg-linear-to-b from-[#FFD54F]/20 via-[#FFD54F]/5 to-[#FFFDF5] text-center relative overflow-hidden'>
-                {/* Decorative background circles */}
-                <div className='absolute -top-20 -left-20 w-72 h-72 bg-[#FFD54F]/20 rounded-full blur-3xl'></div>
-                <div className='absolute -bottom-10 -right-10 w-96 h-96 bg-[#FFD54F]/15 rounded-full blur-3xl'></div>
+        <main className='pt-20 bg-[#FEEBB1] min-h-screen relative overflow-hidden'>
+            {/* Ambient Background Glows */}
+            <div className='absolute top-0 left-1/4 w-96 h-96 bg-[#fed869]/30 rounded-full blur-3xl pointer-events-none' />
+            <div className='absolute bottom-10 right-10 w-96 h-96 bg-[#fed869]/30 rounded-full blur-3xl pointer-events-none' />
 
-                <div className='inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FFD54F]/20 text-grey-dark text-xs font-black mb-4 border border-[#FFD54F]/40 tracking-wider uppercase'>
+            <div className='pt-16 pb-6 text-center relative z-10'>
+                <div className='inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#fed869] text-grey-dark text-xs font-black mb-5 border border-[#fed869] tracking-wider uppercase shadow-xs'>
+                    <Icon icon='solar:chef-hat-bold-duotone' className='text-base text-amber-800' />
                     Authentic Daily Subscriptions
                 </div>
 
-                <h1 className='text-3.5xl sm:text-5xl lg:text-6xl font-extrabold text-grey-dark tracking-tight leading-tight'>
-                    Monthly <span className='text-amber-500'>Meal Plans</span>
+                <h1 className='text-3.5xl sm:text-5xl lg:text-6xl font-extrabold text-grey-dark tracking-tight leading-tight mb-4'>
+                    Monthly <span className='text-amber-800 italic underline decoration-[#fed869]'>Meal Plans</span>
                 </h1>
                 
-                <p className='text-grey-dark/70 mt-3 max-w-2xl mx-auto text-sm sm:text-base font-normal leading-relaxed px-4'>
+                <p className='text-grey-dark/85 max-w-2xl mx-auto text-sm sm:text-base font-medium leading-relaxed px-4'>
                     Savor the warmth of home-cooked South Indian and Kerala meals delivered fresh to your room or flat daily. Choose your favorite plan below.
                 </p>
             </div>
 
-            <div className='relative z-20 -mt-6'>
+            <div className='relative z-20 pb-20'>
                 <FoodMenu initialPlans={initialPlans} />
             </div>
         </main>

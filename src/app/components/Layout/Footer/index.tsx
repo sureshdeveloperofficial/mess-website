@@ -69,12 +69,12 @@ const Footer: FC = () => {
   }
 
   return (
-    <footer className='relative bg-[#FFFDF5] pt-16 pb-12 overflow-hidden border-t border-[#FFD54F]/30'>
+    <footer className='relative bg-[#FFFDF5] pt-16 pb-12 overflow-hidden border-t border-[#fed869]/40'>
       {/* Premium Honey Yellow Animated Top Border */}
-      <div className='absolute top-0 left-0 w-full h-[3px] bg-linear-to-r from-[#FFD54F] via-[#F59E0B] to-[#FFD54F] opacity-80'></div>
+      <div className='absolute top-0 left-0 w-full h-[3px] bg-linear-to-r from-[#fed869] via-[#e6c04f] to-[#fed869] opacity-90'></div>
 
       <div className='container relative z-10'>
-        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-12 pb-16 border-b border-[#FFD54F]/20'>
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-12 pb-16 border-b border-[#fed869]/25'>
           {/* Logo and About Section */}
           <div className='lg:col-span-4 space-y-6'>
             <Logo />
@@ -93,7 +93,7 @@ const Footer: FC = () => {
                   href={social.href}
                   target='_blank'
                   rel='noopener noreferrer'
-                  className='group bg-white hover:bg-[#FFD54F] transition-all duration-300 rounded-full shadow-sm hover:shadow-[#FFD54F]/30 border border-[#FFD54F]/30 p-2.5 flex items-center justify-center'
+                  className='group bg-white hover:bg-[#fed869] transition-all duration-300 rounded-full shadow-sm hover:shadow-[#fed869]/40 border border-[#fed869]/40 p-2.5 flex items-center justify-center'
                 >
                   <Icon
                     icon={social.icon}
@@ -118,7 +118,7 @@ const Footer: FC = () => {
                     <li key={idx}>
                       <Link
                         href={item.href}
-                        className='text-grey-dark/70 hover:text-amber-600 transition-colors text-sm font-medium'
+                        className='text-grey-dark/70 hover:text-amber-700 transition-colors text-sm font-medium'
                       >
                         {item.label}
                       </Link>
@@ -145,12 +145,12 @@ const Footer: FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder='Enter your email...'
-                className='w-full bg-white border border-[#FFD54F]/40 focus:border-[#FFD54F] text-grey-dark text-xs md:text-sm rounded-full py-3.5 pl-5 pr-28 focus:outline-none focus:ring-2 focus:ring-[#FFD54F]/20 shadow-sm transition-all placeholder:text-grey-dark/40 font-medium'
+                className='w-full bg-white border border-[#fed869]/50 focus:border-[#fed869] text-grey-dark text-xs md:text-sm rounded-full py-3.5 pl-5 pr-28 focus:outline-none focus:ring-2 focus:ring-[#fed869]/30 shadow-sm transition-all placeholder:text-grey-dark/40 font-medium'
               />
               <button
                 type='submit'
                 disabled={loading}
-                className='absolute right-1.5 top-1.5 bottom-1.5 bg-[#FFD54F] hover:bg-[#F59E0B] active:scale-95 disabled:opacity-70 text-grey-dark font-extrabold px-6 rounded-full transition-all text-xs shadow-md shadow-[#FFD54F]/30 flex items-center justify-center min-w-[76px] cursor-pointer'
+                className='absolute right-1.5 top-1.5 bottom-1.5 bg-[#fed869] hover:bg-[#e6c04f] active:scale-95 disabled:opacity-70 text-grey-dark font-extrabold px-6 rounded-full transition-all text-xs shadow-md shadow-[#fed869]/35 flex items-center justify-center min-w-[76px] cursor-pointer'
               >
                 {loading ? (
                   <Icon icon='line-md:loading-loop' className='text-base' />

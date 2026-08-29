@@ -65,7 +65,7 @@ const ImageUpload = ({ value, onChange, folder = 'restaurant' }: ImageUploadProp
             onClick={handleContainerClick}
             className={`
                 relative h-48 w-full border-2 border-dashed rounded-2xl cursor-pointer transition-all flex flex-col items-center justify-center 
-                ${value ? 'border-transparent' : 'border-grey/20 hover:border-[#FFD54F] hover:bg-[#FFD54F]/5'}
+                ${value ? 'border-transparent' : 'border-grey/20 hover:border-primary hover:bg-primary/5'}
             `}
         >
             <input
