@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
-import cloudinary from '@/utils/cloudinary';
+import { uploadToSpaces } from '@/utils/s3';
 
 export async function POST(req: Request) {
     const session = await getServerSession(authOptions);
@@ -11,44 +11,55 @@ export async function POST(req: Request) {
 
     try {
         const formData = await req.formData();
-        const file = formData.get('file') as File;
+        
+        // Collect all files from 'files' or 'file' form fields
+        let files: File[] = [];
+        const filesFromList = formData.getAll('files') as File[];
+        const fileFromSingle = formData.getAll('file') as File[];
 
-        if (!file) {
+        if (filesFromList && filesFromList.length > 0) {
+            files = filesFromList.filter(f => f && typeof f === 'object' && 'arrayBuffer' in f);
+        } else if (fileFromSingle && fileFromSingle.length > 0) {
+            files = fileFromSingle.filter(f => f && typeof f === 'object' && 'arrayBuffer' in f);
+        }
+
+        if (files.length === 0) {
             return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
         }
 
-        const arrayBuffer = await file.arrayBuffer();
-        const buffer = Buffer.from(arrayBuffer);
+        // Upload all files in parallel to DigitalOcean Spaces
+        const uploadPromises = files.map(async (file, idx) => {
+            const arrayBuffer = await file.arrayBuffer();
+            const buffer = Buffer.from(arrayBuffer);
 
-        const result: any = await new Promise((resolve, reject) => {
-            cloudinary.uploader.upload_stream(
-                {
-                    folder: 'restaurant_assets',
-                    resource_type: 'auto',
-                    // Use preservation flags to maintain quality
-                    quality: 'auto:best',
-                    flags: 'attachment', // subtle way to suggest original fidelity
-                },
-                (error, result) => {
-                    if (error) reject(error);
-                    else resolve(result);
-                }
-            ).end(buffer);
+            const originalName = file.name || `image_${idx}.png`;
+            const ext = originalName.includes('.') ? originalName.split('.').pop() : 'png';
+            const timestamp = Date.now();
+            const randomStr = Math.random().toString(36).substring(2, 8);
+            const fileName = `upload_${timestamp}_${idx}_${randomStr}.${ext}`;
+
+            const publicUrl = await uploadToSpaces(buffer, fileName, file.type);
+            return {
+                name: originalName,
+                url: publicUrl
+            };
         });
 
-        // We return only the public_id and version or relative path if you prefer.
-        // For simplicity and consistent with the base URL logic, we can return the relative path.
-        // Example: 'v123456789/folder/image.png' or just 'restaurant_assets/xyz'
-        const relativePath = result.public_id; // Usually enough if using public URL construction
+        const results = await Promise.all(uploadPromises);
+        const urls = results.map(r => r.url);
 
         return NextResponse.json({
             success: true,
-            path: relativePath,
-            secure_url: result.secure_url
+            path: urls[0],
+            secure_url: urls[0],
+            url: urls[0],
+            urls: urls,
+            files: results,
+            count: urls.length
         });
 
     } catch (error: any) {
-        console.error('Upload Error:', error);
+        console.error('DigitalOcean Spaces Multi-Upload Error:', error);
         const errorMessage = error.message || 'Upload failed';
         return NextResponse.json({ error: errorMessage }, { status: error.http_code || 500 });
     }

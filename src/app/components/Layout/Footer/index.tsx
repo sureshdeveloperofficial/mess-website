@@ -6,8 +6,7 @@ import { Icon } from '@iconify/react'
 import toast from 'react-hot-toast'
 import Logo from '../Header/Logo'
 import { FooterLinkType } from '@/app/types/footerlink'
-import { useQuery } from '@tanstack/react-query'
-import axios from 'axios'
+import { useSettings } from '@/app/hooks/useSettings'
 
 const Footer: FC = () => {
   const [footerlink, SetFooterlink] = useState<FooterLinkType[]>([])
@@ -15,14 +14,7 @@ const Footer: FC = () => {
   const [loading, setLoading] = useState(false)
   const [subscribed, setSubscribed] = useState(false)
 
-  const { data: settings } = useQuery({
-    queryKey: ['settings'],
-    queryFn: async () => {
-      const res = await axios.get('/api/settings')
-      return res.data
-    },
-    staleTime: 60000,
-  })
+  const { data: settings } = useSettings()
 
   let restaurantName = settings?.restaurant_name || settings?.site_name || 'PREMIUM MESS'
   if (!restaurantName || restaurantName.toLowerCase().includes('shamil')) {

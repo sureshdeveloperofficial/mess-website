@@ -12,10 +12,12 @@ import AuthModal from '@/app/components/Auth/AuthModal'
 import { Icon } from '@iconify/react/dist/iconify.js'
 import { HeaderItem } from '@/app/types/menu'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useSettings } from '@/app/hooks/useSettings'
 
 const Header: React.FC = () => {
   const router = useRouter()
   const { data: session, status } = useSession()
+  const { data: settings } = useSettings()
   const [headerLink, setHeaderLink] = useState<HeaderItem[]>([])
 
   const [navbarOpen, setNavbarOpen] = useState(false)
@@ -24,7 +26,7 @@ const Header: React.FC = () => {
   const [authModalOpen, setAuthModalOpen] = useState(false)
   const [authModalMode, setAuthModalMode] = useState<'signin' | 'signup'>('signin')
 
-  const contactPhone = '+971 4 264 2613'
+  const contactPhone = settings?.contact_phone || '+971 4 264 2613'
   const navbarRef = useRef<HTMLDivElement>(null)
   const mobileMenuRef = useRef<HTMLDivElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)

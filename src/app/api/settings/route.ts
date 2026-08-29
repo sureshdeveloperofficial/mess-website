@@ -1,5 +1,9 @@
 import { NextResponse } from 'next/server'
 import prisma from '@/utils/prisma'
+import { revalidatePath } from 'next/cache'
+
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export async function GET() {
     try {
@@ -24,7 +28,32 @@ export async function GET() {
             settingsObject.site_name = 'PREMIUM MESS'
         }
 
-        return NextResponse.json(settingsObject)
+        // Parse JSON arrays for media if they exist
+        if (settingsObject.hero_slider_images && typeof settingsObject.hero_slider_images === 'string') {
+            try {
+                settingsObject.hero_slider_images = JSON.parse(settingsObject.hero_slider_images)
+            } catch {
+                // keep original string if parsing fails
+            }
+        }
+
+        if (settingsObject.gallery_items && typeof settingsObject.gallery_items === 'string') {
+            try {
+                settingsObject.gallery_items = JSON.parse(settingsObject.gallery_items)
+            } catch {
+                // keep original string if parsing fails
+            }
+        }
+
+        return new NextResponse(JSON.stringify(settingsObject), {
+            status: 200,
+            headers: {
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
+                'Pragma': 'no-cache',
+                'Expires': '0',
+            },
+        })
     } catch (error) {
         console.error('Settings fetch error:', error)
         return NextResponse.json({ error: 'Failed to fetch settings' }, { status: 500 })
@@ -43,7 +72,9 @@ export async function POST(req: Request) {
         for (const [key, value] of Object.entries(targetSettings)) {
             const safeKey = String(key).trim()
             if (!safeKey) continue
-            const safeValue = value !== undefined && value !== null ? String(value).trim() : ''
+            const safeValue = value !== undefined && value !== null
+                ? (typeof value === 'object' ? JSON.stringify(value) : String(value).trim())
+                : ''
 
             await prisma.setting.upsert({
                 where: { key: safeKey },
@@ -55,10 +86,18 @@ export async function POST(req: Request) {
             })
         }
 
+        // Revalidate Next.js cache across the site
+        try {
+            revalidatePath('/', 'layout')
+            revalidatePath('/')
+            revalidatePath('/admin/website-settings')
+        } catch (revalidateErr) {
+            console.warn('Revalidate warning:', revalidateErr)
+        }
+
         return NextResponse.json({ message: 'Settings updated successfully' })
     } catch (error: any) {
         console.error('Settings update error:', error)
         return NextResponse.json({ error: error.message || 'Failed to update settings' }, { status: 500 })
     }
 }
-

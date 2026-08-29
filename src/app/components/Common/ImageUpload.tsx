@@ -21,10 +21,10 @@ const ImageUpload = ({ value, onChange, folder = 'restaurant' }: ImageUploadProp
         const file = e.target.files?.[0]
         if (!file) return
 
-        // 10MB Limit for Cloudinary Free Tier
-        const MAX_SIZE = 10 * 1024 * 1024
+        // 15MB Limit
+        const MAX_SIZE = 15 * 1024 * 1024
         if (file.size > MAX_SIZE) {
-            toast.error('File is too large. Maximum size is 10MB.')
+            toast.error('File is too large. Maximum size is 15MB.')
             return
         }
 

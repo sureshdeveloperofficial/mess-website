@@ -2,40 +2,37 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-import MarqueeRow from '@/app/components/Common/Marquee'
 import { Icon } from '@iconify/react'
 import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useSettings } from '@/app/hooks/useSettings'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const PREMIUM_IMAGES = [
-  '/images/food/biryani_premium.png',
-  '/images/food/parotta.png',
-  '/images/food/appetizer.png',
-  '/images/Gallery/foodone.webp',
-  '/images/Gallery/foodtwo.webp',
-]
-
-const SLIDER_IMAGES = [
+const DEFAULT_SLIDER_IMAGES = [
   '/images/hero/close-up-appetizing-ramadan-meal.jpg',
   '/images/hero/flat-lay-indian-food-frame.jpg',
   '/images/hero/idli-vada-with-sambar-chutney.jpg',
   '/images/hero/massaman-curry-frying-pan-with-spices-cement-floor.jpg'
 ]
 
-const AVATARS = [
-  '/images/Expert/boyone.png',
-  '/images/Expert/boytwo.png',
-  '/images/Expert/girl.png',
-  '/images/Expert/boyone.png',
-]
-
 const Hero = () => {
   const containerRef = useRef<HTMLDivElement>(null)
   const imageRef = useRef<HTMLDivElement>(null)
   const [currentIdx, setCurrentIdx] = useState(0)
+
+  const { data: settings } = useSettings()
+
+  // Dynamic slides calculation
+  const sliderImages = Array.isArray(settings?.hero_slider_images) && settings.hero_slider_images.length > 0
+    ? settings.hero_slider_images
+    : DEFAULT_SLIDER_IMAGES
+
+  const floatingImg1 = settings?.hero_floating_image_1 || '/images/food/biryani_premium.png'
+  const floatingImg2 = settings?.hero_floating_image_2 || '/images/food/parotta.png'
+  const promiseTitle = settings?.hero_promise_title || 'Tradition in\nEvery Bite'
+  const promiseSubtitle = settings?.hero_promise_subtitle || 'Our Promise'
 
   const revealVariants = {
     hidden: { y: 40, opacity: 0 },
@@ -51,8 +48,9 @@ const Hero = () => {
   }
 
   useEffect(() => {
+    if (sliderImages.length === 0) return
     const timer = setInterval(() => {
-      setCurrentIdx((prev) => (prev + 1) % SLIDER_IMAGES.length)
+      setCurrentIdx((prev) => (prev + 1) % sliderImages.length)
     }, 5000)
 
     const ctx = gsap.context(() => {
@@ -83,7 +81,10 @@ const Hero = () => {
       ctx.revert()
       clearInterval(timer)
     }
-  }, [])
+  }, [sliderImages.length])
+
+  // Safeguard index bounds
+  const activeSlide = sliderImages[currentIdx % sliderImages.length] || sliderImages[0]
 
   return (
     <section ref={containerRef} id='home-section' className='relative bg-[#FFFDF5] overflow-hidden pt-20 lg:pt-32'>
@@ -101,7 +102,7 @@ const Hero = () => {
                 initial="hidden"
                 animate="visible"
                 custom={1}
-                className='text-3.5xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-grey-dark lg:text-start text-center leading-[1.1] tracking-tight mb-6 sm:mb-8'
+                className='text-3xl sm:text-4.5xl md:text-5xl lg:text-5.5xl xl:text-6xl font-extrabold text-grey-dark lg:text-start text-center leading-[1.15] tracking-tight mb-6 sm:mb-8'
               >
                 Authentic Taste. <br />
                 <span className='text-amber-500 italic'>Everyday Comfort.</span>
@@ -114,7 +115,7 @@ const Hero = () => {
                 custom={2}
                 className='text-grey-dark/75 text-sm sm:text-base md:text-lg font-normal mb-8 sm:mb-12 lg:text-start text-center max-w-2xl leading-relaxed'
               >
-                Traditional flavours, freshly prepared meals, and the comforting taste of home — served fresh every day.
+                {settings?.site_tagline || 'Traditional flavours, freshly prepared meals, and the comforting taste of home — served fresh every day.'}
               </motion.p>
 
               <motion.div
@@ -170,6 +171,7 @@ const Hero = () => {
 
           <div className='lg:col-span-5 relative mt-6 lg:mt-0'>
             <div ref={imageRef} className='relative z-20'>
+              {/* Promise Badge */}
               <motion.div
                 variants={revealVariants}
                 initial="hidden"
@@ -181,11 +183,12 @@ const Hero = () => {
                   <Icon icon='ion:heart' className='text-grey-dark text-lg sm:text-xl animate-pulse' />
                 </div>
                 <div>
-                  <p className='text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-amber-600'>Our Promise</p>
-                  <p className='font-extrabold text-grey-dark text-xs sm:text-base leading-tight'>Tradition in<br />Every Bite</p>
+                  <p className='text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-amber-600'>{promiseSubtitle}</p>
+                  <p className='font-extrabold text-grey-dark text-xs sm:text-base leading-tight whitespace-pre-line'>{promiseTitle}</p>
                 </div>
               </motion.div>
 
+              {/* Main Rotating Banner */}
               <motion.div
                 variants={revealVariants}
                 initial="hidden"
@@ -199,55 +202,59 @@ const Hero = () => {
                     initial={{ opacity: 0, scale: 1.1 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ duration: 1.5, ease: "easeInOut" }}
+                    transition={{ duration: 1.2, ease: "easeInOut" }}
                     className="absolute inset-0"
                   >
-                    <Image
-                      src={SLIDER_IMAGES[currentIdx]}
-                      alt='hero-slide'
-                      fill
-                      sizes='(max-width: 640px) 90vw, (max-width: 1024px) 50vw, 450px'
-                      className='object-cover'
-                      priority
-                    />
+                    {activeSlide?.startsWith('/') ? (
+                      <Image
+                        src={activeSlide}
+                        alt='hero-slide'
+                        fill
+                        sizes='(max-width: 640px) 90vw, (max-width: 1024px) 50vw, 450px'
+                        className='object-cover'
+                        priority
+                      />
+                    ) : (
+                      <img
+                        src={activeSlide}
+                        alt='hero-slide'
+                        className='w-full h-full object-cover'
+                      />
+                    )}
                   </motion.div>
                 </AnimatePresence>
 
                 {/* Progress Indicators */}
                 <div className='absolute bottom-6 sm:bottom-10 left-1/2 -translate-x-1/2 flex gap-2.5 sm:gap-3 z-30'>
-                  {SLIDER_IMAGES.map((_, i) => (
+                  {sliderImages.map((_, i) => (
                     <div
                       key={i}
-                      className={`h-1.5 rounded-full transition-all duration-500 ${i === currentIdx ? 'w-6 sm:w-8 bg-[#FFD54F]' : 'w-2 bg-white/50'}`}
+                      className={`h-1.5 rounded-full transition-all duration-500 ${i === (currentIdx % sliderImages.length) ? 'w-6 sm:w-8 bg-[#FFD54F]' : 'w-2 bg-white/50'}`}
                     />
                   ))}
                 </div>
               </motion.div>
 
-              {/* Floating Decorative Items */}
+              {/* Dynamic Floating Decorative Items */}
               <motion.div
                 className='floating-food absolute -right-10 top-10 w-36 h-36 sm:w-44 sm:h-44 z-30 hidden xl:block drop-shadow-2xl'
               >
-                <Image src='/images/food/biryani_premium.png' alt='biryani' width={180} height={180} className='rounded-full' />
+                <div className='w-full h-full rounded-full overflow-hidden border-4 border-white shadow-xl bg-white'>
+                  <img src={floatingImg1} alt='dish decorative' className='w-full h-full object-cover' />
+                </div>
               </motion.div>
 
               <motion.div
                 className='floating-food absolute -left-12 bottom-10 w-28 h-28 sm:w-36 sm:h-36 z-30 hidden xl:block drop-shadow-2xl'
               >
-                <Image src='/images/food/parotta.png' alt='parotta' width={140} height={140} className='rounded-full' />
+                <div className='w-full h-full rounded-full overflow-hidden border-4 border-white shadow-xl bg-white'>
+                  <img src={floatingImg2} alt='dish decorative' className='w-full h-full object-cover' />
+                </div>
               </motion.div>
             </div>
           </div>
         </div>
       </div>
-
-      {/* Auto Scrolling Marquee Section */}
-      {/* <div className='mt-16 pb-8 border-t border-[#2D2A26]/5'>
-        <div className='py-6 bg-[#2D2A26]/2'>
-          <MarqueeRow images={PREMIUM_IMAGES} speed={40} />
-          <MarqueeRow images={[...PREMIUM_IMAGES].reverse()} direction='right' speed={50} />
-        </div>
-      </div> */}
     </section>
   )
 }

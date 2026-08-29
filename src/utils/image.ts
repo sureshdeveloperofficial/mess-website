@@ -1,4 +1,4 @@
-const DEFAULT_FALLBACK_IMAGE = '/images/food/biryani_premium.png'
+const DEFAULT_FALLBACK_IMAGE = 'https://rythmtechnical.sgp1.digitaloceanspaces.com/mess_website/images/food/biryani_premium.png'
 
 export const getFullImageUrl = (path: string | undefined | null, fallback: string = DEFAULT_FALLBACK_IMAGE): string => {
     if (!path || typeof path !== 'string' || path.trim() === '') {
@@ -7,7 +7,7 @@ export const getFullImageUrl = (path: string | undefined | null, fallback: strin
 
     const cleanPath = path.trim()
 
-    // Absolute URLs (Cloudinary, S3, external HTTPS)
+    // Absolute URLs (DigitalOcean Spaces, S3, external HTTPS)
     if (cleanPath.startsWith('http://') || cleanPath.startsWith('https://')) {
         return cleanPath
     }
@@ -17,12 +17,6 @@ export const getFullImageUrl = (path: string | undefined | null, fallback: strin
         return cleanPath
     }
 
-    // Relative Cloudinary public IDs
-    const baseUrl = process.env.NEXT_PUBLIC_CLOUDINARY_BASE_URL || ''
-    if (baseUrl) {
-        const normalizedBase = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`
-        return `${normalizedBase}${cleanPath}`
-    }
-
-    return fallback
+    // Default return
+    return `${process.env.NEXT_PUBLIC_DO_SPACES_URL || 'https://rythmtechnical.sgp1.digitaloceanspaces.com/mess_website'}/${cleanPath}`
 }

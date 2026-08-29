@@ -3,18 +3,10 @@
 import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useQuery } from '@tanstack/react-query'
-import axios from 'axios'
+import { useSettings } from '@/app/hooks/useSettings'
 
 const Logo: React.FC = () => {
-  const { data: settings } = useQuery({
-    queryKey: ['settings'],
-    queryFn: async () => {
-      const res = await axios.get('/api/settings')
-      return res.data
-    },
-    staleTime: 60000,
-  })
+  const { data: settings } = useSettings()
 
   let restaurantName = settings?.restaurant_name || settings?.site_name || 'PREMIUM MESS'
   if (!restaurantName || restaurantName.toLowerCase().includes('shamil')) {
@@ -26,6 +18,7 @@ const Logo: React.FC = () => {
     <Link href='/' className='flex items-center gap-3 group'>
       {logoUrl ? (
         <img
+          key={logoUrl}
           src={logoUrl}
           alt={restaurantName}
           className='h-9 md:h-11 w-auto max-w-[140px] object-contain transition-transform group-hover:scale-105 duration-200'

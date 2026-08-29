@@ -20,6 +20,7 @@ const navItems = [
     { label: 'Orders', icon: 'solar:cart-large-bold', href: '/admin/orders' },
     { label: 'Customers', icon: 'solar:users-group-two-rounded-bold-duotone', href: '/admin/customers' },
     { label: 'Website Settings', icon: 'solar:settings-bold-duotone', href: '/admin/website-settings' },
+    { label: 'Banners & Media', icon: 'solar:gallery-wide-bold-duotone', href: '/admin/website-settings?tab=hero' },
     { label: 'Email Settings', icon: 'solar:letter-bold-duotone', href: '/admin/email-settings' },
     { label: 'Bank Settings', icon: 'solar:card-2-bold-duotone', href: '/admin/settings' },
 ]
