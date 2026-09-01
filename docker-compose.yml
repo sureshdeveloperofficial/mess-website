@@ -13,6 +13,8 @@ services:
       - NODE_ENV=production
       - PORT=7691
       - HOSTNAME=0.0.0.0
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     healthcheck:
       test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:7691/ || exit 1"]
       interval: 30s
