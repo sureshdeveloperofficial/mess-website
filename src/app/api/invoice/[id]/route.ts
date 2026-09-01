@@ -56,7 +56,7 @@ export async function GET(
         const page = await browser.newPage()
 
         // 3. Navigate to the dedicated print page
-        const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
+        const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:7691'
         await page.goto(`${baseUrl}/invoice/print/${id}`, {
             waitUntil: 'networkidle0'
         })

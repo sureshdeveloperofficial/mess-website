@@ -172,7 +172,7 @@ export async function sendNewsletterWelcomeEmail(subscriberEmail: string) {
                 </div>
 
                 <div style="text-align: center; margin-bottom: 30px;">
-                    <a href="${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/plans" style="display: inline-block; background: #fed869; color: #171717; text-decoration: none; font-weight: 800; font-size: 14px; padding: 14px 32px; border-radius: 50px; box-shadow: 0 4px 15px rgba(254, 216, 105, 0.45);">
+                    <a href="${process.env.NEXTAUTH_URL || 'http://localhost:7691'}/plans" style="display: inline-block; background: #fed869; color: #171717; text-decoration: none; font-weight: 800; font-size: 14px; padding: 14px 32px; border-radius: 50px; box-shadow: 0 4px 15px rgba(254, 216, 105, 0.45);">
                         Explore Meal Plans
                     </a>
                 </div>
@@ -315,7 +315,7 @@ export async function sendOrderConfirmationEmail(order: any) {
                 </div>
 
                 <div style="text-align: center; margin-top: 24px;">
-                    <a href="${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/my-orders/${order.id}" style="display: inline-block; background: #fed869; color: #171717; padding: 12px 28px; border-radius: 30px; text-decoration: none; font-weight: 800; font-size: 14px; box-shadow: 0 4px 15px rgba(254, 216, 105, 0.45);">
+                    <a href="${process.env.NEXTAUTH_URL || 'http://localhost:7691'}/my-orders/${order.id}" style="display: inline-block; background: #fed869; color: #171717; padding: 12px 28px; border-radius: 30px; text-decoration: none; font-weight: 800; font-size: 14px; box-shadow: 0 4px 15px rgba(254, 216, 105, 0.45);">
                         View Invoice & Meal Schedule
                     </a>
                 </div>
