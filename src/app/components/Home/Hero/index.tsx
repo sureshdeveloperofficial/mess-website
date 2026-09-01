@@ -135,16 +135,23 @@ const Hero = () => {
                     <Icon icon='ion:calendar-outline' className='group-hover:translate-x-1.5 transition-transform' />
                   </motion.button>
                 </Link>
-                <Link href='/menu' className='w-full sm:w-auto'>
+                <a
+                  href='#gallery'
+                  onClick={(e) => {
+                    e.preventDefault()
+                    document.getElementById('gallery')?.scrollIntoView({ behavior: 'smooth' })
+                  }}
+                  className='w-full sm:w-auto'
+                >
                   <motion.button
                     whileHover={{ scale: 1.02, backgroundColor: 'rgba(255,255,255,0.9)' }}
                     whileTap={{ scale: 0.98 }}
                     className='w-full sm:w-auto text-sm sm:text-base border-2 sm:border-3 border-grey-dark/15 rounded-3xl sm:rounded-4xl font-extrabold py-4 px-8 sm:py-5 sm:px-10 text-grey-dark hover:border-[#fed869] hover:bg-white/80 transition-all duration-300 flex items-center justify-center gap-3 bg-white/70 backdrop-blur-sm cursor-pointer'
                   >
-                    View Today&apos;s Menu
+                    View Signature Dishes
                     <Icon icon='ion:restaurant-outline' />
                   </motion.button>
-                </Link>
+                </a>
               </motion.div>
 
               <motion.div
